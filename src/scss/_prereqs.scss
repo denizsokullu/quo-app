@@ -1,0 +1,115 @@
+
+//Colors
+$color-bg-1:#2C2C2C;
+$color-bg-2:#343434;
+$color-bg-3:#434343;
+$color-bg-4:#686868;
+$color-bg-5:#565656;
+$color-bg-6:#444444;
+$color-bg-7:#1A1A1A;
+$color-bg-8:#AFAFAF;
+$color-bg-9:#7E7E7E;
+$color-bg-10:#353535;
+$color-bg-11:#595959;
+$color-bg-12:#F2F2F2;
+$color-text-1:#D8D8D8;
+$color-text-2:#FFFFFF;
+$color-text-3:#7E7E7E;
+$color-icon-hover:#BCBCBC;
+$color-checkbox-fill:#FFFFFF;
+$color-blue:#0879FE;
+$color-slider-fill:$color-blue;
+
+$color-preview-bg:$color-bg-12;
+
+//Font Sizes
+$font-xs:8px;
+$font-s:10px;
+$font-m:11px;
+$font-l:14px;
+
+$card-body-main-text:$font-l;
+$card-header-font-size:$font-m;
+$card-body-title:$font-s;
+$card-body-bottom-border:$color-bg-10;
+$button-font-size:$font-m;
+
+$border-r:8px;
+
+
+//Specific colors
+//Viewer
+$color-viewer-bg:$color-bg-2;
+
+//buttons
+$color-button-bg:$color-bg-3;
+$color-button-border:$color-bg-10;
+$color-button-hover:$color-bg-5;
+$color-button-selected:$color-blue;
+
+//Vertical Nav
+$vertical-nav-height:44px;
+
+//Sidebar
+$color-sidebar-bg:$color-bg-1;
+$sidebar-width:260px;
+$sidebar-width-left:230px;
+$interaction-nav-height:$vertical-nav-height;
+
+//Top Bar
+$color-topbar-bg:$color-bg-7;
+$top-bar-height:44px;
+
+@mixin Checkbox{
+  .check-default {
+    svg {
+      fill: $color-checkbox-fill;
+    }
+    span:last-child {
+      color:$color-checkbox-fill;
+    }
+  }
+
+  .check-checked {
+
+  }
+
+  .check-checked-primary {
+
+  }
+
+  .check-checked-secondary {
+
+  }
+}
+
+@mixin CardHeader {
+
+  height:28px;
+  padding:0 6px 0 .75rem;
+  box-sizing:border-box;
+
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+
+  border-radius:$border-r $border-r 0 0;
+
+  font-size:$card-header-font-size;
+
+  letter-spacing:.5px;
+
+  text-transform:uppercase;
+  background-color:$color-bg-4;
+  color:$color-text-2;
+  user-select:none;
+
+}
+
+//Font
+body {
+  * {
+    font-family:"Roboto", sans-serif;
+  }
+  overflow: hidden
+}

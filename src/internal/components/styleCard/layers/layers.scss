@@ -1,0 +1,52 @@
+.page-name {
+
+  position:relative;
+
+  &:not(:last-child){
+    border-bottom:1px solid $card-body-bottom-border;
+  }
+
+  $padding:.25rem;
+
+  .text-input {
+
+
+    padding:$padding;
+    display:block;
+
+    input {
+
+      position:static;
+      top:0;
+      width:80%;
+      font-weight:300;
+      letter-spacing:.4px;
+
+      font-size:$font-m;
+
+    }
+
+  }
+
+  span {
+
+    position:absolute;
+    right:$padding;
+    top:$padding;
+    transform:scale(.75);
+
+    &:hover {
+
+      cursor:pointer;
+      svg {
+              fill:white;
+      }
+
+
+    }
+
+  }
+
+
+
+}

@@ -1,0 +1,80 @@
+@import 'border/border';
+@import 'copyState/copyState';
+@import 'fill/fill';
+@import 'movement/movement';
+@import 'scale/scale';
+@import 'shadow/shadow';
+@import 'layers/layers';
+
+.style-card, .layer-card {
+
+  border-radius:8px;
+  background-color:$color-bg-3;
+  display:inline-block;
+  width:100%;
+
+  &.half-width {
+
+    width:calc(50% - .25rem);
+
+    // This is bad - find a better fix for it...
+    &:nth-child(2n+1) {
+
+      margin-right:.5rem;
+
+    }
+
+  }
+
+  &.disabled-style {
+
+    .style-card-body {
+
+      opacity:.3;
+      filter: grayscale(100%);
+      pointer-events: none;
+
+    }
+
+  }
+
+  .style-card-header {
+
+    @include CardHeader;
+
+    .check-default {
+      width:24px!important;
+      height:24px!important;
+      transform:scale(.75);
+      position:relative;
+      left:2px;
+    }
+
+    @include Checkbox;
+
+  }
+
+  .style-card-body {
+
+    padding:.75rem .75rem .5rem .75rem;
+
+  }
+
+}
+
+.layer-card {
+
+  .layer-card-body {
+
+    padding:0;
+    margin-bottom:0!important;
+
+  }
+
+  .style-card-header {
+
+    margin-bottom:0!important;
+
+  }
+
+}
