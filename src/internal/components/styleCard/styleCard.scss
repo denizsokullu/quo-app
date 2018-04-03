@@ -64,6 +64,10 @@
 
 .layer-card {
 
+  margin-bottom:.5rem;
+  position:relative;
+  overflow:hidden;
+
   .layer-card-body {
 
     padding:0;
@@ -76,5 +80,76 @@
     margin-bottom:0!important;
 
   }
+
+}
+
+
+.content-pages {
+
+  .left-side-header {
+
+    display:flex;
+    justify-content: center;
+
+    span {
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+    .page-count {
+
+      margin-left:.5rem;
+
+      font-weight:300;
+      line-height:11.5px;
+
+      height:13.5px;
+      width:13.5px;
+      align-items: flex-start;
+
+      box-sizing:border-box;
+      border:2px solid white;
+      border-radius:2px;
+
+      &.small {
+
+        font-size:6px;
+        line-height:10px;
+
+      }
+
+      &.large {
+
+        font-size:8px;
+
+      }
+
+    }
+
+  }
+
+
+    .add-page {
+
+      width:18px;
+      height:18px;
+
+      svg {
+
+        width:18px;
+        height:18px;
+
+      }
+
+      &:hover {
+
+        cursor:pointer;
+
+      }
+
+    }
 
 }

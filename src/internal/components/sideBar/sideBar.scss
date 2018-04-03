@@ -41,7 +41,18 @@
   &.sidebar-left {
 
     position:static;
-    width:calc(100% - 1rem);
+    width:auto;
+    height:auto;
+    top:0;
+    // height:1px;
+    position:relative;
+    z-index:99;
+    color:transparent;
+    height:calc(100% - #{$top-bar-height});
+    // width:calc(100% - 1rem);
+    // top:0;
+    // position:relative;
+    box-sizing:content-box;
     margin:.5rem;
     border-radius:8px;
 

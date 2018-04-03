@@ -26,7 +26,7 @@ import Movement from '../styleCard/movement/movement';
 import MiniPreview from '../miniPreview/miniPreview';
 
 
-import { ContentPagesCard } from '../styleCard/layers/layers';
+import { ContentPagesCard, LayersCard } from '../styleCard/styleCard';
 
 //Icons for the interaction-nav(right)
 
@@ -83,20 +83,21 @@ class SideBarLeft extends Component {
         <div className='sidebar-wrapper sidebar-resizable'>
           <div className={`sidebar-container sidebar-left`}>
             <ContentPagesCard/>
+            <LayersCard/>
           </div>
-          <div className = 'interaction-nav left-nav'>
+          {/* <div className = 'interaction-nav left-nav'>
             {
               Object.keys(this.state.icons).map(icon=>{
-                let selected = this.state.selected === icon ? 'selected-icon' : '';
-                let CurrentIcon = this.state.icons[icon];
-                return (
-                  <div className = {`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
-                    <CurrentIcon/>
-                  </div>
-                )
+            let selected = this.state.selected === icon ? 'selected-icon' : '';
+            let CurrentIcon = this.state.icons[icon];
+            return (
+            <div className = {`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
+            <CurrentIcon/>
+            </div>
+            )
               })
-            }
-          </div>
+          } */}
+          {/* </div> */}
         </div>
       </Resizable>
       )

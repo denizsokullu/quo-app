@@ -1,3 +1,5 @@
+
+
 .page-name {
 
   position:relative;
@@ -8,8 +10,11 @@
 
   $padding:.25rem;
 
-  .text-input {
+  &:hover svg{
+    fill:white;
+  }
 
+  .text-input {
 
     padding:$padding;
     display:block;
@@ -38,15 +43,109 @@
     &:hover {
 
       cursor:pointer;
-      svg {
-              fill:white;
-      }
-
 
     }
 
   }
 
 
+
+}
+
+
+.layers-content {
+
+  .main-layer-block {
+
+    display:flex;
+    align-items:center;
+
+    border-bottom:1px solid $card-body-bottom-border;
+    padding:0.25rem;
+    position:relative;
+    transition:.1s ease-in-out background-color;
+
+    &.last-el {
+
+      border-bottom:none;
+
+    }
+
+    &.single-el {
+
+      .text-input {
+
+        // position:relative;
+        // left:-3px;
+
+      }
+
+    }
+
+    .minimize-icon {
+      position:absolute;
+      right:.25rem;
+      height:18px;
+      display:block;
+      &:hover {
+        cursor:pointer;
+      }
+    }
+
+    &:hover {
+      transition:.1s ease-in-out background-color;
+      background-color:$color-card-hover;
+      cursor:pointer;
+    }
+
+    &:focus {
+      background-color:$color-blue;
+      outline:none;
+      box-shadow:none;
+    }
+
+  }
+
+  .child-layer-block.child-minimized {
+    display:none;
+  }
+
+  .folder-icon {
+    padding-left:.5rem;
+  }
+
+  svg {
+    display:inline-block;
+    width:18px;
+    height:18px;
+    fill :white;
+  }
+
+  .depth-padding {
+
+    display:inline-block;
+    width:26px;
+    height:26px;
+
+  }
+
+  .text-input {
+
+    width:60%;
+    box-sizing:border-box;
+    padding-left:8px;
+
+    input {
+
+      position:static;
+      width:100%;
+      text-overflow: ellipsis;
+      font-size:$font-m;
+      box-sizing:border-box;
+
+
+    }
+
+  }
 
 }
