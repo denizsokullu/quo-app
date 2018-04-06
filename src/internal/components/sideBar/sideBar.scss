@@ -19,7 +19,7 @@
   position:absolute;
   top:$top-bar-height;
   box-sizing:border-box;
-  overflow-y:scroll;
+  overflow-y:auto;
 
   background-color:$color-sidebar-bg;
   color:$color-text-1;
@@ -60,7 +60,7 @@
 
   &.sidebar-right > div {
 
-    overflow:scroll;
+    overflow-y:auto;
     align-items: stretch;
     margin:.5rem;
 

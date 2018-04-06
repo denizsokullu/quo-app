@@ -1,5 +1,7 @@
 'use strict';
 
+require("babel-polyfill");
+
 process.env.NODE_ENV = 'development';
 
 // Load environment variables from .env file. Suppress warnings using silent

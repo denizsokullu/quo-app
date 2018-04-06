@@ -9,7 +9,7 @@ import _ from 'underscore'
 
 const pathElements = ['triangle','shapePath'];
 
-export default class AbstractComponent{
+export class AbstractComponent{
   constructor(data){
 
     this.pageName = data.name;
@@ -183,5 +183,18 @@ export default class AbstractComponent{
       })
       return _.reduce(results,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
     }
+  }
+}
+
+export function getComponent(component,id){
+  console.log(component,id);
+  if(component.id === id){
+    return component
+  }
+  else{
+    let results = component.layers.map(innerComponent => {
+      return getComponent(innerComponent,id);
+    })
+    return _.reduce(results,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
   }
 }

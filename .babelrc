@@ -1,0 +1,9 @@
+{
+  "presets": ["env",
+              "react",
+              "stage-2"],
+  "plugins": ["transform-decorators-legacy",
+              "transform-react-jsx",
+              "transform-object-rest-spread",
+              "transform-es2015-function-name"]
+}

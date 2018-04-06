@@ -2,6 +2,11 @@ import { createStore, combineReducers } from 'redux';
 import sketchParser from './parser';
 import _ from 'underscore';
 import undoable from 'redux-undo'
+import { getComponent } from './parser/abstractComponent';
+
+function dc(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
 
 export const UPLOAD_SKETCH = uploadData => ({
   type: 'UPLOAD_SKETCH',
@@ -10,11 +15,6 @@ export const UPLOAD_SKETCH = uploadData => ({
 
 export const COMPONENT_MOVE = component => ({
   type: 'COMPONENT_MOVE',
-  payload: component
-});
-
-export const UNDO = component => ({
-  type: 'UNDO',
   payload: component
 });
 
@@ -58,27 +58,32 @@ export const reducer = (state = {}, action) => {
       let newComponent = sketchParser(action.payload)
       newData[newComponent.id] = newComponent
       let newAssets = {data:newData};
-      console.log(newAssets);
+      // console.log(newAssets);
       return {...state, assets:newAssets}
+
+
     case 'COMPONENT_MOVE':
-      // console.log(action.type);
-      // console.log(action.payload)
+
       //find the id;
       let id = action.payload.component.id
       // console.log(id)
-      newData = {...state.assets.data}
-      let newFrame = {...action.payload.component.frame}
+      newData = dc(state.assets.data)
+
+      let newFrame = dc(action.payload.component.frame)
       // //update x and y locations
       newFrame.x = action.payload.data.x
       newFrame.y = action.payload.data.y
-      // console.log(action.payload.component.frame,newFrame,newData);
 
       //Place newFrame Data here
       //Find the component first
-      let allIDs = _.keys(newData).map(key=>{
+
+      let allIDs = _.keys(state.assets.data).map(key=>{
         let obj = newData[key];
-        return obj.getComponent(id);
+        return getComponent(obj,id);
       })
+
+      // console.log(allIDs);
+
       allIDs = _.reduce(allIDs,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
       let componentToUpdate = allIDs;
       // // console.log(newData);
@@ -94,7 +99,7 @@ export const reducer = (state = {}, action) => {
 
     case 'KEY_DOWN':
 
-      let controllerNew = {...state.controller};
+      let controllerNew = dc(state.controller);
       let currentKey = action.payload.key;
       controllerNew.key[currentKey] = true;
       // console.log(controllerNew);
@@ -103,7 +108,7 @@ export const reducer = (state = {}, action) => {
 
     case 'KEY_UP':
 
-      controllerNew = {...state.controller};
+      controllerNew = dc(state.controller);
       currentKey = action.payload.key;
       controllerNew.key[currentKey] = false;
       // console.log(controllerNew);
@@ -125,7 +130,11 @@ const mainReducer = undoable(reducer);
 
 // store.js
 export function configureStore(initialState = {}) {
-  const store = createStore(mainReducer, initialState);
+  const store = createStore(
+    mainReducer,
+    initialState,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  );
   return store;
 };
 

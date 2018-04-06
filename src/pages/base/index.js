@@ -14,6 +14,8 @@ import DropzoneContainer from '../../internal/components/dropzone/dropzoneContai
 import Viewer from '../../internal/components/viewer/viewer';
 import UndoButton from '../../internal/components/undo/undo';
 
+import KeyController from '../../internal/components/keyController/keyController';
+
 
 // Libraries
 // Sketch parser / Virtual DOM Creator
@@ -41,7 +43,7 @@ export default class Base extends Component {
               <Switch>
                 <Route exact={ true } path="/" render={ () => {
                   return (
-                    <div className='main-container'>
+                    <KeyController>
                       <DropzoneContainer>
                         <Viewer/>
 
@@ -50,12 +52,12 @@ export default class Base extends Component {
                       {/* <ScaleStyleCard/>
                       <ShadowStyleCard/> */}
                       {/* <StyleCard title='Scale'>
-                        <SliderCore title='Amount' step={0.1} min={0} max={5} value={1}/>
-                        <TextInput title='X' text='1' type='number'/>
-                        <TextInput title='Y' text='1' type='number'/>
+                          <SliderCore title='Amount' step={0.1} min={0} max={5} value={1}/>
+                          <TextInput title='X' text='1' type='number'/>
+                          <TextInput title='Y' text='1' type='number'/>
                       </StyleCard> */}
                       {/* <StyleCard title='Blur'/>
-                        <StyleCard title='Shadow'/>
+                          <StyleCard title='Shadow'/>
                       <StyleCard title='Shadow'/> */}
                       <TopBar/>
                       <SideBarLeft/>
@@ -63,11 +65,15 @@ export default class Base extends Component {
 
                       {/* <PreviewWindow width="1080px" height="720px">
                       </PreviewWindow> */}
-                    </div>
+                    </KeyController>
                   )
                 } } />
               </Switch>
             </main>
+
+
+            {/* Key Controller */}
+
           </div>
         </Router>
       </Provider>

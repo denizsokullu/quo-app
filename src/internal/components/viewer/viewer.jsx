@@ -25,18 +25,24 @@ class Viewer extends React.Component {
 
   keyReleased(e){
     // console.log(e);
-    this.setState({keyDown:false})
-    const { dispatch } = this.props
-    dispatch(KEY_UP(e));
+    // e.preventDefault();
+    // e.persist();
+    // const { dispatch } = this.props
+    // this.setState({keyDown:false},()=>{
+    //   dispatch(KEY_UP(e));
+    // })
   }
 
   keyPressed(e){
-    // console.log(this.state.keyDown)
-    if(!this.state.keyDown){
-      const { dispatch } = this.props
-      dispatch(KEY_DOWN(e));
-      this.setState({keyDown:true})
-    }
+    // e.preventDefault();
+    // e.persist();
+    // // console.log(this.state.keyDown)
+    // if(!this.state.keyDown){
+    //   const { dispatch } = this.props
+    //   this.setState({keyDown:true},()=>{
+    //     dispatch(KEY_DOWN(e));
+    //   })
+    // }
 
     // console.log('Pressed');
 

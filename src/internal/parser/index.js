@@ -1,4 +1,4 @@
-import AbstractComponent from './abstractComponent';
+import { AbstractComponent } from './abstractComponent';
 //understand what an editable object needs
 //start with preview
 //

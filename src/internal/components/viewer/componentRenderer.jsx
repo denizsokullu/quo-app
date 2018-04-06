@@ -46,15 +46,20 @@ class ComponentRenderer extends React.Component {
         this.state.dragSelf = false;
       }
     }
+    this.state.location = this.getPosition();
     this.onClick = this.onClick.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.onDragStart = this.onDragStart.bind(this);
+    this.onDragStop = this.onDragStop.bind(this);
 
   }
   componentWillReceiveProps(nextProps) {
-    this.setState({data: nextProps.componentData});
+    this.setState({data: nextProps.componentData},()=>{
+      this.setState({location:this.getPosition()});
+    });
     this.setState({controller: nextProps.controller});
+    console.log('received new data!',nextProps.componentData);
   }
 
   getPosition(){
@@ -73,9 +78,13 @@ class ComponentRenderer extends React.Component {
   }
 
   onDragStop(e, data) {
+
+    //There are 2 cases, one for root elements,
+    //one for groups
     // console.log(this.children._self.state.data.frame);
-    const { dispatch } = this.children._self.props;
-    const dispatchData = {component:this.children._self.state.data,data:data,e:e}
+    console.log(this);
+    const { dispatch } = this.props;
+    const dispatchData = {component:this.state.data,data:data,e:e}
     dispatch(COMPONENT_MOVE(dispatchData));
   }
 
@@ -128,7 +137,7 @@ class ComponentRenderer extends React.Component {
           )
         })
       }
-      {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
+      {/* {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null} */}
     </div>)
 
     //parent container element
@@ -141,7 +150,7 @@ class ComponentRenderer extends React.Component {
       return (<Draggable
         onStart={this.onDragStart}
         onStop={this.onDragStop}
-        defaultPosition={this.getPosition()}
+        defaultPosition={this.state.location}
         disabled={this.state.controller.key['a']}>
         <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
           onMouseEnter={this.onMouseEnter}
@@ -166,7 +175,15 @@ class ComponentRenderer extends React.Component {
 
     //basic element
     else if(this.state.type === 'rect'){
-      return (<Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.getPosition()} disabled={!this.state.controller.key['a']}>
+      console.log('rendering???')
+      console.log(this.state.location);
+      return (
+      <Draggable
+        onStart={this.onDragStart} onStop={this.onDragStop}
+        defaultPosition={this.state.location}
+        disabled={false}
+        // fix this part first!!
+        key={parseInt(Math.random()*1000)}>
         {innerDOM}
       </Draggable>)
     }
