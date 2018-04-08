@@ -38,8 +38,6 @@ export class AbstractComponent{
         style:this.css,
       }
     }
-    console.log(data)
-    console.log(this.css)
 
     //check the inner layer element of a shapeGroup to get the type.
     if(this._class == 'shapeGroup'){
@@ -187,7 +185,6 @@ export class AbstractComponent{
 }
 
 export function getComponent(component,id){
-  console.log(component,id);
   if(component.id === id){
     return component
   }

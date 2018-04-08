@@ -23,12 +23,24 @@ export const KEY_DOWN = keyData => ({
   payload: keyData
 })
 
+export const COMPONENT_SELECT = component => ({
+  type:'COMPONENT_SELECT',
+  payload: component
+})
+
 export const KEY_UP = keyData => ({
   type:'KEY_UP',
   payload: keyData
 })
 
 //
+const controller = {
+    key:{
+      // 'a':false,
+      // 'b':false,
+    }
+  }
+
 const data = {
   assets:{
     // id_counter : 0,
@@ -40,13 +52,16 @@ const data = {
       // 'a':false,
       // 'b':false,
     }
+  },
+  selection:{
+
   }
 }
 
 const store_initial = {
   past: [],
   present: data, // (?) How do we initialize the present?
-  future: []
+  future: [],
 }
 
 export const reducer = (state = {}, action) => {
@@ -60,6 +75,13 @@ export const reducer = (state = {}, action) => {
       let newAssets = {data:newData};
       // console.log(newAssets);
       return {...state, assets:newAssets}
+
+    case 'COMPONENT_SELECT':
+      // let id = state.assets.id_counter;
+      // let newCounter = state.assets.id_counter + 1;
+      let newSelection = action.payload
+      // console.log(newAssets);
+      return {...state, selection:newSelection}
 
 
     case 'COMPONENT_MOVE':
@@ -100,7 +122,7 @@ export const reducer = (state = {}, action) => {
     case 'KEY_DOWN':
 
       let controllerNew = dc(state.controller);
-      let currentKey = action.payload.which;
+      let currentKey = action.payload.keyCode;
       controllerNew.key[currentKey] = true;
       // console.log(controllerNew);
 
@@ -109,7 +131,7 @@ export const reducer = (state = {}, action) => {
     case 'KEY_UP':
 
       controllerNew = dc(state.controller);
-      currentKey = action.payload.which;
+      currentKey = action.payload.keyCode;
       controllerNew.key[currentKey] = false;
       // console.log(controllerNew);
 
@@ -122,7 +144,7 @@ export const reducer = (state = {}, action) => {
 
 const mainReducer = undoable(reducer,{
   limit:25,
-  filter: excludeAction([KEY_DOWN, KEY_UP])
+  filter: excludeAction(['KEY_DOWN', 'KEY_UP'])
 });
 
 // export const reducers = combineReducers({

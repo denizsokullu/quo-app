@@ -18,6 +18,10 @@ import Blur from '../styleCard/blur/blur';
 
 import Scale from '../styleCard/scale/scale';
 
+import Position from '../styleCard/position/position';
+
+import Size from '../styleCard/size/size';
+
 import CopyState from '../styleCard/copyState/copyState';
 
 import Movement from '../styleCard/movement/movement';
@@ -170,6 +174,8 @@ class StylesContent extends React.Component{
   render(){
     return (
       <div className='styles-content'>
+        <Position/>
+        <Size/>
         <Fill/>
         <Border/>
         <Shadow/>

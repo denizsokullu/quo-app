@@ -96,29 +96,14 @@ class Page extends React.Component {
 class Layers extends React.Component {
   constructor(props){
     super(props);
-    // this.state = {layers:
-    //   [{name:'Page 1',layers:[
-    //     {name:'Component 1',layers:[
-    //       {name:'Component 1-1'},
-    //       {name:'Component 1-2'},
-    //       {name:'Component 1-3'}]},
-    //     {name:'Component 2'},
-    //     {name:'Component 3'}
-    //   ]}]
-    // }
     this.state = {data:props.data};
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({data:nextProps.data},()=>{
-      console.log("Layers received",nextProps.data);
-      console.log(this.state,'New State')
-    });
+    this.setState({data:nextProps.data})
   }
 
   renderLayers(){
-    console.log('rerendering',this.state);
-
     if(Object.keys(this.state.data).length > 0){
       return (
       Object.keys(this.state.data).map(key=>{
@@ -228,8 +213,6 @@ class Layer extends React.Component {
               this.state.layer.layers.map((innerLayer,index) => {
 
                 let isLast = (this.state.layer.layers.length == index + 1) && isLastBool;
-                // console.log((this.state.layer.layers.length == index + 1), isLastBool)
-                console.log(isLast,index)
 
                 return(
                   <Layer layer={innerLayer} depth={this.props.depth+1} isLast={isLast} key={index}/>

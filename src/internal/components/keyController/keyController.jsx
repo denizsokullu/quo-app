@@ -6,7 +6,7 @@ import keydown, { Keys} from 'react-keydown';
 // import Draggable from 'react-draggable';
 // import {bindActionCreators} from 'redux';
 // import ComponentRenderer from './componentRenderer';
-// import {COMPONENT_MOVE,KEY_UP,KEY_DOWN} from '../../redux';
+import {KEY_UP,KEY_DOWN} from '../../redux';
 
 import { ActionCreators } from 'redux-undo';
 
@@ -17,10 +17,15 @@ class KeyController extends React.Component {
     this.state = {
       keyDown:false
     }
+    this.onWheel = this.onWheel.bind(this);
   }
 
-  keyReleased(){
+  keyReleased(e){
     this.setState({keyDown:false});
+    if(e.keyCode === 32){
+      const { dispatch } = this.props
+      dispatch(KEY_UP(e));
+    }
   }
 
   @keydown('cmd+shift+z')
@@ -45,13 +50,32 @@ class KeyController extends React.Component {
     e.preventDefault();
   }
 
+
+  onWheel(e){
+    // e.preventDefault();
+  }
+
+
   render() {
     return (
-      <div className='main-container' tabIndex='0' onKeyUp={this.keyReleased}>
+      <div className='main-container' tabIndex='0' onKeyUp={this.keyReleased} onWheel={this.onWheel}>
         {this.props.children}
       </div>
     )
   }
+
+  @keydown('space')
+  dragEnable(e){
+    e.preventDefault();
+    if(!this.state.keyDown){
+      const { dispatch } = this.props
+      this.setState({keyDown:true},()=>{
+        dispatch(KEY_DOWN(e));
+      })
+    }
+  }
+
+
 }
 
 function mapStateToProps(state) {

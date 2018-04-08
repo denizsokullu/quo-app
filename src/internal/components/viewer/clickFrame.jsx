@@ -3,7 +3,6 @@ import React from 'react'
 export default class ClickFrame extends React.Component{
   constructor(props){
     super(props);
-    console.log('Creating the the click frame.');
   }
   render(){
     return(

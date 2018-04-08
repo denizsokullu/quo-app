@@ -46,17 +46,7 @@ export default class Base extends Component {
                         <Viewer/>
 
                       </DropzoneContainer>
-                      {/* <UndoButton test='test'/> */}
-                      {/* <ScaleStyleCard/>
-                      <ShadowStyleCard/> */}
-                      {/* <StyleCard title='Scale'>
-                          <SliderCore title='Amount' step={0.1} min={0} max={5} value={1}/>
-                          <TextInput title='X' text='1' type='number'/>
-                          <TextInput title='Y' text='1' type='number'/>
-                      </StyleCard> */}
-                      {/* <StyleCard title='Blur'/>
-                          <StyleCard title='Shadow'/>
-                      <StyleCard title='Shadow'/> */}
+
                       <TopBar/>
                       <SideBarLeft/>
                       <SideBarRight/>

@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Draggable from 'react-draggable';
 import ComponentRenderer from './componentRenderer';
-import {COMPONENT_MOVE,KEY_UP,KEY_DOWN} from '../../redux';
+import {COMPONENT_MOVE,KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux';
 
 class Viewer extends React.Component {
   constructor(props) {
@@ -12,82 +12,94 @@ class Viewer extends React.Component {
     this.state = {
       data: this.props.data,
       keyDown: false,
-      draggable: false
+      draggable: this.props.controller[32],
+      draggableClick: false,
+      selection: this.props.selection,
+      zoom:1
     };
-    this.keyPressed = this.keyPressed.bind(this);
-    this.keyReleased = this.keyReleased.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
+    this.mouseDown = this.mouseDown.bind(this);
+    this.onClick = this.onClick.bind(this);
+    this.onWheel = this.onWheel.bind(this);
   }
   componentWillReceiveProps(nextProps) {
-    this.setState({data:nextProps.data});
+    this.setState({data:nextProps.data,selection:nextProps.selection});
+    this.setState({draggable:nextProps.controller.key[32]});
   }
 
-  keyReleased(e){
-    if(e.which === 32){
-      this.setState({draggable:false,keyDown:false},()=>{
-        e.preventDefault();
-        e.persist();
-        const { dispatch } = this.props
-        dispatch(KEY_UP(e));
-      });
+  componentWillUpdate(nextProps,nextState){
+    // console.log(this.state.zoom);
+  }
+
+  mouseDown(){
+    if(this.state.draggable){
+      this.setState({draggableClick:true});
     }
-    // e.preventDefault();
-    // e.persist();
-    // const { dispatch } = this.props
-    // this.setState({keyDown:false},()=>{
-    //   dispatch(KEY_UP(e));
-    // })
   }
 
-  keyPressed(e){
-    if(!this.state.keyDown && e.which === 32){
-      this.setState({draggable:true,keyDown:true},()=>{
-        e.preventDefault();
-        e.persist();
-        const { dispatch } = this.props
-        dispatch(KEY_DOWN(e));
-      });
+  mouseUp(){
+    if(!this.state.draggable){
+      const dispatch = this.props;
+      dispatch(COMPONENT_SELECT({}));
     }
-
-    // e.preventDefault();
-    // e.persist();
-    // // console.log(this.state.keyDown)
-    // if(!this.state.keyDown){
-    //   const { dispatch } = this.props
-    //   this.setState({keyDown:true},()=>{
-    //     dispatch(KEY_DOWN(e));
-    //   })
-    // }
-
-    // console.log('Pressed');
-
+    this.setState({draggableClick:false});
   }
+
+  onClick(){
+    if(!this.state.draggable){
+      const { dispatch } = this.props;
+      dispatch(COMPONENT_SELECT({}));
+    }
+  }
+
+  onWheel(e){
+    e.preventDefault();
+    if (e.ctrlKey) {
+      let zoom = Math.pow(Math.abs(e.deltaY),1.2);
+      if(e.deltaY < 0){
+        zoom = -zoom;
+      }
+      // console.log(zoom,e.deltaY);
+      // this.setState({zoom:Math.max(this.state.zoom-(zoom/90),0.01)});
+    }
+    else{
+      this.viewer.scrollLeft += e.deltaX;
+      this.viewer.scrollTop += e.deltaY;
+    }
+  }
+
   render() {
     let draggableClass = this.state.draggable ? 'draggable' : ''
+    // let draggableClickClass = this.state.draggableClick ? 'draggable-clicked' : ''
     return (
-      <Draggable
-        disabled={!this.state.draggable}
-      >
-        <div className={`component-viewer ${draggableClass}`} tabIndex='0' onKeyDown={this.keyPressed} onKeyUp={this.keyReleased}>
-          {
-            _.keys(this.state.data).map(key => {
-              return <ComponentRenderer
-                style={{
-                  height: '100%',
-                  width: '100%'
-                }}
-                isParent={true}
-                componentData={this.state.data[key]}
-                key={key}
-                dragSelf={true}/>
-            })
-          }
-        </div>
-      </Draggable>)
+      <div className='viewer-wrapper' onWheel={this.onWheel} ref = {c => this.viewer = c} style={{transform:`scale(${this.state.zoom})`}} onClick={this.onClick}>
+        <Draggable
+          disabled={!this.state.draggable}
+        >
+          <div className={`component-viewer ${draggableClass}`} tabIndex='0' onMouseDown={this.mouseDown} onMouseUp={this.mouseUp}>
+            {
+              _.keys(this.state.data).map(key => {
+                return <ComponentRenderer
+                  style={{
+                    height: '100%',
+                    width: '100%'
+                  }}
+                  isParent={true}
+                  componentData={this.state.data[key]}
+                  key={key}
+                  selection={this.state.selection}
+                  dragSelf={true}/>
+              })
+            }
+          </div>
+        </Draggable>
+      </div>
+      )
   }
 }
 
 function mapStateToProps(state) {
-  return {data: state.present.assets.data}
+  return {data: state.present.assets.data,controller:state.present.controller,selection:state.present.selection}
 }
 
 export default connect(mapStateToProps)(Viewer);

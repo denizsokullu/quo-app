@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react';
 import {connect} from 'react-redux';
 import Draggable from 'react-draggable';
-import {COMPONENT_MOVE} from '../../redux';
+import {COMPONENT_MOVE,COMPONENT_SELECT} from '../../redux';
 import ClickFrame from './clickFrame'
 import bplist from 'bplist';
 
@@ -24,7 +24,8 @@ class ComponentRenderer extends React.Component {
       data: data,
       controller: props.controller,
       clicked:false,
-      id: data.id+'-0'
+      selection:props.selection,
+      id: data.id
     };
 
     //svg CoreComponent
@@ -55,15 +56,22 @@ class ComponentRenderer extends React.Component {
     this.onClick = this.onClick.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.onDragStart = this.onDragStart.bind(this);
+    // this.onDragStart = this.onDragStart.bind(this);
     this.onDragStop = this.onDragStop.bind(this);
+    // this.onFocus = this.onFocus.bind(this);
+
+    this.onClick = this.onClick.bind(this);
+    this.onDoubleClick = this.onDoubleClick.bind(this);
 
   }
   componentWillReceiveProps(nextProps) {
     this.setState({data: nextProps.componentData},()=>{
       this.setState({location:this.getPosition()});
     });
-    this.setState({controller: nextProps.controller});
+    this.setState({controller: nextProps.controller, selection:nextProps.selection});
+    if(nextProps.selection.id != this.state.id){
+      this.setState({clicked:false})
+    }
   }
 
   getPosition(){
@@ -73,18 +81,15 @@ class ComponentRenderer extends React.Component {
       y: frame.y
     }
   }
+  getDimensions(){
+    let frame = this.state.data.frame
+    return {
+      height: frame.height,
+      width: frame.width
+    }
+  }
   getStyle() {
     return this.state.data.css;
-  }
-
-  onDragStart(e, data) {
-    // console.log('Starting',this.state.selfDrag);
-    // if(this.state.id.slice(-1) === '0'){
-    //   this.setState({id:this.state.data.id+'-1'})
-    // }
-    // else{
-    //   this.setState({id:this.state.data.id+'-0'})
-    // }
   }
 
   onDragStop(e, data) {
@@ -117,9 +122,29 @@ class ComponentRenderer extends React.Component {
     }
   }
 
-  onClick(){
-    // let oldState = this.state.clicked
-    // this.setState({clicked:!oldState});
+  onFocus(){
+    let oldState = this.state.clicked
+    this.setState({clicked:!oldState});
+  }
+
+  onClick(e){
+    if(!this.props.isParent){
+      e.stopPropagation();
+      console.log('LMAO')
+      this.setState({clicked:true});
+      const { dispatch } = this.props;
+      dispatch(COMPONENT_SELECT(this.state));
+    }
+  }
+
+
+  onDoubleClick(){
+    // this.setState({clicked:true});
+  }
+
+  handleDoubleClick(){
+    console.log('yo')
+    alert('hello');
   }
 
   disableDragging(){
@@ -138,13 +163,16 @@ class ComponentRenderer extends React.Component {
       style={this.getStyle()}
       onMouseEnter={this.onMouseEnter}
       onMouseLeave={this.onMouseLeave}
-      onClick={this.onClick}>
+      onClick={this.onClick}
+      onDoubleClick={this.onDoubleClick}
+                    >
       {
         this.state.data.layers.map((layer, index) => {
           return (
             <ComponentRenderer
               componentData={layer}
               controller={this.state.controller}
+              selection={this.state.selection}
               key={layer.id}
               dispatch={this.props.dispatch}
               dragSelf={this.state.dragChildren}
@@ -152,7 +180,7 @@ class ComponentRenderer extends React.Component {
           )
         })
       }
-      {/* {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null} */}
+      {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
     </div>)
 
     //parent container element
@@ -178,6 +206,7 @@ class ComponentRenderer extends React.Component {
                 <ComponentRenderer
                   componentData={layer}
                   controller={this.state.controller}
+                  selection={this.state.selection}
                   key={index}
                   dispatch={this.props.dispatch}
                   dragSelf={this.state.dragChildren}
@@ -205,13 +234,17 @@ class ComponentRenderer extends React.Component {
     else if(this.state.type === 'text'){
     return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
       key={this.generateKey()}>
-      <div className='component-container text-component child' style={this.getPosition()}>
+      <div className='component-container text-component child' style={{...this.getDimensions()}}
+        // ...{left:this.getPosition().x,top:this.getPosition().y},
+        onClick={this.onClick} onDoubleClick={this.handleDoubleClick}>
         <TextComponent data={this.state.data}></TextComponent>
+        {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
       </div>
     </Draggable>)
     }
     //svg
     else if (this.state.type === 'svg') {
+      console.log({...this.getPosition(),...this.getDimensions()});
       return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
         key={this.generateKey()}>
         <div className='component-container child' style={this.getPosition()}>
@@ -269,6 +302,9 @@ class TextComponent extends CoreComponent{
   constructor(props){
     super(props);
     let that = this;
+
+    // this.setState({clicked : false});
+
     bplist.parseBuffer(Buffer.from(this.state.data.textData, 'base64'), function(err, result) {
       if (!err){
         let data = result[0].$objects;
@@ -303,49 +339,54 @@ class TextComponent extends CoreComponent{
       `"${this.state.textData.fontName}", sans-serif`
     )
   }
+
   handleDoubleClick(){
-    window.alert('hello');
+    console.log('yo')
+    alert('hello');
+  }
+  handleClick(){
+    alert('hello');
   }
   render(){
-    let clicks = [];
-    let timeout;
-
-    function singleClick(event) {
-        console.log("single click");
-    }
-
-    function doubleClick(event) {
-        console.log("doubleClick");
-    }
-
-    function clickHandler(event) {
-        event.preventDefault();
-        event.persist();
-        clicks.push(new Date().getTime());
-        window.clearTimeout(timeout);
-        timeout = window.setTimeout(() => {
-            if (clicks.length > 1 && clicks[clicks.length - 1] - clicks[clicks.length - 2] < 200) {
-                doubleClick.call(event.target, event);
-            } else {
-                singleClick.call(event.target, event);
-            }
-        }, 250);
-    }
+    // let clicks = [];
+    // let timeout;
+    //
+    // function singleClick(event) {
+    //     console.log("single click");
+    // }
+    //
+    // function doubleClick(event) {
+    //     console.log("doubleClick");
+    // }
+    //
+    // function clickHandler(event) {
+    //     event.preventDefault();
+    //     event.persist();
+    //     clicks.push(new Date().getTime());
+    //     window.clearTimeout(timeout);
+    //     timeout = window.setTimeout(() => {
+    //         if (clicks.length > 1 && clicks[clicks.length - 1] - clicks[clicks.length - 2] < 200) {
+    //             doubleClick.call(event.target, event);
+    //         } else {
+    //             singleClick.call(event.target, event);
+    //         }
+    //     }, 250);
+    // }
 
     return (this.state.textData ?
-      <span className='text-outer'
-        // onDoubleClick={this.handleDoubleClick}
-        onClick={clickHandler}
-      >
-        <span className='text-inner'
-          style={
-            {
-              fontSize:this.state.textData.fontSize, color:this.getColor(),
-              fontFamily:this.getFontFamily()
-            }}>
-          {this.state.textData.text}
+        <span className='text-outer'
+          onDoubleClick={this.handleDoubleClick}
+          // onClick={this.handleClick}
+        >
+          <span className='text-inner'
+            style={
+              {
+                fontSize:this.state.textData.fontSize, color:this.getColor(),
+                fontFamily:this.getFontFamily()
+              }}>
+            {this.state.textData.text}
+          </span>
         </span>
-      </span>
     :
     <p></p>
     )
@@ -353,7 +394,7 @@ class TextComponent extends CoreComponent{
 }
 
 function mapStateToProps(state) {
-  return {data: state.present.assets.data, controller:state.present.controller}
+  return {data: state.present.assets.data, controller:state.present.controller, selection:state.present.selection}
 }
 
 export default connect(mapStateToProps)(ComponentRenderer)
