@@ -1,8 +1,8 @@
 import _ from 'underscore';
 import React from 'react';
 import {connect} from 'react-redux';
-import Draggable from 'react-draggable';
 import {bindActionCreators} from 'redux';
+import Draggable from 'react-draggable';
 import ComponentRenderer from './componentRenderer';
 import {COMPONENT_MOVE,KEY_UP,KEY_DOWN} from '../../redux';
 
@@ -11,20 +11,25 @@ class Viewer extends React.Component {
     super(props);
     this.state = {
       data: this.props.data,
-      keyDown: false
+      keyDown: false,
+      draggable: false
     };
-    console.log(this.state);
     this.keyPressed = this.keyPressed.bind(this);
     this.keyReleased = this.keyReleased.bind(this);
   }
   componentWillReceiveProps(nextProps) {
-    console.log('receiving props')
-    console.log(nextProps.data);
     this.setState({data:nextProps.data});
   }
 
   keyReleased(e){
-    // console.log(e);
+    if(e.which === 32){
+      this.setState({draggable:false,keyDown:false},()=>{
+        e.preventDefault();
+        e.persist();
+        const { dispatch } = this.props
+        dispatch(KEY_UP(e));
+      });
+    }
     // e.preventDefault();
     // e.persist();
     // const { dispatch } = this.props
@@ -34,6 +39,15 @@ class Viewer extends React.Component {
   }
 
   keyPressed(e){
+    if(!this.state.keyDown && e.which === 32){
+      this.setState({draggable:true,keyDown:true},()=>{
+        e.preventDefault();
+        e.persist();
+        const { dispatch } = this.props
+        dispatch(KEY_DOWN(e));
+      });
+    }
+
     // e.preventDefault();
     // e.persist();
     // // console.log(this.state.keyDown)
@@ -48,21 +62,27 @@ class Viewer extends React.Component {
 
   }
   render() {
-    return (<div className="component-viewer" tabIndex='0' onKeyDown={this.keyPressed} onKeyUp={this.keyReleased}>
-      {
-        _.keys(this.state.data).map(key => {
-          return <ComponentRenderer
-            style={{
-              height: '100%',
-              width: '100%'
-            }}
-            isParent={true}
-            componentData={this.state.data[key]}
-            key={key}
-            dragSelf={true}/>
-        })
-      }
-    </div>)
+    let draggableClass = this.state.draggable ? 'draggable' : ''
+    return (
+      <Draggable
+        disabled={!this.state.draggable}
+      >
+        <div className={`component-viewer ${draggableClass}`} tabIndex='0' onKeyDown={this.keyPressed} onKeyUp={this.keyReleased}>
+          {
+            _.keys(this.state.data).map(key => {
+              return <ComponentRenderer
+                style={{
+                  height: '100%',
+                  width: '100%'
+                }}
+                isParent={true}
+                componentData={this.state.data[key]}
+                key={key}
+                dragSelf={true}/>
+            })
+          }
+        </div>
+      </Draggable>)
   }
 }
 

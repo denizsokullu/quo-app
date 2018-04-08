@@ -48,7 +48,7 @@
     position:relative;
     z-index:99;
     color:transparent;
-    height:calc(100% - #{$top-bar-height});
+    height:calc(calc(100% - #{$top-bar-height}) - #{$margin-all});
     // width:calc(100% - 1rem);
     // top:0;
     // position:relative;

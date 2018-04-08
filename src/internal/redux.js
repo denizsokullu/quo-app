@@ -1,7 +1,7 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore } from 'redux';
 import sketchParser from './parser';
 import _ from 'underscore';
-import undoable from 'redux-undo'
+import undoable, { excludeAction } from 'redux-undo'
 import { getComponent } from './parser/abstractComponent';
 
 function dc(obj){
@@ -100,7 +100,7 @@ export const reducer = (state = {}, action) => {
     case 'KEY_DOWN':
 
       let controllerNew = dc(state.controller);
-      let currentKey = action.payload.key;
+      let currentKey = action.payload.which;
       controllerNew.key[currentKey] = true;
       // console.log(controllerNew);
 
@@ -109,7 +109,7 @@ export const reducer = (state = {}, action) => {
     case 'KEY_UP':
 
       controllerNew = dc(state.controller);
-      currentKey = action.payload.key;
+      currentKey = action.payload.which;
       controllerNew.key[currentKey] = false;
       // console.log(controllerNew);
 
@@ -120,7 +120,10 @@ export const reducer = (state = {}, action) => {
   }
 };
 
-const mainReducer = undoable(reducer);
+const mainReducer = undoable(reducer,{
+  limit:25,
+  filter: excludeAction([KEY_DOWN, KEY_UP])
+});
 
 // export const reducers = combineReducers({
 //   handleUpload,

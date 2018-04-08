@@ -1,12 +1,17 @@
 import React from 'react';
-import { LayerCard } from '../styleCard'
+import {connect} from 'react-redux';
+
+//Component Imports
+import { LayerCard } from '../styleCard';
 import TextInput from '../../inputElements/textInput/textInput';
 
-import CloseIcon from 'material-ui-icons/Close'
-import FolderIcon from 'material-ui-icons/Folder'
-import FolderOpenIcon from 'material-ui-icons/FolderOpen'
-import KeyboardArrowRightIcon from 'material-ui-icons/KeyboardArrowRight'
-import KeyboardArrowDownIcon from 'material-ui-icons/KeyboardArrowDown'
+import CloseIcon from 'material-ui-icons/Close';
+import FolderIcon from 'material-ui-icons/Folder';
+import FolderOpenIcon from 'material-ui-icons/FolderOpen';
+import KeyboardArrowRightIcon from 'material-ui-icons/KeyboardArrowRight';
+import KeyboardArrowDownIcon from 'material-ui-icons/KeyboardArrowDown';
+
+
 
 class ContentPagesCard extends React.Component {
   constructor(props){
@@ -91,24 +96,49 @@ class Page extends React.Component {
 class Layers extends React.Component {
   constructor(props){
     super(props);
-    this.state = {layers:
-      [{name:'Page 1',layers:[
-        {name:'Component 1',layers:[
-          {name:'Component 1-1'},
-          {name:'Component 1-2'},
-          {name:'Component 1-3'}]},
-        {name:'Component 2'},
-        {name:'Component 3'}
-      ]}]
-    }
+    // this.state = {layers:
+    //   [{name:'Page 1',layers:[
+    //     {name:'Component 1',layers:[
+    //       {name:'Component 1-1'},
+    //       {name:'Component 1-2'},
+    //       {name:'Component 1-3'}]},
+    //     {name:'Component 2'},
+    //     {name:'Component 3'}
+    //   ]}]
+    // }
+    this.state = {data:props.data};
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({data:nextProps.data},()=>{
+      console.log("Layers received",nextProps.data);
+      console.log(this.state,'New State')
+    });
+  }
+
   renderLayers(){
-    return (this.state.layers.map((layer,index)=>{
-      let isLast = this.state.layers.length == index + 1;
-      return(
-        <Layer layer={layer} depth={0} isLast={isLast} key={index}/>
+    console.log('rerendering',this.state);
+
+    if(Object.keys(this.state.data).length > 0){
+      return (
+      Object.keys(this.state.data).map(key=>{
+        let obj = this.state.data[key];
+        return(
+          obj.layers.map((layer,index)=>{
+          let isLast = obj.layers.length == index + 1;
+          return(
+            <Layer layer={layer} depth={0} isLast={isLast} key={index}/>
+            )
+          })
+        )
+      })
       )
-    }))
+    }
+    else{
+      return null
+    }
+
+
   }
   render(){
     return(
@@ -123,9 +153,9 @@ class Layer extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      layer:this.props.layer,
+      layer:props.layer,
       isHidden:false,
-      isGroup:this.props.layer.layers ? true : false,
+      isGroup:props.layer.layers ? true : false,
       isLocked:false,
       isMinimized:false
     }
@@ -137,7 +167,7 @@ class Layer extends React.Component {
     });
   }
   renderLayerStructure(){
-    console.log(this.state.layer,!this.state.isGroup,this.props.isLast)
+    // console.log(this.state.layer,!this.state.isGroup,this.props.isLast)
 
     let isLast = !this.state.isGroup && this.props.isLast ? 'last-el' : ''
     let isSingle = !this.state.isGroup && this.props.hasSiblingGroup ? 'single-el' : '';
@@ -163,9 +193,9 @@ class Layer extends React.Component {
             </span>
             :
             null
-                }
+          }
 
-          <TextInput text={this.state.layer.name} onChange={this.onChange} noTitle />
+          <TextInput text={this.state.layer.pageName} onChange={this.onChange} noTitle />
 
           {/* Minimize Button */}
           { this.state.isGroup ?
@@ -189,7 +219,7 @@ class Layer extends React.Component {
   renderChildren(){
     const isLastBool = this.state.isGroup && this.props.isLast
     const isMinimized = this.state.isMinimized ? 'child-minimized' : ''
-    console.log(isLastBool);
+    // console.log(isLastBool);
     return(
         this.state.layer.layers
         ?
@@ -232,4 +262,9 @@ class Layer extends React.Component {
 
 }
 
+function mapStateToProps(state) {
+  return {data: state.present.assets.data}
+}
+
+Layers = connect(mapStateToProps)(Layers)
 export { Page, Layers }

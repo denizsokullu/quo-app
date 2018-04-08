@@ -1,20 +1,76 @@
-.component-viewer{
+.component-viewer {
+
   position:relative;
   width:100%;
   height:100%;
   left:0;
   top:0;
   background-color:$color-viewer-bg;
-  .component-container{
+
+  &:focus {
+    outline:none;
+  }
+
+  .component-container {
+
     left:0;
     top:0;
     position:absolute;
-    &.child:hover{
-      outline:3px solid #83d0f2;
-      cursor:move;
+
+    &.child:hover {
+
+      outline:2px solid $highlight-color;
+      cursor:default;
+
     }
+
+    &.text-component {
+
+      .text-inner {
+        user-select:none;
+      }
+
+      &:hover {
+        outline:none;
+        cursor:default;
+
+        .text-outer {
+
+          box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
+
+        }
+
+      }
+
+
+    }
+
   }
+
+  //Panning state for the viewer
+
+  &.draggable {
+
+    cursor:grab;
+
+    .component-container.child:hover, .component-container.text-component:hover {
+
+      // outline:2px solid $highlight-color;
+
+      cursor:grab!important;
+      outline:none!important;
+
+      .text-outer {
+        box-shadow: none;
+      }
+
+    }
+
+
+  }
+
 }
+
 
 .clickFrame {
 

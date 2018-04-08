@@ -36,6 +36,11 @@ $button-font-size:$font-m;
 
 $border-r:8px;
 
+$margin-ui:.5rem;
+$margin-all:calc(2 * #{$margin-ui});
+
+$highlight-color:#83d0f2;
+
 
 //Specific colors
 //Viewer
@@ -113,5 +118,6 @@ body {
   * {
     font-family:"Roboto", sans-serif;
   }
-  overflow: hidden
+  overflow: hidden;
+  background-color:$color-viewer-bg;
 }

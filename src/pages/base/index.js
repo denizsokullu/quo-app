@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 
 import { Provider } from 'react-redux';
 import { store } from '../../internal/redux';
@@ -12,7 +11,6 @@ import TopBar from '../../internal/components/topBar/topBar';
 // import StyleCard from '../../internal/components/styleCard/styleCard';
 import DropzoneContainer from '../../internal/components/dropzone/dropzoneContainer';
 import Viewer from '../../internal/components/viewer/viewer';
-import UndoButton from '../../internal/components/undo/undo';
 
 import KeyController from '../../internal/components/keyController/keyController';
 

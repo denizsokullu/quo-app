@@ -4,6 +4,9 @@ import {connect} from 'react-redux';
 import Draggable from 'react-draggable';
 import {COMPONENT_MOVE} from '../../redux';
 import ClickFrame from './clickFrame'
+import bplist from 'bplist';
+
+import uuidv1 from 'uuid/v1';
 
 //every core-component needs to be aware of the data passed in as props
 //every core-component has their own syling methods.
@@ -20,7 +23,8 @@ class ComponentRenderer extends React.Component {
     this.state = {
       data: data,
       controller: props.controller,
-      clicked:false
+      clicked:false,
+      id: data.id+'-0'
     };
 
     //svg CoreComponent
@@ -46,6 +50,7 @@ class ComponentRenderer extends React.Component {
         this.state.dragSelf = false;
       }
     }
+
     this.state.location = this.getPosition();
     this.onClick = this.onClick.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -59,7 +64,6 @@ class ComponentRenderer extends React.Component {
       this.setState({location:this.getPosition()});
     });
     this.setState({controller: nextProps.controller});
-    console.log('received new data!',nextProps.componentData);
   }
 
   getPosition(){
@@ -75,19 +79,30 @@ class ComponentRenderer extends React.Component {
 
   onDragStart(e, data) {
     // console.log('Starting',this.state.selfDrag);
+    // if(this.state.id.slice(-1) === '0'){
+    //   this.setState({id:this.state.data.id+'-1'})
+    // }
+    // else{
+    //   this.setState({id:this.state.data.id+'-0'})
+    // }
   }
 
   onDragStop(e, data) {
 
     //There are 2 cases, one for root elements,
     //one for groups
-    // console.log(this.children._self.state.data.frame);
-    console.log(this);
     const { dispatch } = this.props;
     const dispatchData = {component:this.state.data,data:data,e:e}
-    dispatch(COMPONENT_MOVE(dispatchData));
+    const currentPosition = this.getPosition();
+    const delta = {x:currentPosition.x - data.lastX, y:currentPosition.y - data.lastY };
+    if(delta.x || delta.y){
+      dispatch(COMPONENT_MOVE(dispatchData));
+    }
   }
 
+  generateKey(){
+    return uuidv1();
+  }
 
   //on mouse enter and leave will replace with a key press
   onMouseEnter(){
@@ -103,8 +118,8 @@ class ComponentRenderer extends React.Component {
   }
 
   onClick(){
-    let oldState = this.state.clicked
-    this.setState({clicked:!oldState});
+    // let oldState = this.state.clicked
+    // this.setState({clicked:!oldState});
   }
 
   disableDragging(){
@@ -130,7 +145,7 @@ class ComponentRenderer extends React.Component {
             <ComponentRenderer
               componentData={layer}
               controller={this.state.controller}
-              key={index}
+              key={layer.id}
               dispatch={this.props.dispatch}
               dragSelf={this.state.dragChildren}
             />
@@ -151,7 +166,8 @@ class ComponentRenderer extends React.Component {
         onStart={this.onDragStart}
         onStop={this.onDragStop}
         defaultPosition={this.state.location}
-        disabled={this.state.controller.key['a']}>
+        disabled={this.state.controller.key[32]}
+        key={this.generateKey()}>
         <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
@@ -175,29 +191,29 @@ class ComponentRenderer extends React.Component {
 
     //basic element
     else if(this.state.type === 'rect'){
-      console.log('rendering???')
-      console.log(this.state.location);
       return (
       <Draggable
         onStart={this.onDragStart} onStop={this.onDragStop}
         defaultPosition={this.state.location}
-        disabled={false}
+        disabled={this.state.controller.key[32]}
         // fix this part first!!
-        key={parseInt(Math.random()*1000)}>
+        key={this.generateKey()}>
         {innerDOM}
       </Draggable>)
     }
 
     else if(this.state.type === 'text'){
-    return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.getPosition()} disabled={!this.state.controller.key['a']}>
-      <div className='component-container child' style={this.getPosition()}>
+    return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
+      key={this.generateKey()}>
+      <div className='component-container text-component child' style={this.getPosition()}>
         <TextComponent data={this.state.data}></TextComponent>
       </div>
     </Draggable>)
     }
     //svg
     else if (this.state.type === 'svg') {
-      return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.getPosition()} disabled={!this.state.controller.key['a']}>
+      return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop}  defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
+        key={this.generateKey()}>
         <div className='component-container child' style={this.getPosition()}>
           <SvgComponent data={this.state.data}></SvgComponent>
         </div>
@@ -252,14 +268,87 @@ class SvgComponent extends CoreComponent{
 class TextComponent extends CoreComponent{
   constructor(props){
     super(props);
+    let that = this;
+    bplist.parseBuffer(Buffer.from(this.state.data.textData, 'base64'), function(err, result) {
+      if (!err){
+        let data = result[0].$objects;
+        that.state.textData = {}
+        //These are constant array slots dedicated for text content & stlying information
+        that.state.textData.text = data[2];
+        that.state.textData.fontSize = data[16];
+        that.state.textData.fontName = data[17];
+
+        if(typeof data[26] === 'object'){
+          that.state.textData.color = {r:255,g:255,b:255,a:1};
+        }
+        else{
+          let r = parseInt(data[25] * 255)
+          let g = parseInt(data[28] * 255)
+          let b = parseInt(data[27] * 255)
+          let a = data[26].toFixed(3);
+          that.state.textData.color = {r:r,g:g,b:b,a:a};
+        }
+      }
+    });
+    this.handleDoubleClick = this.handleDoubleClick.bind(this);
   }
-  getText(target) {
-    return atob(target).split("NSAttributes")[1].split('Ó')[0].slice(7);
+  getColor(){
+    let c = this.state.textData.color;
+    return (
+      `rgba(${c.r},${c.g},${c.b},${c.a})`
+    )
+  }
+  getFontFamily(){
+    return (
+      `"${this.state.textData.fontName}", sans-serif`
+    )
+  }
+  handleDoubleClick(){
+    window.alert('hello');
   }
   render(){
-    return (<div>
-      {this.getText(this.state.data.textData)}
-    </div>)
+    let clicks = [];
+    let timeout;
+
+    function singleClick(event) {
+        console.log("single click");
+    }
+
+    function doubleClick(event) {
+        console.log("doubleClick");
+    }
+
+    function clickHandler(event) {
+        event.preventDefault();
+        event.persist();
+        clicks.push(new Date().getTime());
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(() => {
+            if (clicks.length > 1 && clicks[clicks.length - 1] - clicks[clicks.length - 2] < 200) {
+                doubleClick.call(event.target, event);
+            } else {
+                singleClick.call(event.target, event);
+            }
+        }, 250);
+    }
+
+    return (this.state.textData ?
+      <span className='text-outer'
+        // onDoubleClick={this.handleDoubleClick}
+        onClick={clickHandler}
+      >
+        <span className='text-inner'
+          style={
+            {
+              fontSize:this.state.textData.fontSize, color:this.getColor(),
+              fontFamily:this.getFontFamily()
+            }}>
+          {this.state.textData.text}
+        </span>
+      </span>
+    :
+    <p></p>
+    )
   }
 }
 

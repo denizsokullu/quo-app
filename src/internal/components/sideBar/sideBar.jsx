@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import Resizable from 're-resizable';
 
@@ -46,14 +45,14 @@ class SideBarLeft extends Component {
     super(props);
     this.state = {
       selected : 'layers',
-      icons : {assets:WebAssetIcon, layers:LayersIcon, globalLinks:LinkIcon}
+      icons : {assets:WebAssetIcon, layers:LayersIcon, globalLinks:LinkIcon},
+      width:230,
+      height:'100%'
     }
 
     this.onClickNav = this.onClickNav.bind(this);
 
   }
-
-
 
   onClickNav(e) {
     this.setState({selected:e.currentTarget.id});
@@ -75,29 +74,35 @@ class SideBarLeft extends Component {
         }}
         minWidth='150'
         maxWidth='1000'
-        defaultSize={{
-          width:'230',
-          height:'100%',
+        size={{ width: this.state.width, height: this.state.height }}
+        onResizeStop={(e, direction, ref, d) => {
+          this.setState({
+            width: this.state.width + d.width,
+          },()=>{console.log(this.state.width)});
         }}
+        // defaultSize={{
+        //   width:'230',
+        //   height:'100%',
+        // }}
       >
         <div className='sidebar-wrapper sidebar-resizable'>
           <div className={`sidebar-container sidebar-left`}>
             <ContentPagesCard/>
             <LayersCard/>
           </div>
-          {/* <div className = 'interaction-nav left-nav'>
+          <div className='interaction-nav left-nav'>
             {
               Object.keys(this.state.icons).map(icon=>{
-            let selected = this.state.selected === icon ? 'selected-icon' : '';
-            let CurrentIcon = this.state.icons[icon];
-            return (
-            <div className = {`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
-            <CurrentIcon/>
-            </div>
-            )
+                let selected = this.state.selected === icon ? 'selected-icon' : '';
+                let CurrentIcon = this.state.icons[icon];
+                return (
+                  <div className={`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
+                    <CurrentIcon/>
+                  </div>
+                )
               })
-          } */}
-          {/* </div> */}
+            }
+          </div>
         </div>
       </Resizable>
       )
