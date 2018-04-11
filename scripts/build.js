@@ -1,5 +1,7 @@
 'use strict';
 
+require("babel-polyfill");
+
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.NODE_ENV = 'production';
 
@@ -21,6 +23,7 @@ var FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 var measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
 var printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 
+
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
 // Warn and crash if required files are missing
@@ -40,6 +43,7 @@ measureFileSizesBeforeBuild(paths.appBuild).then(previousFileSizes => {
 
   // Merge with the public folder
   copyPublicFolder();
+
 });
 
 // Print out errors

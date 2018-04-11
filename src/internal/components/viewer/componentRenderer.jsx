@@ -1,10 +1,9 @@
 import _ from 'underscore';
 import React from 'react';
 import {connect} from 'react-redux';
-import Draggable from 'react-draggable';
+import Draggable from '../draggable/react-draggable';
 import {COMPONENT_MOVE,COMPONENT_SELECT} from '../../redux';
 import ClickFrame from './clickFrame'
-import bplist from 'bplist';
 
 import uuidv1 from 'uuid/v1';
 
@@ -20,12 +19,14 @@ class ComponentRenderer extends React.Component {
   constructor(props) {
     super(props);
     let data = props.componentData;
+
     this.state = {
       data: data,
       controller: props.controller,
       clicked:false,
       selection:props.selection,
-      id: data.id
+      id: data.id,
+      editState:props.editState,
     };
 
     //svg CoreComponent
@@ -61,35 +62,50 @@ class ComponentRenderer extends React.Component {
     // this.onFocus = this.onFocus.bind(this);
 
     this.onClick = this.onClick.bind(this);
-    this.onDoubleClick = this.onDoubleClick.bind(this);
+    // this.onDoubleClick = this.onDoubleClick.bind(this);
 
   }
+
   componentWillReceiveProps(nextProps) {
     this.setState({data: nextProps.componentData},()=>{
       this.setState({location:this.getPosition()});
     });
-    this.setState({controller: nextProps.controller, selection:nextProps.selection});
+    this.setState({controller: nextProps.controller,
+                   selection:nextProps.selection,
+                   editState:nextProps.editState
+                 });
     if(nextProps.selection.id != this.state.id){
       this.setState({clicked:false})
     }
   }
 
+  isSelected(){
+    return this.state.selection.id === this.state.id
+  }
+
   getPosition(){
-    let frame = this.state.data.frame
+    let frame = this.getStyle();
     return {
-      x: frame.x,
-      y: frame.y
+      x: parseInt(frame.left.slice(0,-2)),
+      y: parseInt(frame.top.slice(0,-2))
     }
   }
+
   getDimensions(){
-    let frame = this.state.data.frame
+    let frame = this.getStyle();
     return {
-      height: frame.height,
-      width: frame.width
+      height: parseInt(frame.height.slice(0,-2)),
+      width: parseInt(frame.width.slice(0,-2))
     }
   }
+
   getStyle() {
-    return this.state.data.css;
+    if(this.isSelected()){
+      return this.state.data.editStates[this.state.editState].style;
+    }
+    else{
+      return this.state.data.editStates['none'].style;
+    }
   }
 
   onDragStop(e, data) {
@@ -99,10 +115,14 @@ class ComponentRenderer extends React.Component {
     const { dispatch } = this.props;
     const dispatchData = {component:this.state.data,data:data,e:e}
     const currentPosition = this.getPosition();
-    const delta = {x:currentPosition.x - data.lastX, y:currentPosition.y - data.lastY };
+    console.log(parseInt(currentPosition.x),parseInt(currentPosition.y),data.lastX,data.lastY);
+    const delta = {x:parseInt(currentPosition.x) - data.lastX, y:parseInt(currentPosition.y) - data.lastY };
+    console.log(delta);
     if(delta.x || delta.y){
       dispatch(COMPONENT_MOVE(dispatchData));
+      this.onClick(e);
     }
+
   }
 
   generateKey(){
@@ -130,30 +150,15 @@ class ComponentRenderer extends React.Component {
   onClick(e){
     if(!this.props.isParent){
       e.stopPropagation();
-      console.log('LMAO')
       this.setState({clicked:true});
       const { dispatch } = this.props;
       dispatch(COMPONENT_SELECT(this.state));
     }
   }
 
-
-  onDoubleClick(){
-    // this.setState({clicked:true});
-  }
-
   handleDoubleClick(){
     console.log('yo')
     alert('hello');
-  }
-
-  disableDragging(){
-    // console.log('Disabling',this.state.type,this.state.data.layers);
-    this.setState({selfDrag:false});
-  }
-
-  enableDragging(){
-    // console.log('Enabling',this.state.type,this.state.data.layers);
   }
 
   render(){
@@ -173,6 +178,7 @@ class ComponentRenderer extends React.Component {
               componentData={layer}
               controller={this.state.controller}
               selection={this.state.selection}
+              editState={this.state.editState}
               key={layer.id}
               dispatch={this.props.dispatch}
               dragSelf={this.state.dragChildren}
@@ -207,6 +213,7 @@ class ComponentRenderer extends React.Component {
                   componentData={layer}
                   controller={this.state.controller}
                   selection={this.state.selection}
+                  editState={this.state.editState}
                   key={index}
                   dispatch={this.props.dispatch}
                   dragSelf={this.state.dragChildren}
@@ -225,7 +232,6 @@ class ComponentRenderer extends React.Component {
         onStart={this.onDragStart} onStop={this.onDragStop}
         defaultPosition={this.state.location}
         disabled={this.state.controller.key[32]}
-        // fix this part first!!
         key={this.generateKey()}>
         {innerDOM}
       </Draggable>)
@@ -301,35 +307,36 @@ class SvgComponent extends CoreComponent{
 class TextComponent extends CoreComponent{
   constructor(props){
     super(props);
-    let that = this;
-
+    // let that = this;
+    this.state.textData = this.state.data.textData
     // this.setState({clicked : false});
 
-    bplist.parseBuffer(Buffer.from(this.state.data.textData, 'base64'), function(err, result) {
-      if (!err){
-        let data = result[0].$objects;
-        that.state.textData = {}
-        //These are constant array slots dedicated for text content & stlying information
-        that.state.textData.text = data[2];
-        that.state.textData.fontSize = data[16];
-        that.state.textData.fontName = data[17];
-
-        if(typeof data[26] === 'object'){
-          that.state.textData.color = {r:255,g:255,b:255,a:1};
-        }
-        else{
-          let r = parseInt(data[25] * 255)
-          let g = parseInt(data[28] * 255)
-          let b = parseInt(data[27] * 255)
-          let a = data[26].toFixed(3);
-          that.state.textData.color = {r:r,g:g,b:b,a:a};
-        }
-      }
-    });
+    // bplist.parseBuffer(Buffer.from(this.state.data.textData, 'base64'), function(err, result) {
+    //   if (!err){
+    //     let data = result[0].$objects;
+    //     that.state.textData = {}
+    //     //These are constant array slots dedicated for text content & stlying information
+    //     that.state.textData.text = data[2];
+    //     that.state.textData.fontSize = data[16];
+    //     that.state.textData.fontName = data[17];
+    //
+    //     if(typeof data[26] === 'object'){
+    //       that.state.textData.color = {r:255,g:255,b:255,a:1};
+    //     }
+    //     else{
+    //       let r = parseInt(data[25] * 255)
+    //       let g = parseInt(data[28] * 255)
+    //       let b = parseInt(data[27] * 255)
+    //       let a = data[26].toFixed(3);
+    //       that.state.textData.color = {r:r,g:g,b:b,a:a};
+    //     }
+    //   }
+    // });
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
   }
   getColor(){
     let c = this.state.textData.color;
+    console.log(this.state.data.css)
     return (
       `rgba(${c.r},${c.g},${c.b},${c.a})`
     )
@@ -394,7 +401,10 @@ class TextComponent extends CoreComponent{
 }
 
 function mapStateToProps(state) {
-  return {data: state.present.assets.data, controller:state.present.controller, selection:state.present.selection}
+  return {data: state.present.assets.data,
+          controller:state.present.controller,
+          selection:state.present.selection,
+          editState:state.present.editState, }
 }
 
 export default connect(mapStateToProps)(ComponentRenderer)

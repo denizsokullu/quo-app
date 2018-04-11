@@ -16,10 +16,15 @@ export default class SliderCore extends React.Component{
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    this.setState({value:nextProps.value})
+  }
+
   handleOnChange = (value) => {
     this.setState({
       value: +parseFloat(value).toFixed(2)
     })
+    this.props.handleOnChange(value);
   }
 
   render(){
@@ -30,7 +35,7 @@ export default class SliderCore extends React.Component{
           step={this.props.step}
           min={this.props.min}
           max={this.props.max}
-          value={value}
+          value={this.state.value}
           onChange={this.handleOnChange}
         />
         <div className='slider-title'>{this.props.title}</div>

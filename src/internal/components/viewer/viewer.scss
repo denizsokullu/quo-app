@@ -7,10 +7,7 @@
   top:$top-bar-height;
   transition:.05s ease-in-out transform;
   will-change: transform;
-
-  // &::-webkit-scrollbar {
-  //   display: none;
-  // }
+  background-color:$color-bg-5;
 
 }
 

@@ -5,6 +5,7 @@ import undoable, { excludeAction } from 'redux-undo'
 import { getComponent } from './parser/abstractComponent';
 
 function dc(obj){
+  console.log(obj);
   return JSON.parse(JSON.stringify(obj))
 }
 
@@ -33,6 +34,11 @@ export const KEY_UP = keyData => ({
   payload: keyData
 })
 
+export const EDIT_STATE_CHANGE = newEditState => ({
+  type:'EDIT_STATE_CHANGE',
+  payload:newEditState
+})
+
 //
 const controller = {
     key:{
@@ -55,7 +61,8 @@ const data = {
   },
   selection:{
 
-  }
+  },
+  editState:'none'
 }
 
 const store_initial = {
@@ -90,11 +97,20 @@ export const reducer = (state = {}, action) => {
       let id = action.payload.component.id
       // console.log(id)
       newData = dc(state.assets.data)
+      console.log("MAO")
 
-      let newFrame = dc(action.payload.component.frame)
-      // //update x and y locations
-      newFrame.x = action.payload.data.x
-      newFrame.y = action.payload.data.y
+      // let newFrame = dc(action.payload.component.frame)
+      // // //update x and y locations
+      // newFrame.x = action.payload.data.x
+      // newFrame.y = action.payload.data.y
+
+
+      let editState = state.editState;
+      let newEditStates = dc(action.payload.component.editStates);
+      newEditStates[editState].style.left = action.payload.data.x+'px'
+      newEditStates[editState].style.top = action.payload.data.y+'px'
+
+
 
       //Place newFrame Data here
       //Find the component first
@@ -108,15 +124,12 @@ export const reducer = (state = {}, action) => {
 
       allIDs = _.reduce(allIDs,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
       let componentToUpdate = allIDs;
-      // // console.log(newData);
-      // // console.log(componentToUpdate.frame)
-      // console.log(state,{...state,assets:updatedAssets})
-      componentToUpdate.frame = newFrame;
+
+      // componentToUpdate.frame = newFrame;
+      componentToUpdate.editStates = newEditStates
+
       let updatedAssets = {data:newData}
-      // console.log(componentToUpdate.frame)
-      // console.log(newData);
-      // console.log(updatedAssets);
-      // console.log({...state,assets:updatedAssets},newFrame)
+
       return {...state,assets:updatedAssets}
 
     case 'KEY_DOWN':
@@ -135,7 +148,10 @@ export const reducer = (state = {}, action) => {
       controllerNew.key[currentKey] = false;
       // console.log(controllerNew);
 
-      return {...state,controller:controllerNew}
+      return {...state, controller:controllerNew}
+
+    case 'EDIT_STATE_CHANGE':
+      return {...state, editState:action.payload}
 
     default:
       return state;

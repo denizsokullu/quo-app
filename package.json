@@ -1,6 +1,6 @@
 {
   "name": "quo-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -12,6 +12,7 @@
     "material-ui-icons": "^1.0.0-beta.36",
     "re-resizable": "^4.4.8",
     "react": "^15.5.0",
+    "react-color": "^2.14.1",
     "react-dom": "^15.5.0",
     "react-draggable": "^3.0.5",
     "react-dropzone": "^4.2.7",
@@ -20,6 +21,7 @@
     "react-redux": "^5.0.6",
     "react-rnd": "^7.4.0",
     "react-router-dom": "4.1.1",
+    "reactcss": "^1.2.3",
     "redux": "^3.7.2",
     "redux-ignore": "^1.2.5",
     "redux-undo": "^0.6.1",

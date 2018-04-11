@@ -6,6 +6,7 @@
 //
 //
 import _ from 'underscore'
+import bplist from 'bplist'
 
 const pathElements = ['triangle','shapePath'];
 
@@ -18,6 +19,61 @@ export class AbstractComponent{
     this._class = data._class;
     this.layers = [];
     this.style = data.style;
+
+    //check the inner layer element of a shapeGroup to get the type.
+    if(this._class == 'shapeGroup'){
+      if(data.layers.length > 0){
+        this.shapeType = data.layers[0]._class;
+        // console.log(data.layers[0]);
+        if(pathElements.includes(this.shapeType)){
+          this.path = data.layers[0].path;
+          // console.log(this.path);
+        }
+      }
+    }
+    //Text needs styling too, therefore call the styling in it.
+    if(this._class == 'text'){
+      this.textData = data.attributedString.archivedAttributedString._archive;
+      bplist.parseBuffer(Buffer.from(this.textData, 'base64'), (err, result) => {
+        if (!err){
+          let data = result[0].$objects;
+          this.textData = {}
+          //These are constant array slots dedicated for text content & stlying information
+          this.textData.text = data[2];
+          this.textData.fontSize = data[16];
+          this.textData.fontName = data[17];
+
+          if(typeof data[26] === 'object'){
+            this.textData.color = {r:255,g:255,b:255,a:1};
+          }
+          else{
+            let r = parseInt(data[25] * 255)
+            let g = parseInt(data[28] * 255)
+            let b = parseInt(data[27] * 255)
+            let a = data[26].toFixed(3);
+            this.textData.color = {r:r,g:g,b:b,a:a};
+          }
+        }
+      this.createCSS(data);
+      });
+    }
+    else{
+      this.createCSS(data);
+    }
+
+    //store these as objects tbh!
+    if(data.layers){
+      data.layers.map(layer=>{
+        // if (!pathElements.includes(layer._class)){
+          this.layers.push(new AbstractComponent(layer))
+        // }
+      })
+    }
+    //and also have a flattened version at all times?
+
+  }
+
+  createCSS(data){
     this.css = this.generateStyle(data);
     this.editStates = {
       current:'none',
@@ -38,30 +94,6 @@ export class AbstractComponent{
         style:this.css,
       }
     }
-
-    //check the inner layer element of a shapeGroup to get the type.
-    if(this._class == 'shapeGroup'){
-      if(data.layers.length > 0){
-        this.shapeType = data.layers[0]._class;
-        // console.log(data.layers[0]);
-        if(pathElements.includes(this.shapeType)){
-          this.path = data.layers[0].path;
-          // console.log(this.path);
-        }
-      }
-    }
-    if(this._class == 'text'){
-      this.textData = data.attributedString.archivedAttributedString._archive;
-    }
-    //store these as objects tbh!
-    if(data.layers){
-      data.layers.map(layer=>{
-        // if (!pathElements.includes(layer._class)){
-          this.layers.push(new AbstractComponent(layer))
-        // }
-      })
-    }
-    //and also have a flattened version at all times?
   }
 
   swapState(target){
@@ -84,10 +116,11 @@ export class AbstractComponent{
     let position = {
       width: `${frame.width}px`,
       height: `${frame.height}px`,
+      left: `${frame.x}px`,
+      top: `${frame.y}px`,
     };
     //add padding for the stroke-width
     if (data.path && data.style) {
-      console.log(data)
       const thickness = data.style.borders
         ? data.style.borders[0].thickness
         : 0;
@@ -158,12 +191,23 @@ export class AbstractComponent{
         boxShadow = {boxShadow:`${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${colorCSS}`}
       }
 
+      //Text styling
+      let fontStyling = {}
+      if(this._class === 'text'){
+        fontStyling.fontSize = this.textData.fontSize
+        fontStyling.fontFamily = `'${this.textData.fontName}',sans-serif`;
+        let c = this.textData.color;
+        fontStyling.color = `rgba{${c.r},${c.g},${c.b},${c.a}}`;
+        console.log(fontStyling);
+      }
+
       styles = Object.assign({},
                             fill,
                             borderRadius,
                             border,
                             transform,
-                            boxShadow);
+                            boxShadow,
+                            fontStyling);
     }
     return ({
         ...position,

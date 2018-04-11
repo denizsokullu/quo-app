@@ -1,18 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { EDIT_STATE_CHANGE } from '../../redux';
 
-export default class ComponentStates extends React.Component {
+class ComponentStates extends React.Component {
   constructor(props) {
-
     super(props);
     this.state = {
-      selected : 'None',
-      states : ['None','Hover','Pressed','Focused'],
+      selected : props.editState,
+      states : ['none','hover','pressed','focused'],
     }
     this.onClick = this.onClick.bind(this);
   }
 
   onClick(e){
     this.setState({selected : e.target.innerHTML});
+    const { dispatch } = this.props;
+    dispatch(EDIT_STATE_CHANGE(e.target.innerHTML.toLowerCase()));
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({selected:nextProps.editState});
   }
 
   render(){
@@ -22,7 +29,7 @@ export default class ComponentStates extends React.Component {
           let selected = this.state.selected === state ? 'selected' : '';
           return(
             <div className={`component-state-box component-state-${selected}`} onClick={this.onClick}>
-              {state}
+              {state.charAt(0).toUpperCase() + state.slice(1)}
             </div>
           );
         })}
@@ -30,3 +37,10 @@ export default class ComponentStates extends React.Component {
     )
   }
 }
+
+function mapStateToProps(state) {
+  return { editState:state.present.editState, }
+}
+
+
+export default connect(mapStateToProps)(ComponentStates);

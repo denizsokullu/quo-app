@@ -17,7 +17,7 @@ class KeyController extends React.Component {
     this.state = {
       keyDown:false
     }
-    this.onWheel = this.onWheel.bind(this);
+    // this.onWheel = this.onWheel.bind(this);
   }
 
   keyReleased(e){
@@ -49,12 +49,6 @@ class KeyController extends React.Component {
   dispatchSave(e){
     e.preventDefault();
   }
-
-
-  onWheel(e){
-    // e.preventDefault();
-  }
-
 
   render() {
     return (
