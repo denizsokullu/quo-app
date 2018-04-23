@@ -3,32 +3,44 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Draggable from 'react-draggable';
-import ComponentRenderer from './componentRenderer';
-import {COMPONENT_MOVE,KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux';
+// import ComponentRenderer from './componentRenderer';
+import ComponentRenderer from './componentRendererv2';
+import {COMPONENT_MOVE,KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux/actions';
 
 class Viewer extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props.newData)
     this.state = {
       data: this.props.data,
       keyDown: false,
       draggable: this.props.controller[32],
       draggableClick: false,
       selection: this.props.selection,
-      zoom:1
+      zoom:1,
+      //New state properties
+      newData:this.props.newData,
+      newSelection:this.props.newSelection,
     };
+
     this.mouseUp = this.mouseUp.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onWheel = this.onWheel.bind(this);
+
   }
   componentWillReceiveProps(nextProps) {
+
+    //Old code
     this.setState({data:nextProps.data,selection:nextProps.selection});
     this.setState({draggable:nextProps.controller.key[32]});
-  }
 
-  componentWillUpdate(nextProps,nextState){
-    // console.log(this.state.zoom);
+
+    console.log(nextProps.newData);
+    //New code
+    this.setState({
+                    newData:nextProps.newData, newSelection:nextProps.newSelection
+                  },()=>{console.log(this.state.newData)});
   }
 
   mouseDown(){
@@ -87,8 +99,7 @@ class Viewer extends React.Component {
                   isParent={true}
                   componentData={this.state.data[key]}
                   key={key}
-                  selection={this.state.selection}
-                  dragSelf={true}/>
+                  selection={this.state.selection}/>
               })
             }
           </div>
@@ -99,7 +110,13 @@ class Viewer extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {data: state.present.assets.data,controller:state.present.controller,selection:state.present.selection}
+  return {
+    data: state.present.assets.data,
+    controller:state.present.controller,
+    selection:state.present.selection,
+    newData: state.present.newAssets[state.present.currentPage],
+    newSelection: state.present.newSelection
+  }
 }
 
 export default connect(mapStateToProps)(Viewer);

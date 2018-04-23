@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { EDIT_STATE_CHANGE } from '../../redux';
+import { EDIT_STATE_CHANGE } from '../../redux/actions';
 
 class ComponentStates extends React.Component {
   constructor(props) {

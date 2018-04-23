@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { Provider } from 'react-redux';
-import { store } from '../../internal/redux';
+import { store } from '../../internal/redux/index.js';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 // import { PreviewWindow } from '../../internal/components/previewWindow/previewWindow';

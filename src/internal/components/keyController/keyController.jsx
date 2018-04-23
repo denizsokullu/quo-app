@@ -6,7 +6,7 @@ import keydown, { Keys} from 'react-keydown';
 // import Draggable from 'react-draggable';
 // import {bindActionCreators} from 'redux';
 // import ComponentRenderer from './componentRenderer';
-import {KEY_UP,KEY_DOWN} from '../../redux';
+import {KEY_UP,KEY_DOWN} from '../../redux/actions';
 
 import { ActionCreators } from 'redux-undo';
 

@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 import Resizable from 're-resizable';
 
+import { connect } from 'react-redux';
+
+import _ from 'underscore';
+
 // Import all the cards
 
 import ComponentStates from '../componentStates/componentStates';
@@ -123,11 +127,16 @@ class SideBarRight extends Component {
       selected : 'styles',
       options : ['styles','links','interactions'],
       components : {styles:StylesContent, links:LinksContent, interactions:ActionsContent},
-      icons : {styles:ColorLensIcon, links:FlashOnIcon, interactions:GamesIcon}
+      icons : {styles:ColorLensIcon, links:FlashOnIcon, interactions:GamesIcon},
+      selectedComponent : props.selection
     }
 
     this.onClickNav = this.onClickNav.bind(this);
 
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({selectedComponent:nextProps.selection})
   }
 
   onClickNav(e) {
@@ -143,23 +152,34 @@ class SideBarRight extends Component {
     return (
       <div className='sidebar-wrapper'>
         <div className={`sidebar-container sidebar-right`}>
-          <ComponentStates/>
-          <CurrentComponent/>
-          <MiniPreview/>
-          <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr()}/>
+          {
+            !_.isEmpty(this.state.selectedComponent)
+              ?
+                <React.Fragment>
+                  <ComponentStates/>
+                  <CurrentComponent/>
+                  <MiniPreview/>
+                  <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr()}/>
+                </React.Fragment>
+              :
+            null
+          }
         </div>
-
         <div className = 'interaction-nav right-nav'>
           {
-            this.state.options.map(icon=>{
-              let selected = this.state.selected === icon ? 'selected-icon' : '';
-              let CurrentIcon = this.state.icons[icon];
-              return (
-                <div className = {`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
-                  <CurrentIcon/>
-                </div>
-              )
-            })
+            !_.isEmpty(this.state.selectedComponent)
+              ?
+                this.state.options.map(icon=>{
+                  let selected = this.state.selected === icon ? 'selected-icon' : '';
+                  let CurrentIcon = this.state.icons[icon];
+                  return (
+                    <div className = {`nav-el ${selected}`} onClick={this.onClickNav} id={icon}>
+                      <CurrentIcon/>
+                    </div>
+                  )
+                })
+              :
+              null
           }
         </div>
       </div>
@@ -220,18 +240,10 @@ class LinksContent extends React.Component{
   }
 }
 
-export { SideBarLeft, SideBarRight }
+function mapStateToProps(state) {
+  return { selection:state.present.selection }
+}
 
-// const mapStateToProps = (state, ownProps) => ({
-//   geod: state.geod,
-// })
+const ConnectedSideBarRight = connect(mapStateToProps)(SideBarRight)
 
-// const mapDispatchToProps = {
-//   activateGeod,
-//   closeGeod,
-// };
-
-// const Sidebar = connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(SideBarDOM);
+export { SideBarLeft, ConnectedSideBarRight as SideBarRight }

@@ -11,7 +11,9 @@ class Fill extends React.Component{
     super(props);
     this.state = {
       displayColorPicker:false,
-      color:this.getColor(props.selection)
+      color:this.getColor(props.selection),
+      selection:props.selection,
+      editStates:props.editStates
     }
   }
 
@@ -26,7 +28,7 @@ class Fill extends React.Component{
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({color:this.getColor(nextProps.selection)});
+    this.setState({color:this.getColor(nextProps.selection), selection:nextProps.selection, editStates:nextProps.editStates});
   }
 
   handleChange = (color) => {
@@ -67,7 +69,7 @@ class Fill extends React.Component{
 }
 
 function mapStateToProps(state) {
-  return {selection:state.present.selection}
+  return {selection:state.present.selection,editState:state.present.editState}
 }
 
 export default connect(mapStateToProps)(Fill)

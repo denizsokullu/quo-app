@@ -3,7 +3,7 @@ import { StyleCard } from '../styleCard';
 import SliderCore from '../../inputElements/slider/sliderCore'
 import TextInput from '../../inputElements/textInput/textInput'
 import {connect} from 'react-redux';
-import {COMPONENT_MOVE} from '../../../redux';
+import {COMPONENT_MOVE} from '../../../redux/actions';
 
 
 
