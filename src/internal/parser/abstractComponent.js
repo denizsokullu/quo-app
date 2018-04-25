@@ -20,6 +20,10 @@ export class AbstractComponentSimple{
     this.layers = [];
     this.style = data.style;
 
+    this.interactions = {
+      clicked:false
+    }
+
     //check the inner layer element of a shapeGroup to get the type.
     if(this._class == 'shapeGroup'){
       if(data.layers.length > 0){

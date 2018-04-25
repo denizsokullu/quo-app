@@ -82,7 +82,6 @@ class Viewer extends React.Component {
 
   render() {
     let draggableClass = this.state.draggable ? 'draggable' : ''
-    // let draggableClickClass = this.state.draggableClick ? 'draggable-clicked' : ''
     return (
       <div className='viewer-wrapper' onWheel={this.onWheel} ref = {c => this.viewer = c} style={{transform:`scale(${this.state.zoom})`}} onClick={this.onClick}>
         <Draggable
@@ -90,17 +89,16 @@ class Viewer extends React.Component {
         >
           <div className={`component-viewer ${draggableClass}`} tabIndex='0' onMouseDown={this.mouseDown} onMouseUp={this.mouseUp}>
             {
-              _.keys(this.state.data).map(key => {
-                return <ComponentRenderer
+              this.state.newData ?
+                <ComponentRenderer
                   style={{
-                    height: '100%',
-                    width: '100%'
+                      height:'100%',
+                      width: '100%'
                   }}
                   isParent={true}
-                  componentData={this.state.data[key]}
-                  key={key}
-                  selection={this.state.selection}/>
-              })
+                  summary={this.state.newData.layers}
+                />
+              : null
             }
           </div>
         </Draggable>

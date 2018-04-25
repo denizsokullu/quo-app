@@ -15,34 +15,41 @@ import uuidv1 from 'uuid/v1';
 //
 // svg, rect, text all receive new props from componentRenderers -> mainly data
 
-class ComponentRenderer extends React.Component {
+class ComponentRendererCore extends React.Component {
   constructor(props) {
     super(props);
-    let data = props.componentData;
+
+    let data = props.summary;
 
     this.state = {
-      data: data,
+      // data: data,
       controller: props.controller,
       clicked:false,
-      selection:props.selection,
-      id: data.id,
-      editState:props.editState,
-    };
 
+      selection:props.selection,
+      // id: data.id,
+      editState:props.editState,
+
+      //new properties
+      layers:data,
+      components:props.components,
+      id:data.id,
+    };
+    let components = this.state.components;
     //svg CoreComponent
-    if(data.path){
+    if(components.path){
       this.state.type = 'svg'
     }
-    else if(data.textData){
+    else if(components.textData){
       this.state.type = 'text'
     }
 
-    else if(data._class == 'page' || (data.shapeType && data.layers) || data._class == 'group'){
+    else if(components._class == 'page' || (components.shapeType && components.layers) || components._class == 'group'){
       //group container(more ComponentRenderers)
       if(this.props.isParent){
         this.state.type = 'parent'
       }
-      else if(data._class == 'group'){
+      else if(components._class == 'group'){
         this.state.type = 'group'
         this.state.dragChildren = true;
       }
@@ -53,34 +60,39 @@ class ComponentRenderer extends React.Component {
       }
     }
 
-    this.state.location = this.getPosition();
-    this.onClick = this.onClick.bind(this);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
+    // this.state.location = this.getPosition();
+    // this.onClick = this.onClick.bind(this);
+    // this.onMouseEnter = this.onMouseEnter.bind(this);
+    // this.onMouseLeave = this.onMouseLeave.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
-    this.onDragStop = this.onDragStop.bind(this);
+    // this.onDragStop = this.onDragStop.bind(this);
     // this.onFocus = this.onFocus.bind(this);
 
-    this.onClick = this.onClick.bind(this);
+    // this.onClick = this.onClick.bind(this);
     // this.onDoubleClick = this.onDoubleClick.bind(this);
 
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({data: nextProps.componentData},()=>{
-      this.setState({location:this.getPosition()});
-    });
+    // this.setState({data: nextProps.summary},()=>{
+    //   // this.setState({location:this.getPosition()});
+    // });
     this.setState({controller: nextProps.controller,
-                   selection:nextProps.selection,
                    editState:nextProps.editState
                  });
-    if(nextProps.selection.id != this.state.id){
-      this.setState({clicked:false})
-    }
+    // if(nextProps.selection.id != this.state.id){
+    //   this.setState({clicked:false})
+    // }
+
+    //new properties
+    this.setState({
+      components:nextProps.components,
+      layers:nextProps.summary
+    })
   }
 
   isSelected(){
-    return this.state.selection.id === this.state.id
+    return this.state.selection === this.state.id;
   }
 
   getPosition(){
@@ -100,11 +112,15 @@ class ComponentRenderer extends React.Component {
   }
 
   getStyle() {
+    if(this.props.isParent){
+      return;
+    }
     if(this.isSelected()){
-      return this.state.data.editStates[this.state.editState].style;
+      return this.state.components.editStates[this.state.editState].style;
     }
     else{
-      return this.state.data.editStates['none'].style;
+      console.log(this.state.components)
+      return this.state.components.editStates['none'].style;
     }
   }
 
@@ -165,110 +181,149 @@ class ComponentRenderer extends React.Component {
     alert('hello');
   }
 
-  render(){
-    // console.log(this.props.enableParentDragging,this.props.disableParentDragging)
-    let innerDOM = (<div
+  renderWrapper(content){
+    return (<div
       className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
       style={this.getStyle()}
-      onMouseEnter={this.onMouseEnter}
-      onMouseLeave={this.onMouseLeave}
-      onClick={this.onClick}
-      onDoubleClick={this.onDoubleClick}
-                    >
-      {
-        this.state.data.layers.map((layer, index) => {
-          return (
-            <ComponentRenderer
-              componentData={layer}
-              controller={this.state.controller}
-              selection={this.state.selection}
-              editState={this.state.editState}
-              key={layer.id}
-              dispatch={this.props.dispatch}
-              dragSelf={this.state.dragChildren}
-            />
-          )
-        })
-      }
-      {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
+      // onMouseEnter={this.onMouseEnter}
+      // onMouseLeave={this.onMouseLeave}
+      // onClick={this.onClick}
+      // onDoubleClick={this.onDoubleClick}
+            >
+      { content }
+      {/* {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null} */}
     </div>)
+  }
 
-    //parent container element
-    if(this.state.type === 'parent'){
-      return innerDOM;
-    }
+  render(){
 
-    //group element that contains groups/primitive shapes
-    else if (this.state.type === 'group'){
-      return (<Draggable
-        onStart={this.onDragStart}
-        onStop={this.onDragStop}
-        onDrag={this.onDrag.bind(this)}
-        defaultPosition={this.state.location}
-        disabled={this.state.controller.key[32]}
-        key={this.generateKey()}>
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
-          onMouseEnter={this.onMouseEnter}
-          onMouseLeave={this.onMouseLeave}
-          onClick={this.onClick}>
-          {
-            this.state.data.layers.map((layer, index) => {
-              return (
-                <ComponentRenderer
-                  componentData={layer}
-                  controller={this.state.controller}
-                  selection={this.state.selection}
-                  editState={this.state.editState}
-                  key={index}
-                  dispatch={this.props.dispatch}
-                  dragSelf={this.state.dragChildren}
-                />)
-            })
-          }
-          {this.state.clicked ? <ClickFrame/> : null}
-        </div>
-      </Draggable>)
-    }
+    // let innerDOM = this.renderInnerDOM;
 
-    //basic element
-    else if(this.state.type === 'rect'){
+    let parentContent = _.keys(this.state.layers).map(key => {
       return (
-      <Draggable
-        onStart={this.onDragStart} onStop={this.onDragStop}
-        defaultPosition={this.state.location}
-        onDrag={this.onDrag.bind(this)}
-        disabled={this.state.controller.key[32]}
-        key={this.generateKey()}>
-        {innerDOM}
-      </Draggable>)
-    }
+        <ComponentRenderer
+          isParent={false}
+          summary={this.state.layers[key]}
+          key={key}
+        />
+      )
+    });
 
-    else if(this.state.type === 'text'){
-    return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-      key={this.generateKey()}>
-      <div className='component-container text-component child' style={{...this.getDimensions()}}
-        // ...{left:this.getPosition().x,top:this.getPosition().y},
-        onClick={this.onClick} onDoubleClick={this.handleDoubleClick}>
-        <TextComponent data={this.state.data}></TextComponent>
-        {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
-      </div>
-    </Draggable>)
-    }
-    //svg
-    else if (this.state.type === 'svg') {
-      console.log({...this.getPosition(),...this.getDimensions()});
-      return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-        key={this.generateKey()}>
-        <div className='component-container child' style={this.getPosition()}>
-          <SvgComponent data={this.state.data}></SvgComponent>
-        </div>
-      </Draggable>)
-    }
+    let nonParentContent = _.keys(this.state.layers.components).map(key => {
+      return (
+        <ComponentRenderer
+          isParent={false}
+          summary={this.state.layers.components[key]}
+          key={key}
+        />
+      )
+    })
 
-    //empty
-    else{
-      return null
-    }
+    return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
+
+    // console.log(this.props.enableParentDragging,this.props.disableParentDragging)
+    // let innerDOM = (<div
+    //   className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
+    //   style={this.getStyle()}
+    //   onMouseEnter={this.onMouseEnter}
+    //   onMouseLeave={this.onMouseLeave}
+    //   onClick={this.onClick}
+    //   onDoubleClick={this.onDoubleClick}
+    //                 >
+    //   {
+    //     this.state.data.layers.map((layer, index) => {
+    //       return (
+    //         <ComponentRenderer
+    //           summary={layer}
+    //           controller={this.state.controller}
+    //           selection={this.state.selection}
+    //           editState={this.state.editState}
+    //           key={layer.id}
+    //           dispatch={this.props.dispatch}
+    //           dragSelf={this.state.dragChildren}
+    //         />
+    //       )
+    //     })
+    //   }
+    //   {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
+    // </div>)
+    //
+    // //parent container element
+    // if(this.state.type === 'parent'){
+    //   return innerDOM;
+    // }
+    //
+    // //group element that contains groups/primitive shapes
+    // else if (this.state.type === 'group'){
+    //   return (<Draggable
+    //     onStart={this.onDragStart}
+    //     onStop={this.onDragStop}
+    //     onDrag={this.onDrag.bind(this)}
+    //     defaultPosition={this.state.location}
+    //     disabled={this.state.controller.key[32]}
+    //     key={this.generateKey()}>
+    //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
+    //       onMouseEnter={this.onMouseEnter}
+    //       onMouseLeave={this.onMouseLeave}
+    //       onClick={this.onClick}>
+    //       {
+    //         this.state.data.layers.map((layer, index) => {
+    //           return (
+    //             <ComponentRenderer
+    //               summary={layer}
+    //               controller={this.state.controller}
+    //               selection={this.state.selection}
+    //               editState={this.state.editState}
+    //               key={index}
+    //               dispatch={this.props.dispatch}
+    //               dragSelf={this.state.dragChildren}
+    //             />)
+    //         })
+    //       }
+    //       {this.state.clicked ? <ClickFrame/> : null}
+    //     </div>
+    //   </Draggable>)
+    // }
+    //
+    // //basic element
+    // else if(this.state.type === 'rect'){
+    //   return (
+    //   <Draggable
+    //     onStart={this.onDragStart} onStop={this.onDragStop}
+    //     defaultPosition={this.state.location}
+    //     onDrag={this.onDrag.bind(this)}
+    //     disabled={this.state.controller.key[32]}
+    //     key={this.generateKey()}>
+    //     {innerDOM}
+    //   </Draggable>)
+    // }
+    //
+    // else if(this.state.type === 'text'){
+    // return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
+    //   key={this.generateKey()}>
+    //   <div className='component-container text-component child' style={{...this.getDimensions()}}
+    //     // ...{left:this.getPosition().x,top:this.getPosition().y},
+    //     onClick={this.onClick} onDoubleClick={this.handleDoubleClick}>
+    //     <TextComponent data={this.state.data}></TextComponent>
+    //     {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
+    //   </div>
+    // </Draggable>)
+    // }
+    // //svg
+    // else if (this.state.type === 'svg') {
+    //   console.log({...this.getPosition(),...this.getDimensions()});
+    //   return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
+    //     key={this.generateKey()}>
+    //     <div className='component-container child' style={this.getPosition()}>
+    //       <SvgComponent data={this.state.data}></SvgComponent>
+    //     </div>
+    //   </Draggable>)
+    // }
+    //
+    // //empty
+    // else{
+    //   return null
+    // }
 
   }
 }
@@ -406,11 +461,19 @@ class TextComponent extends CoreComponent{
   }
 }
 
-function mapStateToProps(state) {
-  return {data: state.present.assets.data,
+function mapStateToProps(state,ownProps) {
+  let components = state.present.newAssets[state.present.currentPage].components
+  if(!ownProps.isParent){
+    components = components[ownProps.summary.id];
+  }
+  return {
           controller:state.present.controller,
-          selection:state.present.selection,
-          editState:state.present.editState, }
+          editState:state.present.editState,
+          selection:state.present.newSelection,
+          components:components
+        }
 }
 
-export default connect(mapStateToProps)(ComponentRenderer)
+const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);
+
+export default ComponentRenderer

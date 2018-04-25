@@ -96,35 +96,50 @@ class Page extends React.Component {
 class Layers extends React.Component {
   constructor(props){
     super(props);
-    this.state = {data:props.data};
+    //if there are pages, select the layers of it.
+    if(props.data){
+      this.state = {data:props.data.layers}
+    }
+    //if there are no pages just keep the data undefined.
+    else{
+      this.state = {data:props.data}
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({data:nextProps.data})
+    if(nextProps.data){
+      this.setState({data:nextProps.data.layers});
+    }
+    else{
+      this.setState({data:nextProps.data})
+    }
   }
 
   renderLayers(){
-    if(Object.keys(this.state.data).length > 0){
-      return (
-      Object.keys(this.state.data).map(key=>{
-        let obj = this.state.data[key];
-        return(
-          obj.layers.map((layer,index)=>{
-          let isLast = obj.layers.length == index + 1;
-          return(
-            <Layer layer={layer} depth={0} isLast={isLast} key={index}/>
-            )
-          })
-        )
-      })
-      )
-    }
-    else{
+
+    //if there are no pages selected
+    if(!this.state.data){
       return null
     }
 
+    //if there are artboards & other shapes
+    let artboards = Object.keys(this.state.data);
+
+    return (
+      //loop through the artboards & possible other shapes
+      artboards.map( (key,index) => {
+        //look
+        let obj = this.state.data[key];
+        console.log(obj)
+        let isLast = artboards.length == index + 1;
+        return (
+          <Layer layer={obj} depth={0} isLast={isLast} key={index}/>
+        )
+    })
+    )
 
   }
+
   render(){
     return(
       <div className='layers-content'>
@@ -132,6 +147,7 @@ class Layers extends React.Component {
       </div>
     )
   }
+
 }
 
 class Layer extends React.Component {
@@ -140,17 +156,20 @@ class Layer extends React.Component {
     this.state = {
       layer:props.layer,
       isHidden:false,
-      isGroup:props.layer.layers ? true : false,
+      //change this
+      isGroup:props.layer.components ? true : false,
       isLocked:false,
-      isMinimized:false
+      isMinimized:true
     }
     this.handleMinimizeChange = this.handleMinimizeChange.bind(this);
   }
+
   handleMinimizeChange(){
     this.setState({isMinimized:!this.state.isMinimized},()=>{
       console.log(this.isMinimized);
     });
   }
+
   renderLayerStructure(){
     // console.log(this.state.layer,!this.state.isGroup,this.props.isLast)
 
@@ -180,9 +199,10 @@ class Layer extends React.Component {
             null
           }
 
-          <TextInput text={this.state.layer.pageName} onChange={this.onChange} noTitle />
+          <TextInput text={this.state.layer.name} onChange={this.onChange} noTitle />
 
           {/* Minimize Button */}
+
           { this.state.isGroup ?
             <span className='minimize-icon' onClick={this.handleMinimizeChange}>
               {this.state.isMinimized ?
@@ -193,6 +213,7 @@ class Layer extends React.Component {
             </span>
           : null
           }
+
         </div>
         {
           this.renderChildren()
@@ -202,28 +223,39 @@ class Layer extends React.Component {
   }
 
   renderChildren(){
+
+    // If it's the innermost component, ignore the
+    // task and return null for it's children.
+
+    if(!this.state.layer.components){
+      return null;
+    }
+
     const isLastBool = this.state.isGroup && this.props.isLast
-    const isMinimized = this.state.isMinimized ? 'child-minimized' : ''
-    // console.log(isLastBool);
+    const isMinimized = this.state.isMinimized ? 'child-minimized' : '';
+
+    const children = this.state.layer.components;
+    const childrenKeys = Object.keys(children);
+
     return(
-        this.state.layer.layers
-        ?
-          <div className={`child-layer-block ${isMinimized}`}>
-            {
-              this.state.layer.layers.map((innerLayer,index) => {
 
-                let isLast = (this.state.layer.layers.length == index + 1) && isLastBool;
+      <div className={`child-layer-block ${isMinimized}`}>
+        {
+          childrenKeys.map((key,index) => {
 
-                return(
-                  <Layer layer={innerLayer} depth={this.props.depth+1} isLast={isLast} key={index}/>
-                )
+            // To figure out which layer is the last on the window,
+            // keep track of this.
 
-              })
-            }
-          </div>
-        :
-          null
+            let isLast = (childrenKeys.length == index + 1) && isLastBool;
+            let innerLayer = children[key];
 
+            return(
+              <Layer layer={innerLayer} depth={this.props.depth+1} isLast={isLast} key={index}/>
+            )
+
+          })
+        }
+      </div>
     )
   }
   renderDepthBlocks(){
@@ -246,7 +278,7 @@ class Layer extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {data: state.present.assets.data}
+  return {data: state.present.newAssets[state.present.currentPage]}
 }
 
 Layers = connect(mapStateToProps)(Layers)
