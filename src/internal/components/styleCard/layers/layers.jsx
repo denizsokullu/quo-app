@@ -128,10 +128,10 @@ class Layers extends React.Component {
     return (
       //loop through the artboards & possible other shapes
       artboards.map( (key,index) => {
-        //look
+
         let obj = this.state.data[key];
-        console.log(obj)
         let isLast = artboards.length == index + 1;
+
         return (
           <Layer layer={obj} depth={0} isLast={isLast} key={index}/>
         )
@@ -259,8 +259,8 @@ class Layer extends React.Component {
     )
   }
   renderDepthBlocks(){
-    return [...Array(this.props.depth)].map(()=>{
-      return (<div className='depth-padding'></div>)
+    return [...Array(this.props.depth)].map((val,index)=>{
+      return (<div className='depth-padding' key={index}></div>)
     })
   }
   render(){

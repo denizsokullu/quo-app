@@ -15,9 +15,7 @@ const data = {
   newAssets:{
 
   },
-  newSelection:{
-
-  },
+  newSelection:'',
   currentPage:"",
   //write a function to init the keys
   controller:controller,

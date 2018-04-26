@@ -74,7 +74,7 @@ class ContentPagesCard extends React.Component{
         <div className='style-card-body layer-card-body'>
           {this.state.pages ? Object.keys(this.state.pages).map((key)=>{
             let page = this.state.pages[key]
-            return <Page text={page.name}/>
+            return <Page text={page.name} key={key}/>
           }) : null }
         </div>
       </div>

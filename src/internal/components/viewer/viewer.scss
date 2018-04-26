@@ -59,6 +59,12 @@
 
     }
 
+    &.component-artboard {
+      &:hover{
+        outline:none;
+      }
+    }
+
   }
 
   //Panning state for the viewer

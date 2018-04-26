@@ -36,11 +36,9 @@ class Viewer extends React.Component {
     this.setState({draggable:nextProps.controller.key[32]});
 
 
-    console.log(nextProps.newData);
+    // console.log(nextProps.newData);
     //New code
-    this.setState({
-                    newData:nextProps.newData, newSelection:nextProps.newSelection
-                  },()=>{console.log(this.state.newData)});
+    this.setState({newData:nextProps.newData, newSelection:nextProps.newSelection});
   }
 
   mouseDown(){
@@ -52,7 +50,7 @@ class Viewer extends React.Component {
   mouseUp(){
     if(!this.state.draggable){
       const dispatch = this.props;
-      dispatch(COMPONENT_SELECT({}));
+      dispatch(COMPONENT_SELECT(""));
     }
     this.setState({draggableClick:false});
   }
@@ -60,7 +58,7 @@ class Viewer extends React.Component {
   onClick(){
     if(!this.state.draggable){
       const { dispatch } = this.props;
-      dispatch(COMPONENT_SELECT({}));
+      dispatch(COMPONENT_SELECT(""));
     }
   }
 

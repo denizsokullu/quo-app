@@ -17,15 +17,20 @@ export class AbstractComponentSimple{
     this.frame = data.frame;
     this.id = data.do_objectID
     this._class = data._class;
-    this.layers = [];
     this.style = data.style;
+
+    //Define grouping state for the component
+    this.isGroupObject = false;
+    if(this.isArtboard || this.isGroup){
+      this.isGroupObject = true;
+    }
 
     this.interactions = {
       clicked:false
     }
 
     //check the inner layer element of a shapeGroup to get the type.
-    if(this._class == 'shapeGroup'){
+    if(this.isShape){
       if(data.layers.length > 0){
         this.shapeType = data.layers[0]._class;
         // console.log(data.layers[0]);
@@ -35,8 +40,9 @@ export class AbstractComponentSimple{
         }
       }
     }
+
     //Text needs styling too, therefore call the styling in it.
-    if(this._class == 'text'){
+    if(this.isText){
       this.textData = data.attributedString.archivedAttributedString._archive;
       bplist.parseBuffer(Buffer.from(this.textData, 'base64'), (err, result) => {
         if (!err){
@@ -61,6 +67,7 @@ export class AbstractComponentSimple{
       this.createCSS(data);
       });
     }
+
     else{
       this.createCSS(data);
     }
@@ -75,6 +82,22 @@ export class AbstractComponentSimple{
     // }
     //and also have a flattened version at all times?
 
+  }
+
+  get isArtboard(){
+    return this._class === 'artboard';
+  }
+
+  get isGroup(){
+    return this._class === 'group';
+  }
+
+  get isShape(){
+    return this._class === 'shapeGroup';
+  }
+
+  get isText(){
+    return this._class === 'text';
   }
 
   createCSS(data){
@@ -136,10 +159,17 @@ export class AbstractComponentSimple{
         paddingTop: `${padding}px`
       };
     }
+
+
     let styles = {};
+
     if (data.style) {
       let style = data.style
-      //currently picks the first fill
+
+      ///////////
+      // FILL
+      ///////////
+
       let fill = {}
       if (style.fills) {
         let color = style.fills[0].color
@@ -150,6 +180,16 @@ export class AbstractComponentSimple{
           fill.backgroundColor = colorCSS;
         }
       }
+      //case for the artboard
+      if(this.isArtboard && data.backgroundColor){
+        let colorCSS = this.generateColor(data.backgroundColor);
+        fill.backgroundColor = colorCSS;
+      }
+
+      ///////////
+      // BORDER
+      ///////////
+
       let border = {}
       if (style.borders && style.borders[0].isEnabled) {
         let color = style.borders[0].color
@@ -164,7 +204,11 @@ export class AbstractComponentSimple{
           border.border = `${thickness} solid ${color}`;
         }
       }
-      //oval styling
+
+      ///////////
+      // BORDER RADIUS
+      ///////////
+
       let borderRadius = {}
       //border radius on rectangles
       if(data._class === 'shapeGroup'){
@@ -181,11 +225,19 @@ export class AbstractComponentSimple{
           }
         }
       }
-      //rotation
+
+      ///////////
+      // TRANSFORM
+      ///////////
+
       let transform = {}
       if(data.rotation){
         transform = { transform: `rotate(${-data.rotation}deg)`}
       }
+
+      ///////////
+      // BOX SHADOW
+      ///////////
 
       let boxShadow = {}
       if(style.shadows && style.shadows[0].isEnabled){
@@ -194,6 +246,10 @@ export class AbstractComponentSimple{
         let colorCSS = this.generateColor(color);
         boxShadow = {boxShadow:`${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blurRadius}px ${shadow.spread}px ${colorCSS}`}
       }
+
+      ///////////
+      // TEXT STYLING
+      ///////////
 
       //Text styling
       let fontStyling = {}
@@ -204,6 +260,10 @@ export class AbstractComponentSimple{
         fontStyling.color = `rgba{${c.r},${c.g},${c.b},${c.a}}`;
         console.log(fontStyling);
       }
+
+      ///////////
+      // MERGE STYLES
+      ///////////
 
       styles = Object.assign({},
                             fill,

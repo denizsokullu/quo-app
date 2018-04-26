@@ -1,5 +1,9 @@
 import React from 'react';
 
+import {connect} from 'react-redux';
+
+import PreviewComponent from '../previewComponent/previewComponent';
+
 //dock back(flip this)
 import TabIcon from 'material-ui-icons/Tab';
 
@@ -15,18 +19,26 @@ import ExpandLessIcon from 'material-ui-icons/ExpandLess';
 //Share
 import ReplyIcon from 'material-ui-icons/Reply';
 
-export default class MiniPreview extends React.Component{
+class MiniPreview extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {isMinimized: false, docked:true};
+    this.state = {isMinimized: false, docked:true, targetComponent:props.selection};
     this.handleMinimizeClick = this.handleMinimizeClick.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps.selection)
+    this.setState({targetComponent:nextProps.selection});
   }
 
   handleMinimizeClick() {
     this.setState(prevState => ({
       isMinimized: !prevState.isMinimized
     }));
+  }
+  renderPreviewComponent(){
+    return (<PreviewComponent id={this.state.targetComponent}/>)
   }
 
   render() {
@@ -48,11 +60,19 @@ export default class MiniPreview extends React.Component{
               <PictureInPictureAltIcon/>
             </span>
           </div>
-          <div className={`${prefix}-body`}></div>
+          <div className={`${prefix}-body`}>
+            {this.renderPreviewComponent()}
+          </div>
         </div>
       </div>
     );
   }
-
-
 }
+
+function mapStateToProps(state){
+    return ({
+      selection:state.present.newSelection
+    });
+}
+
+export default connect(mapStateToProps)(MiniPreview);

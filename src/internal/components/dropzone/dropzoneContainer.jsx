@@ -28,7 +28,6 @@ class DropzoneContainer extends React.Component {
     files.map(curFile => {
       JSZip.loadAsync(curFile).then(zip => {
         Object.keys(zip.files).forEach(filename => {
-          console.log(filename);
           if (filename.includes('.json') && filename.includes('pages/')) {
             zip.files[filename].async('string').then(fileData => {
               const { dispatch } = this.props

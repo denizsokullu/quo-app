@@ -35,7 +35,9 @@ class ComponentRendererCore extends React.Component {
       components:props.components,
       id:data.id,
     };
+
     let components = this.state.components;
+
     //svg CoreComponent
     if(components.path){
       this.state.type = 'svg'
@@ -61,7 +63,7 @@ class ComponentRendererCore extends React.Component {
     }
 
     // this.state.location = this.getPosition();
-    // this.onClick = this.onClick.bind(this);
+    this.onClick = this.onClick.bind(this);
     // this.onMouseEnter = this.onMouseEnter.bind(this);
     // this.onMouseLeave = this.onMouseLeave.bind(this);
     // this.onDragStart = this.onDragStart.bind(this);
@@ -88,7 +90,11 @@ class ComponentRendererCore extends React.Component {
     this.setState({
       components:nextProps.components,
       layers:nextProps.summary
-    })
+    },()=>{
+      console.log('this has changed',this.state.components)
+    });
+
+
   }
 
   isSelected(){
@@ -119,7 +125,6 @@ class ComponentRendererCore extends React.Component {
       return this.state.components.editStates[this.state.editState].style;
     }
     else{
-      console.log(this.state.components)
       return this.state.components.editStates['none'].style;
     }
   }
@@ -168,11 +173,10 @@ class ComponentRendererCore extends React.Component {
   }
 
   onClick(e){
-    if(!this.props.isParent){
+    if(!this.props.isParent && this.state.components._class != 'artboard'){
       e.stopPropagation();
-      this.setState({clicked:true});
       const { dispatch } = this.props;
-      dispatch(COMPONENT_SELECT(this.state));
+      dispatch(COMPONENT_SELECT(this.state.id));
     }
   }
 
@@ -182,16 +186,16 @@ class ComponentRendererCore extends React.Component {
   }
 
   renderWrapper(content){
-    return (<div
-      className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
-      style={this.getStyle()}
-      // onMouseEnter={this.onMouseEnter}
-      // onMouseLeave={this.onMouseLeave}
-      // onClick={this.onClick}
-      // onDoubleClick={this.onDoubleClick}
-            >
-      { content }
-      {/* {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null} */}
+    return (
+      <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class}`} id={this.state.id}
+        style={this.getStyle()}
+        // onMouseEnter={this.onMouseEnter}
+        // onMouseLeave={this.onMouseLeave}
+        onClick={this.onClick}
+        // onDoubleClick={this.onDoubleClick}
+      >
+        { content }
+        {/* {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null} */}
     </div>)
   }
 
@@ -218,6 +222,14 @@ class ComponentRendererCore extends React.Component {
         />
       )
     })
+
+    if(this.state.components._class === 'text'){
+
+      nonParentContent = (
+        <TextComponent data={this.state.components}></TextComponent>
+      )
+
+    }
 
     return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
 
@@ -370,34 +382,10 @@ class TextComponent extends CoreComponent{
     super(props);
     // let that = this;
     this.state.textData = this.state.data.textData
-    // this.setState({clicked : false});
-
-    // bplist.parseBuffer(Buffer.from(this.state.data.textData, 'base64'), function(err, result) {
-    //   if (!err){
-    //     let data = result[0].$objects;
-    //     that.state.textData = {}
-    //     //These are constant array slots dedicated for text content & stlying information
-    //     that.state.textData.text = data[2];
-    //     that.state.textData.fontSize = data[16];
-    //     that.state.textData.fontName = data[17];
-    //
-    //     if(typeof data[26] === 'object'){
-    //       that.state.textData.color = {r:255,g:255,b:255,a:1};
-    //     }
-    //     else{
-    //       let r = parseInt(data[25] * 255)
-    //       let g = parseInt(data[28] * 255)
-    //       let b = parseInt(data[27] * 255)
-    //       let a = data[26].toFixed(3);
-    //       that.state.textData.color = {r:r,g:g,b:b,a:a};
-    //     }
-    //   }
-    // });
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
   }
   getColor(){
     let c = this.state.textData.color;
-    console.log(this.state.data.css)
     return (
       `rgba(${c.r},${c.g},${c.b},${c.a})`
     )
@@ -412,39 +400,15 @@ class TextComponent extends CoreComponent{
     console.log('yo')
     alert('hello');
   }
+
   handleClick(){
     alert('hello');
   }
-  render(){
-    // let clicks = [];
-    // let timeout;
-    //
-    // function singleClick(event) {
-    //     console.log("single click");
-    // }
-    //
-    // function doubleClick(event) {
-    //     console.log("doubleClick");
-    // }
-    //
-    // function clickHandler(event) {
-    //     event.preventDefault();
-    //     event.persist();
-    //     clicks.push(new Date().getTime());
-    //     window.clearTimeout(timeout);
-    //     timeout = window.setTimeout(() => {
-    //         if (clicks.length > 1 && clicks[clicks.length - 1] - clicks[clicks.length - 2] < 200) {
-    //             doubleClick.call(event.target, event);
-    //         } else {
-    //             singleClick.call(event.target, event);
-    //         }
-    //     }, 250);
-    // }
 
+  render(){
     return (this.state.textData ?
         <span className='text-outer'
           onDoubleClick={this.handleDoubleClick}
-          // onClick={this.handleClick}
         >
           <span className='text-inner'
             style={
@@ -462,16 +426,18 @@ class TextComponent extends CoreComponent{
 }
 
 function mapStateToProps(state,ownProps) {
+
   let components = state.present.newAssets[state.present.currentPage].components
+
   if(!ownProps.isParent){
     components = components[ownProps.summary.id];
   }
+
   return {
-          controller:state.present.controller,
-          editState:state.present.editState,
-          selection:state.present.newSelection,
-          components:components
-        }
+            controller:state.present.controller,
+            editState:state.present.editState,
+            components:components
+         }
 }
 
 const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);

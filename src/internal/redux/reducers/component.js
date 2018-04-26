@@ -4,9 +4,28 @@ import _ from 'underscore';
 import { getComponent } from '../../parser/abstractComponent';
 
 function COMPONENT_SELECT(state = {}, action){
-    let newSelection = action.payload
-    let newNewSelection = action.payload.id
-    return {...state, selection:newSelection, newSelection:newNewSelection }
+
+    let oldSelection;
+    let newSelection;
+    // let newAssets = dc(state.newAssets[state.currentPage]);
+
+    //if something is selected before, unselect it.
+    if(state.newSelection != ''){
+      oldSelection = dc(state.newAssets[state.currentPage].components[state.newSelection]);
+      oldSelection.interactions.clicked = false;
+      state.newAssets[state.currentPage].components[state.newSelection] = oldSelection;
+    }
+
+    //if the new selection is selecting something
+    if(action.payload !== ''){
+
+      newSelection = dc(state.newAssets[state.currentPage].components[action.payload]);
+      newSelection.interactions.clicked = true;
+      state.newAssets[state.currentPage].components[action.payload] = newSelection;
+    }
+
+
+    return {...state, newSelection:action.payload}
 }
 
 function COMPONENT_MOVE(state = {}, action){

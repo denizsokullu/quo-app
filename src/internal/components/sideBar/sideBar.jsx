@@ -241,7 +241,13 @@ class LinksContent extends React.Component{
 }
 
 function mapStateToProps(state) {
-  return { selection:state.present.selection }
+  if(state.present.currentPage !== ''){
+    return { selection:state.present.newAssets[state.present.currentPage].components[state.present.newSelection]}
+  }
+  else{
+      return { selection:{} }
+  }
+
 }
 
 const ConnectedSideBarRight = connect(mapStateToProps)(SideBarRight)
