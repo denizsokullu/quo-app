@@ -3,6 +3,8 @@ import _ from 'underscore';
 
 import { getComponent } from '../../parser/abstractComponent';
 
+import * as StyleChangeReducer from './styleChange.js';
+
 function VIEWER_RESIZE(state = {}, action){
 
   return {...state, viewerZoom:action.payload}
@@ -32,6 +34,10 @@ function COMPONENT_SELECT(state = {}, action){
       state.newAssets[state.currentPage].components[action.payload] = newSelection;
     }
 
+    if(action.payload === ''){
+      return {...state, newSelection:action.payload, editState:'none'}
+    }
+
     return {...state, newSelection:action.payload}
 }
 
@@ -41,8 +47,8 @@ function COMPONENT_MOVE(state = {}, action){
 
         let style = target.editStates[state.editState].style
 
-        let left = (parseInt(style.left.slice(0,-2)) + action.payload.x) + 'px'
-        let top = (parseInt(style.top.slice(0,-2)) + action.payload.y) + 'px'
+        let left = (parseInt(style.left.slice(0,-2)) + parseInt(action.payload.x)) + 'px'
+        let top = (parseInt(style.top.slice(0,-2)) + parseInt(action.payload.y)) + 'px'
 
         let updatedStyle = {...style,left:left,top:top}
 
@@ -61,82 +67,102 @@ function COMPONENT_MOVE(state = {}, action){
         // newNewAssets[state.currentPage] = newComponents
 
         return {...state, newAssets:newAssetsWhole}
-
-        // //find the id;
-        // let id = action.payload.component.id
-        // // console.log(id)
-        // let newData = dc(state.assets.data)
-        //
-        // // let newFrame = dc(action.payload.component.frame)
-        // // // //update x and y locations
-        // // newFrame.x = action.payload.data.x
-        // // newFrame.y = action.payload.data.y
-        //
-        //
-        // let editState = state.editState;
-        // let newEditStates = dc(action.payload.component.editStates);
-        // newEditStates[editState].style.left = action.payload.data.x+'px'
-        // newEditStates[editState].style.top = action.payload.data.y+'px'
-        //
-        // //Place newFrame Data here
-        // //Find the component first
-        //
-        // let allIDs = _.keys(state.assets.data).map(key=>{
-        //   let obj = newData[key];
-        //   return getComponent(obj,id);
-        // })
-        //
-        // // console.log(allIDs);
-        //
-        // allIDs = _.reduce(allIDs,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
-        // let componentToUpdate = allIDs;
-        //
-        // // componentToUpdate.frame = newFrame;
-        // componentToUpdate.editStates = newEditStates
-        //
-        // let updatedAssets = {data:newData}
-        //
 }
 
 function COMPONENT_RESIZE(state = {}, action){
-  //find the id;
-  let id = action.payload.component.id
 
-  let newData = dc(state.assets.data)
+  let target = dc(state.newAssets[state.currentPage].components[action.payload.id]);
 
-  let allIDs = _.keys(newData).map(key=>{
-    let obj = newData[key];
-    return getComponent(obj,id);
-  })
+  let style = target.editStates[state.editState].style
 
-  allIDs = _.reduce(allIDs,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)},undefined);
-  let componentToUpdate = allIDs;
+  let width = (parseInt(style.width.slice(0,-2)) + parseInt(action.payload.w)) + 'px'
+  let height = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
 
+  let updatedStyle = {...style,width:width,height:height}
 
-  let editState = state.editState;
-  //instead of getting the editstates from the selection, find it in the actual component
-  let newEditStates = dc(componentToUpdate.editStates);
+  let newAssets = dc(state.newAssets[state.currentPage].components);
 
-  //only change if they have a new value
-  if(action.payload.data.width){
-    newEditStates[editState].style.width = action.payload.data.width+'px'
-  }
-  else{
-    // console.log('width',newEditStates[editState].style.width);
-  }
-  if(action.payload.data.height){
-    newEditStates[editState].style.height = action.payload.data.height+'px'
-  }
-  else{
-    // console.log('height',newEditStates[editState].style.height);
-  }
+  target.editStates[state.editState].style = updatedStyle
 
-  // componentToUpdate.frame = newFrame;
-  componentToUpdate.editStates = newEditStates
+  newAssets[action.payload.id] = target;
 
-  let updatedAssets = {data:newData}
+  let newAssetsWhole = {...state.newAssets}
 
-  return {...state,assets:updatedAssets}
+  newAssetsWhole[state.currentPage].components = newAssets
+
+  return {...state, newAssets:newAssetsWhole}
 }
 
-export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE}
+function COMPONENT_BOXSHADOW(state = {}, action){
+
+  // let target = dc(state.newAssets[state.currentPage].components[action.payload.id]);
+  //
+  // let style = target.editStates[state.editState].style
+  //
+  // let x = (parseInt(style.width.slice(0,-2)) + parseInt(action.payload.w)) + 'px'
+  // let y = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
+  // let blur = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
+  // let spread = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
+  // let color =
+  //
+  // let updatedStyle = {...style,width:width,height:height}
+  //
+  // let newAssets = dc(state.newAssets[state.currentPage].components);
+  //
+  // target.editStates[state.editState].style = updatedStyle
+  //
+  // newAssets[action.payload.id] = target;
+  //
+  // let newAssetsWhole = {...state.newAssets}
+  //
+  // newAssetsWhole[state.currentPage].components = newAssets
+  //
+  // return {...state, newAssets:newAssetsWhole}
+
+  return state
+}
+
+function COMPONENT_STYLE_CHANGE(state = {}, action){
+
+  let component = dc(state.newAssets[state.currentPage].components[action.payload.payload.id]);
+
+  let newStyle = component.editStates[state.editState].style;
+
+  console.log(component.editStates.none.style.backgroundColor);
+
+  if(action.type === 'BG_COLOR'){
+
+    action.payload = action.payload.payload;
+    action.payload.component = component
+
+    newStyle = StyleChangeReducer.BG_COLOR(state,action);
+
+  }
+
+  if(action.type === 'BOX_SHADOW'){
+
+    action.payload = action.payload.payload;
+    action.payload.component = component
+
+    newStyle = StyleChangeReducer.BOX_SHADOW(state,action);
+
+  }
+
+
+  component.editStates[state.editState].style = newStyle
+
+  let newComponents = dc(state.newAssets[state.currentPage].components)
+
+  newComponents[action.payload.id] = component
+
+  let newAssetsWhole = dc(state.newAssets)
+
+  newAssetsWhole[state.currentPage].components = newComponents;
+
+  return {...state, newAssets:newAssetsWhole}
+
+}
+
+
+
+export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_BOXSHADOW, COMPONENT_STYLE_CHANGE}

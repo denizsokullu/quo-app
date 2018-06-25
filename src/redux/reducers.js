@@ -4,14 +4,14 @@ import _ from 'underscore';
 // import { getComponent } from '../parser/abstractComponent';
 
 import { UPLOAD_SKETCH } from './reducers/uploadSketch';
-import { VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE } from './reducers/component';
+import { VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE } from './reducers/component';
 import { KEY_UP, KEY_DOWN } from './reducers/keyControls';
 
 // import { dc } from './helpers';
 
 function reducer(state = {}, action){
   switch (action.type) {
-    
+
     case 'UPLOAD_SKETCH':
       return UPLOAD_SKETCH(state,action);
 
@@ -26,6 +26,11 @@ function reducer(state = {}, action){
 
     case 'COMPONENT_RESIZE':
       return COMPONENT_RESIZE(state,action);
+
+    case 'COMPONENT_STYLE_CHANGE':
+      //specify the action type
+      action.type = action.payload.type;
+      return COMPONENT_STYLE_CHANGE(state,action);
 
     case 'KEY_DOWN':
       return KEY_DOWN(state,action);

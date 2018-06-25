@@ -6,6 +6,9 @@ import ColorPicker from '../../inputElements/colorPicker';
 import { SketchPicker } from 'react-color';
 import {connect} from 'react-redux';
 
+import { COMPONENT_STYLE_CHANGE } from '../../../redux/actions';
+
+
 class Fill extends React.Component{
   constructor(props){
     super(props);
@@ -18,13 +21,18 @@ class Fill extends React.Component{
   }
 
   getColor(selection){
-    if(selection.data){
-      let color = selection.data.style.fills[0].color;
+    if(selection.editStates){
+
+      let color = (selection.editStates[selection.editStates.current].style.backgroundColor.split('(')[1].split(')')[0].split(',').map((color,i)=>{
+        if(i === 3) return parseFloat(color)
+        else return parseInt(color,10)
+      }))
+
       return {
-        r:parseInt(color.red*255,10),
-        g:parseInt(color.green*255,10),
-        b:parseInt(color.blue*255,10),
-        a:color.alpha
+        r:parseInt(color[0],10),
+        g:parseInt(color[1],10),
+        b:parseInt(color[2],10),
+        a:color[3],
       }
     }
     else{
@@ -37,12 +45,25 @@ class Fill extends React.Component{
   }
 
   handleChange = (color) => {
+
+    const { dispatch } = this.props
+    let c = this.state.color
+    let colorArr = [color.rgb.r - c.r ,color.rgb.g - c.g, color.rgb.b - c.b ,0]
     this.setState({ color: color.rgb })
+    dispatch(COMPONENT_STYLE_CHANGE('BG_COLOR',{bgColor:colorArr,id:this.state.selection.id}))
+
   };
 
   handleSliderChange = (alpha) => {
+
+    const { dispatch } = this.props
+    let colorArr = [0,0,0, alpha / 100  - this.state.color.a ]
+
+    dispatch(COMPONENT_STYLE_CHANGE('BG_COLOR',{bgColor:colorArr,id:this.state.selection.id}))
+
     let color = {...this.state.color}
-    color.a = alpha/100;
+    color.a = alpha / 100;
+
     this.setState({color:color});
   };
 
@@ -50,21 +71,19 @@ class Fill extends React.Component{
     this.setState({ displayColorPicker: !this.state.displayColorPicker })
   };
 
-
-
   render(){
     return(
       <div>
         <StyleCard title='Fill'>
           <ColorPicker title='Color' color={this.state.color} handleClick={ this.handleClick }/>
-          <SliderCore title='Opacity' step={1} min={0} max={100} value={parseInt(parseFloat(this.state.color.a)*100,10)} handleOnChange={this.handleSliderChange}/>
+          <SliderCore title='Opacity' step={1} min={0} max={100} value={parseInt(this.state.color.a*100,10)} handleOnChange={this.handleSliderChange}/>
           {/* <span className='opacity-text'>{parseInt(parseFloat(this.state.color.a)*100)}%</span> */}
           <TextInput title='' text={parseInt(parseFloat(this.state.color.a)*100,10)} type='percentage' after="%"/>
         </StyleCard>
         {
           this.state.displayColorPicker
             ?
-              <SketchPicker color={ this.state.color } onChange={ this.handleChange }/>
+              <SketchPicker color={ this.state.color } onChange={ this.handleChange.bind(this) }/>
             :
           null
         }
@@ -74,7 +93,10 @@ class Fill extends React.Component{
 }
 
 function mapStateToProps(state) {
-  return {selection:state.present.selection,editState:state.present.editState}
+
+  let component = state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
+
+  return { selection:component, editState:state.present.editState}
 }
 
 export default connect(mapStateToProps)(Fill)

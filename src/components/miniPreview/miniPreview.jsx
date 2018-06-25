@@ -23,13 +23,12 @@ class MiniPreview extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {isMinimized: false, docked:true, targetComponent:props.selection};
+    this.state = {isMinimized: false, docked:true, component:props.selection};
     this.handleMinimizeClick = this.handleMinimizeClick.bind(this);
   }
 
   componentWillReceiveProps(nextProps){
-    // console.log(nextProps.selection)
-    this.setState({targetComponent:nextProps.selection});
+    this.setState({component:nextProps.selection});
   }
 
   handleMinimizeClick() {
@@ -38,7 +37,7 @@ class MiniPreview extends React.Component{
     }));
   }
   renderPreviewComponent(){
-    return (<PreviewComponent id={this.state.targetComponent}/>)
+    return (<PreviewComponent id={this.state.component} component={this.state.component}/>)
   }
 
   render() {
@@ -70,8 +69,9 @@ class MiniPreview extends React.Component{
 }
 
 function mapStateToProps(state){
+    let component = state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
     return ({
-      selection:state.present.newSelection
+      selection:component
     });
 }
 

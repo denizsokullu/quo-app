@@ -3,6 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from "styled-components";
 
+function px2int(str){
+  return parseInt(str.slice(0,-2));
+}
+
 class PreviewComponentCore extends React.Component {
   constructor(props) {
 
@@ -15,7 +19,12 @@ class PreviewComponentCore extends React.Component {
     return {
       containerSize:{ w: 220, h: 150 },
       id:props.id,
+      component:props.component
     }
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({component:nextProps.component})
   }
 
   bindDOMActions(){
@@ -34,6 +43,7 @@ class PreviewComponentCore extends React.Component {
     }
 
     else if(components._class === 'page' || (components.shapeType && components.layers) || components._class === 'group'){
+
       //group container(more ComponentRenderers)
       if(this.props.isParent){
         this.setState({type:'parent'});
@@ -80,18 +90,22 @@ class PreviewComponentCore extends React.Component {
     let rInner = w/h;
     let rContainer = c.w / c.h;
 
-    return rContainer > rInner ? { w: w * c.h / h, h: c.h } : { w: c.w, h: h * c.w / w }
+    return rContainer > rInner ? { w: parseInt(w * c.h / h), h: parseInt(c.h) } : { w: parseInt(c.w), h: parseInt(h * c.w / w) }
   }
 
   getStyle() {
-    let size = this.computeDockedSize(500,500);
+    let states = this.state.component.editStates;
+    let style = states[this.state.component.editStates.current].style
+    let size = this.computeDockedSize(px2int(style.width),px2int(style.height));
     // a preview component applies the style from edit states into a const variable
+
     return (styled.div`
       width:${size.w}px;
       height:${size.h}px;
-      background-color: red;
+      background-color:${states['none'].style.backgroundColor};
+      border:${states['none'].style.border};
       &:hover {
-        background-color:blue;
+        background-color:${states['hover'].style.backgroundColor};
       }
     `);
 
@@ -137,7 +151,7 @@ class PreviewComponentCore extends React.Component {
   render(){
     const content = (
       <p>
-        HI
+
       </p>
     )
     return (this.renderWrapper(content));
@@ -366,22 +380,22 @@ class PreviewComponentCore extends React.Component {
 //   }
 // }
 //
-function mapStateToProps(state,ownProps) {
-  if(state.present.currentPage !== ''){
-      let data = state.present.newAssets[state.present.currentPage].components[ownProps.id];
-      return {
-                data:data,
-             }
-  }
-  else{
-    return {
-      data:{}
-    }
-  }
-
-
-}
+// function mapStateToProps(state,ownProps) {
+//   if(state.present.currentPage !== ''){
+//       let data = state.present.newAssets[state.present.currentPage].components[ownProps.id];
+//       return {
+//                 data:data,
+//              }
+//   }
+//   else{
+//     return {
+//       data:{}
+//     }
+//   }
 //
-const PreviewComponent = connect(mapStateToProps)(PreviewComponentCore);
+//
+// }
+// //
+// const PreviewComponent = connect(mapStateToProps)(PreviewComponentCore);
 
-export default PreviewComponent;
+export default PreviewComponentCore;

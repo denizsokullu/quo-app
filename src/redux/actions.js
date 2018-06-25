@@ -28,6 +28,11 @@ export const COMPONENT_SELECT = component => ({
   payload: component
 })
 
+export const COMPONENT_STYLE_CHANGE = (type,payload) => ({
+  type:'COMPONENT_STYLE_CHANGE',
+  payload: {type:type,payload:payload}
+})
+
 export const KEY_UP = keyData => ({
   type:'KEY_UP',
   payload: keyData

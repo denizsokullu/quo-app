@@ -19,7 +19,9 @@ class ComponentStates extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({selected:nextProps.editState});
+    this.setState({
+      selected:nextProps.editState,
+    });
   }
 
   render(){

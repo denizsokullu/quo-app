@@ -35,10 +35,14 @@ class SelectionFrame extends React.Component {
       let el = document.getElementById(nextProps.selection.id);
       let elDims = el.getBoundingClientRect();
       let style = window.getComputedStyle(el);
-      let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale
+
+      let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale;
+
+      let styleWidth = style.width.slice(0,-2);
+      let computedWidth = elDims.width - border;
 
       this.setState({
-        scale:(elDims.width - border) / nextProps.selection.frame.width
+        scale: computedWidth / styleWidth
       })
 
     }
@@ -75,7 +79,7 @@ class SelectionFrame extends React.Component {
     // )
 
     if(this.state.target){
-      let style = { transform:`scale(${1/this.state.scale})`}
+      let style = { transform:`scale(${parseInt(1/this.state.scale)})`}
       return(
         ReactDOM.createPortal(
 

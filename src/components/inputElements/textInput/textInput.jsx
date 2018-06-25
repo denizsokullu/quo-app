@@ -26,7 +26,7 @@ export default class TextInput extends React.Component{
     keyPress(e){
       if(e.key === 'Enter'){
         e.currentTarget.blur();
-        if(this.props.type === 'percentage' && this.state.value.slice(-1) !== '%'){
+        if(this.props.type === 'percentage'){
           this.setState({value:this.state.value + '%'});
         }
         this.props.onChange(this.state.value,this.props.title,true);

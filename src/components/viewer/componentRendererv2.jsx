@@ -113,6 +113,8 @@ class ComponentRendererCore extends React.Component {
       id:nextProps.summary.id,
       components:nextProps.components,
       layers:nextProps.summary,
+      selection:nextProps.selection,
+      editState:nextProps.editState
     })
     //new properties
     // this.setState({
@@ -162,27 +164,6 @@ class ComponentRendererCore extends React.Component {
     }
   }
 
-  onDrag(e,data){
-
-  }
-
-  // onDragStop(e, data) {
-  //
-  //   //There are 2 cases, one for root elements,
-  //   //one for groups
-  //   const { dispatch } = this.props;
-  //   const dispatchData = {component:this.state.data,data:data,e:e}
-  //   const currentPosition = this.getPosition();
-  //   // console.log(parseInt(currentPosition.x),parseInt(currentPosition.y),data.lastX,data.lastY);
-  //   const delta = {x:parseInt(currentPosition.x,10) - data.lastX, y:parseInt(currentPosition.y,10) - data.lastY };
-  //   // console.log(delta);
-  //   if(delta.x || delta.y){
-  //     dispatch(COMPONENT_MOVE(dispatchData));
-  //     this.onClick(e);
-  //   }
-  //
-  // }
-
   generateKey(){
     return uuidv1();
   }
@@ -230,7 +211,7 @@ class ComponentRendererCore extends React.Component {
 
   onMouseUp(e){
 
-    if(this.state.drag.offset.x != 0 || this.state.drag.offset.y != 0){
+    if(this.state.drag.offset.x !== 0 || this.state.drag.offset.y !== 0){
       const { dispatch } = this.props;
       dispatch(COMPONENT_MOVE({...this.state.drag.offset,id:this.state.id}));
     }
@@ -281,7 +262,6 @@ class ComponentRendererCore extends React.Component {
 
   handleDoubleClick(){
     // console.log('yo')
-    // alert('hello');
   }
 
   calcDragOffset(style){
@@ -304,8 +284,10 @@ class ComponentRendererCore extends React.Component {
 
     }
 
+    let selectedClass = this.isSelected() ? 'selected' : '';
+
     return (
-      <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class}`} id={this.state.id}
+      <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
         style={style}
         onClick={this.onClick}
         ref='handle'
@@ -555,8 +537,9 @@ function mapStateToProps(state,ownProps) {
 
   return {
             controller:state.present.controller,
+            components:components,
+            selection:state.present.newSelection,
             editState:state.present.editState,
-            components:components
          }
 }
 

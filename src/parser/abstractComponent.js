@@ -134,7 +134,7 @@ export class AbstractComponentSimple{
     let r = parseInt(color.red * 255)
     let g = parseInt(color.green * 255)
     let b = parseInt(color.blue * 255)
-    let a = parseInt(color.alpha * 255)
+    let a = color.alpha
     return `rgba(${r},${g},${b},${a})`
   }
 
@@ -180,6 +180,7 @@ export class AbstractComponentSimple{
           fill.backgroundColor = colorCSS;
         }
       }
+
       //case for the artboard
       if(this.isArtboard && data.backgroundColor){
         let colorCSS = this.generateColor(data.backgroundColor);
@@ -258,7 +259,6 @@ export class AbstractComponentSimple{
         fontStyling.fontFamily = `'${this.textData.fontName}',sans-serif`;
         let c = this.textData.color;
         fontStyling.color = `rgba{${c.r},${c.g},${c.b},${c.a}}`;
-        console.log(fontStyling);
       }
 
       ///////////
@@ -273,6 +273,8 @@ export class AbstractComponentSimple{
                             boxShadow,
                             fontStyling);
     }
+
+
     return ({
         ...position,
         ...styles
@@ -389,7 +391,7 @@ export class AbstractComponent{
     let r = parseInt(color.red * 255)
     let g = parseInt(color.green * 255)
     let b = parseInt(color.blue * 255)
-    let a = parseInt(color.alpha * 255)
+    let a = color.alpha
     return `rgba(${r},${g},${b},${a})`
   }
 
