@@ -334,7 +334,6 @@ class ComponentRendererCore extends React.Component {
 
     return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
 
-    // console.log(this.props.enableParentDragging,this.props.disableParentDragging)
     // let innerDOM = (<div
     //   className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
     //   style={this.getStyle()}

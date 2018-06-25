@@ -97,6 +97,8 @@ class PreviewComponentCore extends React.Component {
     let states = this.state.component.editStates;
     let style = states[this.state.component.editStates.current].style
     let size = this.computeDockedSize(px2int(style.width),px2int(style.height));
+
+    console.log(states['none'].style.borderRadius);
     // a preview component applies the style from edit states into a const variable
 
     return (styled.div`
@@ -104,20 +106,11 @@ class PreviewComponentCore extends React.Component {
       height:${size.h}px;
       background-color:${states['none'].style.backgroundColor};
       border:${states['none'].style.border};
+      border-radius:${states['none'].style.borderRadius}
       &:hover {
         background-color:${states['hover'].style.backgroundColor};
       }
     `);
-
-    // if(this.props.isParent){
-    //   return;
-    // }
-    // if(this.isSelected()){
-    //   return this.state.components.editStates[this.state.editState].style;
-    // }
-    // else{
-    //   return this.state.components.editStates['none'].style;
-    // }
   }
 
   // onFocus(){

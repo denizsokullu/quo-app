@@ -7,6 +7,23 @@
 @import 'layers/layers';
 @import 'size/size';
 @import 'position/position';
+span[class*='MuiCheckbox']{
+  width:18px;
+  height:18px;
+}
+span[class*='MuiCheckbox'] > span[class*='Button']{
+  color:white;
+  width:18px;
+  height:18px;
+  svg {
+    width:18px;
+    height:18px;
+  }
+}
+span[class*='MuiCheckbox-checked'] > span{
+  color:white;
+}
+
 
 .style-card, .layer-card {
 
