@@ -1,0 +1,32 @@
+.selection-frame{
+
+  $border-thickness:7px;
+  $border-offset:-5px;
+
+  width:$border-thickness;
+  height:$border-thickness;
+  background-color:white;
+  box-shadow:0px 0px 1px rgba(0,0,0,.3);
+  border:1px solid rgba(0,0,0,.3);
+  position:absolute;
+
+
+  &.top{
+    top:$border-offset;
+  }
+  &.left{
+    left:$border-offset;
+  }
+  &.right{
+    right:$border-offset;
+  }
+  &.bottom{
+    bottom:$border-offset;
+  }
+  &.middle-w{
+    left:calc(50% + #{$border-offset});
+  }
+  &.middle-h{
+    top:calc(50% + #{$border-offset});
+  }
+}

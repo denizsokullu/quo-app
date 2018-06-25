@@ -1,0 +1,40 @@
+.text-input {
+  padding:0px 0px 0px 8px;
+  display:inline-block;
+
+  .text-input-title {
+
+    color:$color-text-3;
+    font-size:$card-body-title;
+    text-transform:uppercase;
+    padding-left:6px;
+    user-select:none;
+
+  }
+
+  input {
+
+    width:32px;
+
+    position:relative;
+    top:-7px;
+
+    background-color:transparent;
+    color:$color-text-2;
+    border:1px solid transparent;
+    font-size:$card-body-main-text;
+    border-radius:4px;
+    padding:4px;
+
+
+    &:hover, &:focus {
+      background-color:$color-bg-5;
+    }
+
+    &:focus {
+      border:1px solid $color-slider-fill;
+      outline:none;
+    }
+  }
+
+}

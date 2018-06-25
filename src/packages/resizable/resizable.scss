@@ -1,0 +1,24 @@
+.dragger-wrapper{
+
+  height:100%;
+  width:100%;
+  position:absolute;
+
+  .resizable-dragger{
+
+    position:absolute;
+    width:6px;
+    height:100%;
+    z-index:99;
+
+    &:hover{
+      cursor:ew-resize;
+    }
+
+    &.right {
+      right:-2px;
+    }
+
+  }
+
+}

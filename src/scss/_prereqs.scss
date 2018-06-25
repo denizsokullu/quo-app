@@ -113,11 +113,34 @@ $top-bar-height:44px;
 
 }
 
+body, html, #root {
+  font-family: 'Helvetica Neue', Helvetica, Arial, Roboto;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
 //Font
 body {
+
+  margin:0px;
+  overflow: hidden;
+  background-color:$color-viewer-bg;
+
   * {
     font-family:"Roboto", sans-serif;
   }
+
+}
+
+.quo-content {
   overflow: hidden;
-  background-color:$color-viewer-bg;
+  width:100vw;
+  height:100vh;
+  .quo-container {
+    height:100%;
+    width:100%;
+  }
 }

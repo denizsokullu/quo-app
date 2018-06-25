@@ -1,31 +1,36 @@
-/** Pink Components **/
-// @import '~@connections/pink-components/src/globals/scss/styles.scss';
-
-/** Pages **/
 @import "prereqs";
-@import "../pages/base/index.scss";
-@import "../internal/components/previewWindow/previewWindow";
+
+@import "../components/previewWindow/previewWindow";
 
 //UI
-@import "../internal/components/sideBar/sideBar";
-@import "../internal/components/topBar/topBar";
-@import "../internal/components/buttons/buttons";
-@import "../internal/components/dropzone/dropzoneContainer";
-@import "../internal/components/viewer/viewer";
+@import "../components/sideBar/sideBar";
+@import "../components/topBar/topBar";
+@import "../components/buttons/buttons";
+@import "../components/dropzone/dropzoneContainer";
+@import "../components/viewer/viewer";
 
 // Component State Bar
-@import "../internal/components/componentStates/componentStates";
+@import "../components/componentStates/componentStates";
 
 // StyleCard
-@import "../internal/components/styleCard/styleCard";
+@import "../components/styleCard/styleCard";
 
 //Mini Preview
-@import "../internal/components/miniPreview/miniPreview";
-@import "../internal/components/previewComponent/previewComponent";
+@import "../components/miniPreview/miniPreview";
+@import "../components/previewComponent/previewComponent";
 
 // Input Elements
-@import "../internal/components/inputElements/slider/sliderCore";
-@import "../internal/components/inputElements/textInput/textInput";
-@import "../internal/components/inputElements/colorPicker/colorPicker";
-// /** Typography **/
-// @import "typography/index.scss";
+@import "../components/inputElements/slider/sliderCore";
+@import "../components/inputElements/textInput/textInput";
+@import "../components/inputElements/colorPicker/colorPicker";
+
+
+//New Formatting
+
+// Components
+@import '../components/styles';
+
+
+//Packages
+
+@import '../packages/styles';

@@ -1,0 +1,42 @@
+.component-states-container {
+
+  border-radius:8px;
+  background-color:$color-button-bg;
+  display:flex;
+  margin-bottom:0!important;
+
+  .component-state-box {
+
+    font-size:$button-font-size;
+    font-weight:300;
+    display:inline-block;
+      letter-spacing: 0.4px;
+    width:25%;
+    box-sizing:border-box;
+    text-align:center;
+    padding:calc(.5rem - 1px);
+    color:$color-text-2;
+    border-right:2px solid $color-button-border;
+    user-select: none;
+
+    &:hover {
+      cursor:pointer;
+      background-color:$color-button-hover;
+    }
+
+    &:first-child {
+      border-radius:8px 0 0 8px;
+    }
+
+    &:last-child {
+      border-radius:0 8px 8px 0;
+      border-color:transparent;
+    }
+
+    &.component-state-selected {
+      background-color:$color-slider-fill;
+    }
+
+  }
+
+}

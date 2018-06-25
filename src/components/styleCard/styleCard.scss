@@ -1,0 +1,164 @@
+@import 'border/border';
+@import 'copyState/copyState';
+@import 'fill/fill';
+@import 'movement/movement';
+@import 'scale/scale';
+@import 'shadow/shadow';
+@import 'layers/layers';
+@import 'size/size';
+@import 'position/position';
+
+.style-card, .layer-card {
+
+  border-radius:8px;
+  background-color:$color-bg-3;
+  display:inline-block;
+  width:100%;
+
+  &.half-width {
+
+    width:calc(50% - .25rem);
+
+    // This is bad - find a better fix for it...
+    &:nth-child(2n+1) {
+
+      margin-right:.5rem;
+
+    }
+
+  }
+
+  &.disabled-style {
+
+    .style-card-body {
+
+      opacity:.3;
+      filter: grayscale(100%);
+      pointer-events: none;
+
+    }
+
+  }
+
+  .style-card-header {
+
+    @include CardHeader;
+
+    .check-default {
+      width:24px!important;
+      height:24px!important;
+      transform:scale(.75);
+      position:relative;
+      left:2px;
+    }
+
+    @include Checkbox;
+
+  }
+
+  .style-card-body {
+
+    display:flex;
+
+    padding:.75rem .75rem .5rem .75rem;
+
+  }
+
+}
+
+.layer-card {
+
+  margin-bottom:.5rem;
+  position:relative;
+  overflow:hidden;
+
+  .layer-card-body {
+
+    padding:0;
+    margin-bottom:0!important;
+    display:block;
+
+  }
+
+  .style-card-header {
+
+    margin-bottom:0!important;
+
+  }
+
+}
+
+
+.content-pages {
+
+  .layer-card-body {
+    display:block;
+  }
+
+  .left-side-header {
+
+    display:flex;
+    justify-content: center;
+
+    span {
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+    .page-count {
+
+      margin-left:.5rem;
+
+      font-weight:300;
+      line-height:11.5px;
+
+      height:13.5px;
+      width:13.5px;
+      align-items: flex-start;
+
+      box-sizing:border-box;
+      border:2px solid white;
+      border-radius:2px;
+
+      &.small {
+
+        font-size:6px;
+        line-height:10px;
+
+      }
+
+      &.large {
+
+        font-size:8px;
+
+      }
+
+    }
+
+  }
+
+
+    .add-page {
+
+      width:18px;
+      height:18px;
+
+      svg {
+
+        width:18px;
+        height:18px;
+
+      }
+
+      &:hover {
+
+        cursor:pointer;
+
+      }
+
+    }
+
+}
