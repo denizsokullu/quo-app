@@ -292,6 +292,11 @@ class Viewer extends React.Component {
 }
 
 function mapStateToProps(state) {
+  if(_.isEmpty(state.present.newAssets)) {
+    return {
+      controller:state.present.controller,
+    }
+  }
   return {
     data: state.present.assets.data,
     controller:state.present.controller,

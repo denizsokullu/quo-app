@@ -37,6 +37,7 @@ class Position extends React.Component{
   }
 
   render(){
+
     return(
       this.state.selection !== '' ?
       <StyleCard title='Position'>

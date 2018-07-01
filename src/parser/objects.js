@@ -78,6 +78,8 @@ class Page extends ComponentCore{
       this.traverseComponents(artboard);
     });
 
+    console.log(this.components);
+
   }
 
   traverseComponents(component){

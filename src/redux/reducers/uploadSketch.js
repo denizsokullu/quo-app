@@ -7,6 +7,9 @@ import { sketchParser,
          // Component
         } from '../../parser';
 
+
+import { firebase } from '../../firebase';
+
 function addPage(state,page){
 
     let newPage = new Page(page);
@@ -35,7 +38,6 @@ export function UPLOAD_SKETCH(state = {}, action){
     }
 
     return {...state,
-            assets:newAssets,
             newAssets:newNewAssets,
             currentPage:newCurrentPage
            }

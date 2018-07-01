@@ -19,12 +19,16 @@ class PreviewComponentCore extends React.Component {
     return {
       containerSize:{ w: 220, h: 150 },
       id:props.id,
-      component:props.component
+      component:props.component,
+      hovered:false,
+      pressed:false,
+      focused:false
     }
   }
 
   componentWillReceiveProps(nextProps){
     this.setState({component:nextProps.component})
+    console.log('change happened')
   }
 
   bindDOMActions(){
@@ -58,29 +62,6 @@ class PreviewComponentCore extends React.Component {
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState({
-  //     components:nextProps.components,
-  //     layers:nextProps.summary
-  //   });
-  // }
-
-  // getPosition(){
-  //   let frame = this.getStyle();
-  //   return {
-  //     x: parseInt(frame.left.slice(0,-2)),
-  //     y: parseInt(frame.top.slice(0,-2))
-  //   }
-  // }
-  //
-  // getDimensions(){
-  //   let frame = this.getStyle();
-  //   return {
-  //     height: parseInt(frame.height.slice(0,-2)),
-  //     width: parseInt(frame.width.slice(0,-2))
-  //   }
-  // }
-
 
   // Returns a size that fits into the docked container.
   // Keeps aspect ratio for the element.
@@ -93,52 +74,105 @@ class PreviewComponentCore extends React.Component {
     return rContainer > rInner ? { w: parseInt(w * c.h / h), h: parseInt(c.h) } : { w: parseInt(c.w), h: parseInt(h * c.w / w) }
   }
 
-  getStyle() {
+  mouseDownHandler(){
+    this.setState({focused:false,pressed:true})
+  }
+
+  mouseUpHandler(){
+    this.setState({focused:true,pressed:false})
+  }
+
+  mouseEnterHandler(){
+    this.setState({hovered:true})
+  }
+
+  mouseLeaveHandler(){
+    this.setState({hovered:false})
+  }
+
+  resetInteraction(){
+    this.setState({focused:false,pressed:false})
+  }
+
+
+  convertCSSRule(rule){
+
+    const callback = (dashChar, char) => { return '-' + dashChar.toLowerCase() };
+
+    const pattern = /[A-Z]/g;
+
+    return rule.replace(pattern, callback);
+
+  }
+
+  generateStyleChunks(styles,watchList){
+    let styleChunk = ``;
+    let convertedCSSPropertiesTable = Object.keys(styles).map(property => {
+      if(!watchList.includes(property)){
+        let convertedProperty = this.convertCSSRule(property);
+        styleChunk += `${convertedProperty}:${styles[property]};\n`
+      }
+    })
+    return styleChunk;
+  }
+
+  generateBoundaries(){
+
+  }
+
+  generateComponent() {
+
+
     let states = this.state.component.editStates;
+
     let style = states[this.state.component.editStates.current].style
     let size = this.computeDockedSize(px2int(style.width),px2int(style.height));
 
-    console.log(states['none'].style.borderRadius);
     // a preview component applies the style from edit states into a const variable
 
-    return (styled.div`
+    const Component = (styled.div`
       width:${size.w}px;
       height:${size.h}px;
-      background-color:${states['none'].style.backgroundColor};
-      border:${states['none'].style.border};
-      border-radius:${states['none'].style.borderRadius}
-      &:hover {
-        background-color:${states['hover'].style.backgroundColor};
+      ${this.generateStyleChunks(states['none'].style,['width','height'])}
+      &.hovered {
+        ${this.generateStyleChunks(states['hover'].style,['width','height'])}
       }
-    `);
+      &.pressed{
+        ${this.generateStyleChunks(states['pressed'].style,['width','height'])}
+      }
+      &.focused{
+        ${this.generateStyleChunks(states['focused'].style,['width','height'])}
+      }
+    `)
+
+    return Component
   }
 
-  // onFocus(){
-  //   let oldState = this.state.clicked
-  //   this.setState({clicked:!oldState});
-  // }
-
-  // onClick(e){
-  //   if(!this.props.isParent && this.state.components._class != 'artboard'){
-  //     e.stopPropagation();
-  //     const { dispatch } = this.props;
-  //     dispatch(COMPONENT_SELECT(this.state.id));
-  //   }
-  // }
-
-  // handleDoubleClick(){
-  //   console.log('yo')
-  //   alert('hello');
-  // }
-
   renderWrapper(content){
-    let StyleWrapper = this.getStyle();
+
+    const PreviewComponent = this.generateComponent();
+
+    const focusedClass = this.state.focused ? 'focused' : ''
+    const pressedClass = this.state.pressed ? 'pressed' : ''
+    const hoveredClass = this.state.hovered ? 'hovered' : ''
+
+    // currently creates a div only = make it so that the render
+    // calls previewComponentCore for the inner components as well.
+    // Also instead of changing the width of the element, the scaling should
+    // be done by the container.
+
     return (
-      <div className={`preview-component-container`}>
-        <StyleWrapper>
-          { content }
-        </StyleWrapper>
+      <React.Fragment>
+      <div className={`preview-component-container`} onClick={this.resetInteraction.bind(this)}>
+        <PreviewComponent
+          onMouseDown={this.mouseDownHandler.bind(this)}
+          onMouseUp={this.mouseUpHandler.bind(this)}
+          onMouseEnter={this.mouseEnterHandler.bind(this)}
+          onMouseLeave={this.mouseLeaveHandler.bind(this)}
+          className={`${hoveredClass} ${pressedClass} ${focusedClass}`}>
+        </PreviewComponent>
       </div>
+      </React.Fragment>
     )
   }
   render(){

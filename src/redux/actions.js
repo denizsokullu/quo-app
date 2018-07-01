@@ -33,6 +33,11 @@ export const COMPONENT_STYLE_CHANGE = (type,payload) => ({
   payload: {type:type,payload:payload}
 })
 
+export const DATABASE_ACTION = (type,payload) => ({
+  type:'DATABASE_ACTION',
+  payload: {type:type,payload:payload}
+})
+
 export const KEY_UP = keyData => ({
   type:'KEY_UP',
   payload: keyData

@@ -27,9 +27,12 @@ const data = {
 }
 
 const store_initial = {
-  past: [],
-  present: data, // (?) How do we initialize the present?
-  future: [],
+  // main:{
+    past: [],
+    present: data, // (?) How do we initialize the present?
+    future: [],
+  // },
+  routing: {},
 }
 
 export { store_initial }

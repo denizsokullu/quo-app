@@ -192,7 +192,7 @@ class SideBarRight extends Component {
   }
 
   onClickAddToArr() {
-    // console.log('Clicked add to arrangement...')
+
   }
 
   render() {

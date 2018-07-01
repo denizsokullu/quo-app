@@ -19,6 +19,10 @@ import ExpandLessIcon from 'material-ui-icons/ExpandLess';
 //Share
 import ReplyIcon from 'material-ui-icons/Reply';
 
+import { push } from 'react-router-redux'
+
+
+
 class MiniPreview extends React.Component{
 
   constructor(props) {
@@ -40,6 +44,11 @@ class MiniPreview extends React.Component{
     return (<PreviewComponent id={this.state.component} component={this.state.component}/>)
   }
 
+  openInNewTab(url) {
+     const { dispatch } = this.props;
+     dispatch(push(url));
+  }
+
   render() {
     let prefix = 'mini-prev';
     let minimized = this.state.isMinimized ? 'minimized' : '';
@@ -53,7 +62,7 @@ class MiniPreview extends React.Component{
             </span>
             <span className='right-side-icons'>
               <span className='flip'>
-                <ReplyIcon/>
+                <ReplyIcon onClick={()=>{this.openInNewTab('/p/C03346FF-82E0-4926-89F2-202F119F7D8D/E92A0DF7-FC86-4747-A089-3DDA40683D16')}}/>
               </span>
 
               <PictureInPictureAltIcon/>

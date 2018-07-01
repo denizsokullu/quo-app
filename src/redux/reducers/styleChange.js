@@ -6,8 +6,7 @@ function BOX_SHADOW(state,action){
 
   let bsDelta = action.payload.boxShadow;
   let bsInit = style.boxShadow.split(' ');
-
-  //example [0,0,0,0,[255,255,255,255]]
+  
   //x
   bsInit[0] = px2int(bsInit[0]);
   //y
@@ -49,10 +48,6 @@ function BG_COLOR(state,action){
 
 function getStyle(component){
   return component.editStates[component.editStates.current].style
-}
-
-function getComponent(state,id){
-  return state.newAssets[state.currentPage].components[id];
 }
 
 function px2int(str){

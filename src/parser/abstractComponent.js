@@ -17,7 +17,11 @@ export class AbstractComponentSimple{
     this.frame = data.frame;
     this.id = data.do_objectID
     this._class = data._class;
-    this.style = data.style;
+
+    if(data.style){
+      this.style = data.style;
+    }
+
 
     //Define grouping state for the component
     this.isGroupObject = false;
@@ -52,17 +56,20 @@ export class AbstractComponentSimple{
           this.textData.text = data[2];
           this.textData.fontSize = data[16];
           this.textData.fontName = data[17];
+          let mapping = data[20];
 
-          if(typeof data[26] === 'object'){
-            this.textData.color = {r:255,g:255,b:255,a:1};
-          }
-          else{
-            let r = parseInt(data[25] * 255)
-            let g = parseInt(data[28] * 255)
-            let b = parseInt(data[27] * 255)
-            let a = data[26].toFixed(3);
-            this.textData.color = {r:r,g:g,b:b,a:a};
-          }
+          let rLoc = mapping['NS.objects'][0];
+          let aLoc = mapping['NS.objects'][1];
+          let bLoc = mapping['NS.objects'][2];
+          let gLoc = mapping['NS.objects'][3];
+
+          let r = parseInt(data[rLoc] * 255)
+          let g = parseInt(data[gLoc] * 255)
+          let b = parseInt(data[bLoc] * 255)
+          let a = parseFloat(data[aLoc].toFixed(3));
+
+          this.textData.color = {r:r,g:g,b:b,a:a};
+
         }
       this.createCSS(data);
       });
@@ -258,6 +265,7 @@ export class AbstractComponentSimple{
         fontStyling.fontSize = this.textData.fontSize
         fontStyling.fontFamily = `'${this.textData.fontName}',sans-serif`;
         let c = this.textData.color;
+        console.log(c);
         fontStyling.color = `rgba{${c.r},${c.g},${c.b},${c.a}}`;
       }
 
@@ -302,7 +310,9 @@ export class AbstractComponent{
     this.id = data.do_objectID
     this._class = data._class;
     this.layers = [];
-    this.style = data.style;
+    if(data.style){
+      this.style = data.style;
+    }
 
     //check the inner layer element of a shapeGroup to get the type.
     if(this._class === 'shapeGroup'){
@@ -327,16 +337,19 @@ export class AbstractComponent{
           this.textData.fontSize = data[16];
           this.textData.fontName = data[17];
 
-          if(typeof data[26] === 'object'){
-            this.textData.color = {r:255,g:255,b:255,a:1};
-          }
-          else{
-            let r = parseInt(data[25] * 255)
-            let g = parseInt(data[28] * 255)
-            let b = parseInt(data[27] * 255)
-            let a = data[26].toFixed(3);
-            this.textData.color = {r:r,g:g,b:b,a:a};
-          }
+          let mapping = data[20];
+
+          let rLoc = mapping['NS.objects'][0];
+          let aLoc = mapping['NS.objects'][1];
+          let bLoc = mapping['NS.objects'][2];
+          let gLoc = mapping['NS.objects'][3];
+
+          let r = parseInt(data[rLoc] * 255)
+          let g = parseInt(data[gLoc] * 255)
+          let b = parseInt(data[bLoc] * 255)
+          let a = parseFloat(data[aLoc].toFixed(3));
+
+          this.textData.color = {r:r,g:g,b:b,a:a};
         }
       this.createCSS(data);
       });

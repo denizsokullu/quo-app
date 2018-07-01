@@ -7,6 +7,8 @@ import { UPLOAD_SKETCH } from './reducers/uploadSketch';
 import { VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE } from './reducers/component';
 import { KEY_UP, KEY_DOWN } from './reducers/keyControls';
 
+import { DATABASE_ACTION } from './reducers/database';
+
 // import { dc } from './helpers';
 
 function reducer(state = {}, action){
@@ -32,6 +34,8 @@ function reducer(state = {}, action){
       action.type = action.payload.type;
       return COMPONENT_STYLE_CHANGE(state,action);
 
+    case 'DATABASE_ACTION':
+      return DATABASE_ACTION(state,action);
     case 'KEY_DOWN':
       return KEY_DOWN(state,action);
 

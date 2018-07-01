@@ -5,6 +5,7 @@
   "dependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "bplist": "0.0.4",
+    "firebase": "^5.2.0",
     "html-loader": "^0.4.5",
     "jszip": "^3.1.5",
     "markdown-loader": "^2.0.0",
@@ -19,6 +20,7 @@
     "react-rangeslider": "^2.2.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "4.1.1",
+    "react-router-redux": "^4.0.8",
     "reactcss": "^1.2.3",
     "redux": "^3.7.2",
     "redux-ignore": "^1.2.5",
@@ -124,9 +126,9 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "array-callback-return" : "off",
-      "radix" : "off",
-      "no-unused-vars" : "off"
+      "array-callback-return": "off",
+      "radix": "off",
+      "no-unused-vars": "off"
     }
   }
 }

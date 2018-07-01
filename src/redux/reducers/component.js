@@ -124,16 +124,19 @@ function COMPONENT_BOXSHADOW(state = {}, action){
 
 function COMPONENT_STYLE_CHANGE(state = {}, action){
 
-  let component = dc(state.newAssets[state.currentPage].components[action.payload.payload.id]);
+  let component = getComponentFromState(state,action)
 
   let newStyle = component.editStates[state.editState].style;
 
-  console.log(component.editStates.none.style.backgroundColor);
+  //replace the payload with the actual style change payload
+
+  action.payload = action.payload.payload;
+
+  // add the component for better use
+
+  action.payload.component = component
 
   if(action.type === 'BG_COLOR'){
-
-    action.payload = action.payload.payload;
-    action.payload.component = component
 
     newStyle = StyleChangeReducer.BG_COLOR(state,action);
 
@@ -141,25 +144,26 @@ function COMPONENT_STYLE_CHANGE(state = {}, action){
 
   if(action.type === 'BOX_SHADOW'){
 
-    action.payload = action.payload.payload;
-    action.payload.component = component
-
     newStyle = StyleChangeReducer.BOX_SHADOW(state,action);
 
   }
 
-
   component.editStates[state.editState].style = newStyle
 
-  let newComponents = dc(state.newAssets[state.currentPage].components)
+  return addUpdatedComponentToState(state,action,component)
 
-  newComponents[action.payload.id] = component
+}
 
-  let newAssetsWhole = dc(state.newAssets)
+function getComponentFromState(state,action){
 
-  newAssetsWhole[state.currentPage].components = newComponents;
+  return dc(state.newAssets[state.currentPage].components[action.payload.payload.id]);
 
-  return {...state, newAssets:newAssetsWhole}
+}
+
+function addUpdatedComponentToState(state,action,component){
+
+  state.newAssets[state.currentPage].components[action.payload.id] = component
+  return {...state}
 
 }
 
