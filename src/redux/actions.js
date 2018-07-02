@@ -1,3 +1,5 @@
+import { firebase } from '../firebase';
+
 export const UPLOAD_SKETCH = uploadData => ({
   type: 'UPLOAD_SKETCH',
   payload: uploadData
@@ -37,6 +39,19 @@ export const DATABASE_ACTION = (type,payload) => ({
   type:'DATABASE_ACTION',
   payload: {type:type,payload:payload}
 })
+
+export const TEST_TIMEOUT = () => {
+  return (dispatch) => {
+    setTimeout(()=>{
+      firebase.database.ref('/testing').push('test').then(
+        (err)=>{
+          dispatch(DATABASE_ACTION('CLEAR_VIEWER',{}));
+        }
+      )
+    },2000)
+
+  }
+}
 
 export const KEY_UP = keyData => ({
   type:'KEY_UP',

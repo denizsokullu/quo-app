@@ -11,10 +11,15 @@ const PUSH_PROJECT = (state,action) => {
   let pageId = action.payload.id;
   let pageObj = getPage(state,pageId);
   firebase.database.ref('/projects').push(state.newAssets);
-  //retrieve the page, and push a ref with the id to the core database
+  // //retrieve the page, and push a ref with the id to the core database
   return state
 
+
+
 }
+
+
+
 
 const PULL_PROJECT_ASYNC = (state,action) => {
 

@@ -1,5 +1,7 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import undoable, { excludeAction } from 'redux-undo';
+
+import thunk from 'redux-thunk';
 
 //Redux imports
 import { store_initial } from './state';
@@ -37,7 +39,11 @@ function configureStore(initialState = {}) {
     //     routing:routerReducer
     //   }),
     initialState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    compose(
+      applyMiddleware(thunk),
+      window.devToolsExtension ? window.devToolsExtension() : f => f
+    ),
+
   );
   return store;
 };

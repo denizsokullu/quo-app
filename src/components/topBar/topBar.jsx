@@ -2,7 +2,7 @@ import React from 'react'
 
 import { ButtonCore } from '../buttons/buttons';
 import { connect } from 'react-redux';
-import { DATABASE_ACTION } from '../../redux/actions';
+import { DATABASE_ACTION, TEST_TIMEOUT } from '../../redux/actions';
 
 class TopBar extends React.Component {
 
@@ -20,7 +20,7 @@ class TopBar extends React.Component {
   }
   pushProject(){
     const { dispatch } = this.props;
-    dispatch(DATABASE_ACTION('PUSH_PROJECT',{}))
+    dispatch(TEST_TIMEOUT())
   }
 
   render(){
