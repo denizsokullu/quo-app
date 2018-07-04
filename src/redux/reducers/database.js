@@ -7,19 +7,11 @@ const getPage = (state,id) => {
 }
 
 const PUSH_PROJECT = (state,action) => {
-
-  let pageId = action.payload.id;
-  let pageObj = getPage(state,pageId);
-  firebase.database.ref('/projects').push(state.newAssets);
+  //if the newAssets is empty, the push is no-op
+  firebase.database.ref('/mainProject').set({...state.newAssets});
   // //retrieve the page, and push a ref with the id to the core database
   return state
-
-
-
 }
-
-
-
 
 const PULL_PROJECT_ASYNC = (state,action) => {
 
@@ -48,13 +40,21 @@ const CLEAR_VIEWER = (state,action) => {
 
 }
 
+const RETRIEVE_COMPONENT_FINISH = (state,action) => {
+  if(action.payload.status)   return {...state, previewLink:{received:true,component:action.payload.payload}};
+  return {...state,previewLink:{received:false,component:null}};
+}
+
+const RETRIEVE_MAIN_PROJECT_FINISH = (state,action) => {
+  if(action.payload.status) return {...state, newAssets:action.payload.project,currentPage:Object.keys(action.payload.project)[0]};
+  return state;
+}
+
 const DATABASE_ACTION = (state,action) => {
 
   let type = action.payload.type;
   let payload = action.payload.payload;
   let newAction = {type:type,payload:payload}
-
-  console.log(newAction)
 
   switch (type) {
 
@@ -66,6 +66,10 @@ const DATABASE_ACTION = (state,action) => {
       return UPDATE_PROJECT(state,newAction);
     case 'CLEAR_VIEWER':
       return CLEAR_VIEWER(state,newAction);
+    case 'RETRIEVE_COMPONENT_FINISH':
+      return RETRIEVE_COMPONENT_FINISH(state,newAction)
+    case 'RETRIEVE_MAIN_PROJECT_FINISH':
+      return RETRIEVE_MAIN_PROJECT_FINISH(state,newAction)
     default:
       return state;
 

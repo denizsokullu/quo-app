@@ -59,12 +59,15 @@ class Page extends ComponentCore{
 
     this.layers = {};
 
+    this.testLayers = [];
+
     data.layers.map(component => {
       //check if it is an artboard
       //only add things on the artboards
       if(component._class === 'artboard'){
         let newArtboard = new Artboard(component);
         this.layers[newArtboard.id] = newArtboard;
+        this.testLayers.push(newArtboard);
       }
     });
 
@@ -74,7 +77,6 @@ class Page extends ComponentCore{
 
     Object.keys(this.layers).map(id => {
       let artboard = this.layers[id];
-      // dc
       this.traverseComponents(artboard);
     });
 

@@ -36,6 +36,7 @@ function reducer(state = {}, action){
 
     case 'DATABASE_ACTION':
       return DATABASE_ACTION(state,action);
+      
     case 'KEY_DOWN':
       return KEY_DOWN(state,action);
 

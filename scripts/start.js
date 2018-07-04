@@ -40,6 +40,15 @@ var DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
 var compiler;
 var handleCompile;
 
+const memwatch = require('memwatch-next');
+
+console.log('loading memwatch');
+
+memwatch.on('leak', (info) => {
+  console.error('Memory leak detected:\n', info);
+});
+
+
 // You can safely remove this after ejecting.
 // We only use this block for testing of Create React App itself:
 var isSmokeTest = process.argv.some(arg => arg.indexOf('--smoke-test') > -1);

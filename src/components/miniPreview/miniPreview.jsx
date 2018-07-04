@@ -27,12 +27,18 @@ class MiniPreview extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {isMinimized: false, docked:true, component:props.selection};
+    this.state = {
+      isMinimized: false,
+      docked:true,
+      component:props.selection,
+      currentProject:props.currentProject,
+      currentPage:props.currentPage
+    };
     this.handleMinimizeClick = this.handleMinimizeClick.bind(this);
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({component:nextProps.selection});
+    this.setState({component:nextProps.selection, currentProject:nextProps.currentProject, currentPage:nextProps.currentPage},()=>{console.log(this.state)});
   }
 
   handleMinimizeClick() {
@@ -45,8 +51,7 @@ class MiniPreview extends React.Component{
   }
 
   openInNewTab(url) {
-     const { dispatch } = this.props;
-     dispatch(push(url));
+    window.open(url, "_blank");
   }
 
   render() {
@@ -62,7 +67,7 @@ class MiniPreview extends React.Component{
             </span>
             <span className='right-side-icons'>
               <span className='flip'>
-                <ReplyIcon onClick={()=>{this.openInNewTab('/p/C03346FF-82E0-4926-89F2-202F119F7D8D/E92A0DF7-FC86-4747-A089-3DDA40683D16')}}/>
+                <ReplyIcon onClick={()=>{this.openInNewTab(`http://localhost:3000/p/${this.state.currentProject}/${this.state.currentPage}/${this.state.component.id}`)}}/>
               </span>
 
               <PictureInPictureAltIcon/>
@@ -80,7 +85,9 @@ class MiniPreview extends React.Component{
 function mapStateToProps(state){
     let component = state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
     return ({
-      selection:component
+      selection:component,
+      currentProject:state.present.currentProject,
+      currentPage:state.present.currentPage,
     });
 }
 

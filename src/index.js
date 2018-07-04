@@ -27,7 +27,6 @@ import { createBrowserHistory } from 'history';
 
 import { firebase } from "./firebase";
 
-console.log(firebase.database);
 
 // const config = {
 //   apiKey: "AIzaSyCOJCrAjbXhyjVF94rUH6GEqoxI0jEuutM",
@@ -59,11 +58,16 @@ class App extends Component {
                     </KeyController>
                   )
                 } } />
-                <Route path="/p/:pageId/:componentId" render={ ({ match }) => {
+                <Route path="/p/:projectId/:pageId/:componentId" render={ ({ match }) => {
                   return (
-                    <PreviewLink id={match.params.componentId} pageId={match.params.pageId}></PreviewLink>
+                    <PreviewLink
+                      projectId={match.params.projectId}
+                      pageId={match.params.pageId}
+                      id={match.params.componentId}
+                    ></PreviewLink>
                   )
                 } } />
+                {/* -LGParuUInchgusujCer/39F50ACC-9E48-4F8E-976C-9C33F2D4B850/45550208-8288-4905-9AC9-AC7B55C5E9F2 */}
               </Switch>
             </main>
         </Router>

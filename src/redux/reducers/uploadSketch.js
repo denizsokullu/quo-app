@@ -21,24 +21,22 @@ function addPage(state,page){
 
 export function UPLOAD_SKETCH(state = {}, action){
 
-    let newNewAssets = addPage(state,action.payload);
-
-    let newData = {...state.assets.data}
-    let newComponent = sketchParser(action.payload)
-    newData[newComponent.id] = newComponent
-    let newAssets = {data:newData};
-
+    console.log(action.payload)
+    let assets = addPage(state,action.payload);
     //if the currentPage isn't set, set it to this page.
-    let pages = Object.keys(newNewAssets);
-    let newCurrentPage = state.currentPage;
+    let pages = Object.keys(assets);
+    let currentPage = state.currentPage;
+
+    console.log(assets);
+
     if(state.currentPage === '' && pages.length ){
 
-      newCurrentPage = newNewAssets[pages[0]].id;
+      currentPage = assets[pages[0]].id;
 
     }
 
     return {...state,
-            newAssets:newNewAssets,
-            currentPage:newCurrentPage
+            newAssets:assets,
+            currentPage:currentPage
            }
 }

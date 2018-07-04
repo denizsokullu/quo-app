@@ -114,7 +114,8 @@ class ComponentRendererCore extends React.Component {
       components:nextProps.components,
       layers:nextProps.summary,
       selection:nextProps.selection,
-      editState:nextProps.editState
+      editState:nextProps.editState,
+      currentPage:nextProps.currentPage
     })
     //new properties
     // this.setState({
@@ -178,7 +179,9 @@ class ComponentRendererCore extends React.Component {
 
       e.stopPropagation();
       const { dispatch } = this.props;
-      dispatch(COMPONENT_SELECT(this.state.id));
+      console.log(this.state.currentPage);
+      dispatch(COMPONENT_SELECT(this.state.id,this.state.currentPage));
+
     }
 
   }
@@ -539,6 +542,7 @@ function mapStateToProps(state,ownProps) {
             components:components,
             selection:state.present.newSelection,
             editState:state.present.editState,
+            currentPage:state.present.currentPage,
          }
 }
 

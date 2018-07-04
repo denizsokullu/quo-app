@@ -15,7 +15,12 @@ const data = {
   newAssets:{
 
   },
+  linkPreview:{
+    received:false,
+    component:null
+  },
   newSelection:'',
+  currentProject:'-LGParuUInchgusujCer',
   currentPage:"",
   viewerZoom:1,
   //write a function to init the keys

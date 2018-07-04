@@ -20,15 +20,15 @@ class TopBar extends React.Component {
   }
   pushProject(){
     const { dispatch } = this.props;
-    dispatch(TEST_TIMEOUT())
+    dispatch(DATABASE_ACTION('PUSH_PROJECT',{}))
   }
 
   render(){
     return (
       <div className='top-bar'>
         <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/>
-        <ButtonCore title='Push Project' onClick={this.pushProject}/>
-        <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/>
+        {/* <ButtonCore title='Push Project' onClick={this.pushProject}/>
+        <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
       </div>
     )
   }

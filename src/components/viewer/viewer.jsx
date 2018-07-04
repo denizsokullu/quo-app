@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import {connect} from 'react-redux';
 import ComponentRenderer from './componentRendererv2';
-import {COMPONENT_SELECT} from '../../redux/actions';
+import {COMPONENT_SELECT,RETRIEVE_MAIN_PROJECT} from '../../redux/actions';
 
 import { dimensions } from '../constants/constants'
 
@@ -60,6 +60,11 @@ class Viewer extends React.Component {
     this.onClick = this.onClick.bind(this);
     this.handlePinch = this.handlePinch.bind(this);
 
+  }
+
+  componentDidMount(){
+    const { dispatch } = this.props;
+    // dispatch(RETRIEVE_MAIN_PROJECT());
   }
 
   componentWillReceiveProps(nextProps) {

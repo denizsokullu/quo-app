@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-
+import { COMPONENT_SELECT } from '../../../redux/actions'
 //Component Imports
 import { LayerCard } from '../styleCard';
 import TextInput from '../../inputElements/textInput/textInput';
@@ -131,7 +131,7 @@ class Layers extends React.Component {
         let isLast = artboards.length === index + 1;
 
         return (
-          <Layer layer={obj} depth={0} isLast={isLast} key={index}/>
+          <LayerConnected layer={obj} depth={0} isLast={isLast} key={index}/>
         )
     })
     )
@@ -160,13 +160,20 @@ class Layer extends React.Component {
       isMinimized:true
     }
     this.handleMinimizeChange = this.handleMinimizeChange.bind(this);
+    console.log(props.layer);
   }
 
-  handleMinimizeChange(){
+  handleMinimizeChange(e){
     this.setState({isMinimized:!this.state.isMinimized},()=>{
       console.log(this.isMinimized);
     });
+    e.stopPropagation()
   }
+
+  selectComponent(){
+    const { dispatch } = this.props;
+    dispatch(COMPONENT_SELECT(this.state.layer.id))
+   }
 
   renderLayerStructure(){
     // console.log(this.state.layer,!this.state.isGroup,this.props.isLast)
@@ -176,7 +183,7 @@ class Layer extends React.Component {
 
     return(
       <div className='layer'>
-        <div className={`main-layer-block ${isLast} ${isSingle}`} tabIndex="0" >
+        <div className={`main-layer-block ${isLast} ${isSingle}`} tabIndex="0" onClick={this.selectComponent.bind(this)}>
 
           {/* Depth Padding Element */}
           {this.renderDepthBlocks()}
@@ -197,7 +204,7 @@ class Layer extends React.Component {
             null
           }
 
-          <TextInput text={this.state.layer.name} onChange={this.onChange} noTitle />
+          <TextInput text={this.state.layer.name} onChange={this.onChange} noTitle onClick={(e)=>{e.stopPropagation()}}/>
 
           {/* Minimize Button */}
 
@@ -248,7 +255,7 @@ class Layer extends React.Component {
             let innerLayer = children[key];
 
             return(
-              <Layer layer={innerLayer} depth={this.props.depth+1} isLast={isLast} key={index}/>
+              <LayerConnected layer={innerLayer} depth={this.props.depth+1} isLast={isLast} key={index}/>
             )
 
           })
@@ -280,4 +287,5 @@ function mapStateToProps(state) {
 }
 
 Layers = connect(mapStateToProps)(Layers)
+const LayerConnected = connect()(Layer);
 export { Page, Layers }
