@@ -80,6 +80,10 @@ $artboard-size-h:2100px;
     top:0;
     position:absolute;
 
+    svg {
+      fill:transparent;
+    }
+
     &.child:hover {
 
       outline:2px solid $highlight-color;
@@ -87,21 +91,34 @@ $artboard-size-h:2100px;
 
     }
 
-    &.text-component {
+    &.component-text {
 
       .text-inner {
         user-select:none;
+        margin:0;
+      }
+
+      .text-outer {
+        width:100%;
+        height:100%;
+        overflow:hidden;
+      }
+
+      .text-outer.edit-mode ~ .selection-frame {
+        display:none
       }
 
       &:hover {
         outline:none;
         cursor:default;
 
-        .text-outer {
+        .text-outer:not(.edit-mode) {
 
           box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
 
         }
+
+
 
       }
 

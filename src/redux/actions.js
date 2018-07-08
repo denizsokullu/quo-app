@@ -56,8 +56,11 @@ export const DATABASE_ACTION = (type,payload) => ({
   payload: {type:type,payload:payload}
 })
 
-// on load, retrieve the first project,
-//
+
+export const TEXT_EDIT_TRIGGER = (payload) => ({
+  type:'TEXT_EDIT_TRIGGER',
+  payload:payload
+})
 
 export const RETRIEVE_COMPONENT = (projectId,pageId,componentId) => {
   return (dispatch) => {

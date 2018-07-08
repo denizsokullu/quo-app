@@ -21,13 +21,10 @@ function addPage(state,page){
 
 export function UPLOAD_SKETCH(state = {}, action){
 
-    console.log(action.payload)
     let assets = addPage(state,action.payload);
     //if the currentPage isn't set, set it to this page.
     let pages = Object.keys(assets);
     let currentPage = state.currentPage;
-
-    console.log(assets);
 
     if(state.currentPage === '' && pages.length ){
 

@@ -303,7 +303,6 @@ function mapStateToProps(state) {
     }
   }
   return {
-    data: state.present.assets.data,
     controller:state.present.controller,
     selection:state.present.selection,
     newData: state.present.newAssets[state.present.currentPage],

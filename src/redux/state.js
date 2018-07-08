@@ -7,11 +7,6 @@ const controller = {
   }
 
 const data = {
-  assets:{
-    data:{
-
-    }
-  },
   newAssets:{
 
   },
@@ -25,6 +20,7 @@ const data = {
   viewerZoom:1,
   //write a function to init the keys
   controller:controller,
+  textEdit:'',
   selection:{
 
   },

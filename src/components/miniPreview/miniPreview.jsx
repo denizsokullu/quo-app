@@ -38,7 +38,7 @@ class MiniPreview extends React.Component{
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({component:nextProps.selection, currentProject:nextProps.currentProject, currentPage:nextProps.currentPage},()=>{console.log(this.state)});
+    this.setState({component:nextProps.selection, currentProject:nextProps.currentProject, currentPage:nextProps.currentPage});
   }
 
   handleMinimizeClick() {

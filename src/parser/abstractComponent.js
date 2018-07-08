@@ -22,7 +22,6 @@ export class AbstractComponentSimple{
       this.style = data.style;
     }
 
-
     //Define grouping state for the component
     this.isGroupObject = false;
     if(this.isArtboard || this.isGroup){
@@ -33,46 +32,63 @@ export class AbstractComponentSimple{
       clicked:false
     }
 
+    //assign shape class to those that have children shapeGroups
+    if(this._class === 'group' && this.areChildrenAllShapeGroups(data)){
+      this._class = 'shape'
+    }
+
     //check the inner layer element of a shapeGroup to get the type.
     if(this.isShape){
-      if(data.layers.length > 0){
-        this.shapeType = data.layers[0]._class;
-        // console.log(data.layers[0]);
-        if(pathElements.includes(this.shapeType)){
-          this.path = data.layers[0].path;
-          // console.log(this.path);
-        }
-      }
+      //shape group
+      console.log('asdasdasd',data.layers);
+      this.shapeData = data.layers.map((shape)=>{
+        let obj = {};
+        obj.style = this.generateStyle(shape);
+        let outerStyle = this.generateStyle(shape);
+        obj.frame = shape.frame;
+        //path group
+        obj.paths = shape.layers.map((path)=>{
+          let innerObj = {};
+          innerObj.style = this.generateStyle(path);
+          innerObj.style.fill = outerStyle.fill;
+          innerObj.style.border = outerStyle.border;
+          innerObj.frame = path.frame;
+          innerObj.points = path.points
+          return innerObj;
+        })
+        return obj
+      });
+      this.createCSS(data);
     }
 
     //Text needs styling too, therefore call the styling in it.
     if(this.isText){
-      this.textData = data.attributedString.archivedAttributedString._archive;
-      bplist.parseBuffer(Buffer.from(this.textData, 'base64'), (err, result) => {
-        if (!err){
-          let data = result[0].$objects;
+      let rawTextData = data.attributedString;
+      // this.textData = data.attributedString.archivedAttributedString._archive;
+      // bplist.parseBuffer(Buffer.from(this.textData, 'base64'), (err, result) => {
+        // if (!err){
+          // let data = result[0].$objects;
           this.textData = {}
           //These are constant array slots dedicated for text content & stlying information
-          this.textData.text = data[2];
-          this.textData.fontSize = data[16];
-          this.textData.fontName = data[17];
-          let mapping = data[20];
-
-          let rLoc = mapping['NS.objects'][0];
-          let aLoc = mapping['NS.objects'][1];
-          let bLoc = mapping['NS.objects'][2];
-          let gLoc = mapping['NS.objects'][3];
-
-          let r = parseInt(data[rLoc] * 255)
-          let g = parseInt(data[gLoc] * 255)
-          let b = parseInt(data[bLoc] * 255)
-          let a = parseFloat(data[aLoc].toFixed(3));
-
+          this.textData.text = rawTextData.string;
+          let attributes = rawTextData.attributes['0'].attributes;
+          let colorAttr = attributes.MSAttributedStringColorAttribute
+          let fontAttr = attributes.MSAttributedStringFontAttribute
+          // console.log()
+          this.textData.fontSize = fontAttr.attributes.size;
+          this.textData.fontName = fontAttr.attributes.name;
+          // Add more style options later
+          //
+          let r = parseInt(parseFloat(colorAttr.red) * 255)
+          let g = parseInt(parseFloat(colorAttr.green) * 255)
+          let b = parseInt(parseFloat(colorAttr.blue) * 255)
+          let a = parseFloat(colorAttr.alpha);
+          //
           this.textData.color = {r:r,g:g,b:b,a:a};
 
-        }
+        // }
       this.createCSS(data);
-      });
+      // });
     }
 
     else{
@@ -91,6 +107,10 @@ export class AbstractComponentSimple{
 
   }
 
+  combineFrames(outer,inner){
+
+  }
+
   get isArtboard(){
     return this._class === 'artboard';
   }
@@ -100,11 +120,17 @@ export class AbstractComponentSimple{
   }
 
   get isShape(){
-    return this._class === 'shapeGroup';
+    return this._class === 'shape';
   }
 
   get isText(){
     return this._class === 'text';
+  }
+
+  areChildrenAllShapeGroups(data){
+    return  _.reduce(data.layers,(prev,cur)=>{
+        return cur._class === 'shapeGroup' && prev
+      },true);
   }
 
   createCSS(data){
@@ -146,6 +172,9 @@ export class AbstractComponentSimple{
   }
 
   generateStyle(data){
+
+    // if(data._class === 'shapeGroup') console.log(data);
+
     let frame = data.frame
     let position = {
       width: `${frame.width}px`,
@@ -181,7 +210,7 @@ export class AbstractComponentSimple{
       if (style.fills) {
         let color = style.fills[0].color
         let colorCSS = this.generateColor(color);
-        if (data.path) {
+        if (this.isShape) {
           fill.fill = colorCSS;
         } else {
           fill.backgroundColor = colorCSS;
@@ -222,7 +251,7 @@ export class AbstractComponentSimple{
       if(data._class === 'shapeGroup'){
         let innerEl = data.layers[0];
         if (innerEl._class === 'rectangle'){
-          let points = innerEl.path.points
+          let points = innerEl.points
           borderRadius = {
             borderRadius: `${points[0].cornerRadius}px ${points[1].cornerRadius}px ${points[2].cornerRadius}px ${points[3].cornerRadius}px`
           }
@@ -265,7 +294,6 @@ export class AbstractComponentSimple{
         fontStyling.fontSize = this.textData.fontSize
         fontStyling.fontFamily = `'${this.textData.fontName}',sans-serif`;
         let c = this.textData.color;
-        console.log(c);
         fontStyling.color = `rgba{${c.r},${c.g},${c.b},${c.a}}`;
       }
 

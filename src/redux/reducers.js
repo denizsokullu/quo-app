@@ -4,7 +4,7 @@ import _ from 'underscore';
 // import { getComponent } from '../parser/abstractComponent';
 
 import { UPLOAD_SKETCH } from './reducers/uploadSketch';
-import { VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE } from './reducers/component';
+import { VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE, TEXT_EDIT_TRIGGER } from './reducers/component';
 import { KEY_UP, KEY_DOWN } from './reducers/keyControls';
 
 import { DATABASE_ACTION } from './reducers/database';
@@ -36,7 +36,10 @@ function reducer(state = {}, action){
 
     case 'DATABASE_ACTION':
       return DATABASE_ACTION(state,action);
-      
+
+    case 'TEXT_EDIT_TRIGGER':
+      return TEXT_EDIT_TRIGGER(state,action);
+
     case 'KEY_DOWN':
       return KEY_DOWN(state,action);
 

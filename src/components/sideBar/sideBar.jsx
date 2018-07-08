@@ -100,7 +100,7 @@ class SideBarLeft extends Component {
         {/* <div className='sidebar-wrapper sidebar-resizable'> */}
           <div className={`sidebar-container sidebar-left`}>
             <ContentPagesCard/>
-            <LayersCard/>
+            {/* <LayersCard/> */}
           </div>
           <div className='interaction-nav left-nav'>
             {
@@ -122,18 +122,32 @@ class SideBarLeft extends Component {
 }
 
 class StylesContent extends React.Component{
+  //the styles content should be aware of what component is selected
+  constructor(props){
+    super(props);
+  }
   render(){
     return (
       <div className='styles-content'>
-        <Position/>
-        <Size/>
-        <Fill/>
-        <Border/>
-        <Shadow/>
-        <Blur/>
-        <Scale/>
-        <CopyState/>
-        <Movement/>
+        {
+          this.props.selection._class === 'text' ?
+            <React.Fragment>
+              <Position/>
+              <Size/>
+            </React.Fragment>
+          :
+            <React.Fragment>
+              <Position/>
+              <Size/>
+              <Fill/>
+              <Border/>
+              <Shadow/>
+              <Blur/>
+              <Scale/>
+              <CopyState/>
+              <Movement/>
+            </React.Fragment>
+        }
       </div>
     )
   }
@@ -205,7 +219,7 @@ class SideBarRight extends Component {
               ?
                 <React.Fragment>
                   <ComponentStates/>
-                  <CurrentComponent/>
+                  <CurrentComponent selection={this.state.selectedComponent}/>
                   <MiniPreview/>
                   <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr}/>
                 </React.Fragment>
@@ -245,6 +259,6 @@ function mapStateToProps(state) {
 
 }
 
-const ConnectedSideBarRight = connect(mapStateToProps)(SideBarRight)
+SideBarRight = connect(mapStateToProps)(SideBarRight)
 
-export { SideBarLeft, ConnectedSideBarRight as SideBarRight }
+export { SideBarLeft, SideBarRight }

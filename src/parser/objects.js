@@ -1,5 +1,6 @@
 import { sketchParserNew } from './index';
 import { dc } from '../redux/helpers';
+import _ from 'underscore';
 
 class ComponentCore {
   constructor(data){
@@ -7,6 +8,48 @@ class ComponentCore {
     this.name = data.name;
     this.class = data._class;
     this.data = data;
+    this.components = {};
+  }
+  mapLayersToComponents = (component) => {
+    // checking shapes before the groups since
+    // the parent is always a group for shapes
+    if(areChildrenAllShapeGroups(component)){
+      let newShape = new Shape(component);
+      this.components[newShape.id] = newShape;
+    }
+    else if(component._class === 'group'){
+      let newGroup = new Group(component);
+      this.components[newGroup.id] = newGroup;
+    }
+    else{
+      let newComponent = new Component(component);
+      this.components[newComponent.id] = newComponent;
+    }
+  }
+}
+
+class ShapeContent {
+  constructor(shape){
+    if(shape._class === 'shapePath'){
+      this.class = 'path';
+      this.points = shape.points;
+    }
+  }
+}
+
+class Shape extends ComponentCore{
+  constructor(data){
+    super(data);
+    this.class = 'shape';
+    this.shapes = data.layers.map(this.createShape);
+
+  }
+  createShape = (shapeComponent) => {
+    if(shapeComponent._class === 'shapeGroup' &&
+       shapeComponent.layers.length == 1)
+    {
+      return new ShapeContent(shapeComponent.layers[0]);
+    }
   }
 }
 
@@ -16,37 +59,25 @@ class Component extends ComponentCore{
 
 class Group extends ComponentCore{
   constructor(data){
-    super(data)
-    this.components  = {};
-    data.layers.map(component => {
-      if(component._class === 'group'){
-        let newGroup = new Group(component);
-        this.components[newGroup.id] = newGroup;
-      }
-      else{
-        let newComponent = new Component(component);
-        this.components[newComponent.id] = newComponent;
-      }
-    });
+    super(data);
+    data.layers.map(this.mapLayersToComponents);
   }
 }
 
 class Artboard extends ComponentCore{
   constructor(data){
     super(data);
-    this.components = {};
-    data.layers.map(component => {
-      if(component._class === 'group'){
-        let newGroup = new Group(component);
-        this.components[newGroup.id] = newGroup;
-      }
-      else{
-        let newComponent = new Component(component);
-        this.components[newComponent.id] = newComponent;
-      }
-    });
-
+    data.layers.map(this.mapLayersToComponents);
+    console.log(this.components);
   }
+}
+
+
+const areChildrenAllShapeGroups = (component) => {
+  let layers = component.layers;
+  return _.reduce(layers,(prev,cur)=>{
+    return cur._class === 'shapeGroup' && prev
+  },true);
 }
 
 class Page extends ComponentCore{

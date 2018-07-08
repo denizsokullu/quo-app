@@ -13,6 +13,7 @@ import { browserHistory } from 'react-router'
 import { syncHistoryWithStore, routerReducer, ConnectedRouter } from 'react-router-redux';
 
 import { SideBarRight, SideBarLeft } from './components/sideBar/sideBar';
+
 import TopBar from './components/topBar/topBar';
 import DropzoneContainer from './components/dropzone/dropzoneContainer';
 import Viewer from './components/viewer/viewer';
@@ -42,36 +43,36 @@ const history = syncHistoryWithStore( createBrowserHistory(), store )
 class App extends Component {
   render() {
     return (
-      <Provider store={ store }>
-        <Router forceRefresh={true} history={ history }>
-            <main className="quo-content">
-              <Switch>
-                <Route exact={ true } path="/" render={ () => {
-                  return (
-                    <KeyController>
-                      <DropzoneContainer>
-                        <Viewer/>
-                      </DropzoneContainer>
-                      <TopBar/>
-                      <SideBarLeft/>
-                      <SideBarRight/>
-                    </KeyController>
-                  )
-                } } />
-                <Route path="/p/:projectId/:pageId/:componentId" render={ ({ match }) => {
-                  return (
-                    <PreviewLink
-                      projectId={match.params.projectId}
-                      pageId={match.params.pageId}
-                      id={match.params.componentId}
-                    ></PreviewLink>
-                  )
-                } } />
-                {/* -LGParuUInchgusujCer/39F50ACC-9E48-4F8E-976C-9C33F2D4B850/45550208-8288-4905-9AC9-AC7B55C5E9F2 */}
-              </Switch>
-            </main>
-        </Router>
-      </Provider>
+       <Provider store={ store }>
+         <Router forceRefresh={true} history={ history }>
+             <main className="quo-content">
+               <Switch>
+                 <Route exact={ true } path="/" render={ () => {
+                   return (
+                     <KeyController>
+                       <DropzoneContainer>
+                          <Viewer/>
+                        </DropzoneContainer>
+                        <TopBar/>
+                        <SideBarLeft/>
+                        <SideBarRight/>
+                      </KeyController>
+                    )
+                  } } />
+                  <Route path="/p/:projectId/:pageId/:componentId" render={ ({ match }) => {
+                    return (
+                      <PreviewLink
+                        projectId={match.params.projectId}
+                        pageId={match.params.pageId}
+                        id={match.params.componentId}
+                      ></PreviewLink>
+                    )
+                  } } />
+                  {/* -LGParuUInchgusujCer/39F50ACC-9E48-4F8E-976C-9C33F2D4B850/45550208-8288-4905-9AC9-AC7B55C5E9F2 */}
+                </Switch>
+              </main>
+          </Router>
+       </Provider>
     );
   }
 }

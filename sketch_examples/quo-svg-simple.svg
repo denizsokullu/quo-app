@@ -1,0 +1,11 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="125" height="57" viewBox="0 0 125 57">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #595757;
+      }
+    </style>
+  </defs>
+  <title>quo-svg-simple</title>
+  <path class="cls-1" d="M600,399H725s0-57-62.5-57C599.67,342,600,399,600,399Z" transform="translate(-600 -342)"/>
+</svg>

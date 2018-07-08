@@ -40,13 +40,14 @@ var DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
 var compiler;
 var handleCompile;
 
-const memwatch = require('memwatch-next');
+// const memwatch = require('memwatch-next');
 
-console.log('loading memwatch');
-
-memwatch.on('leak', (info) => {
-  console.error('Memory leak detected:\n', info);
-});
+// console.log('loading memwatch');
+//
+// memwatch.on('leak', (info) => {
+//   console.error('Memory leak detected:\n', info);
+//   process.exit(1)
+// });
 
 
 // You can safely remove this after ejecting.

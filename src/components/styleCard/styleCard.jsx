@@ -98,14 +98,15 @@ class LayersCard extends React.Component{
   render(){
     let id = this.title.toLowerCase().split(' ').join('-');
     return(
-      <div className={`layer-card`} id={`card-${id}`}>
-        <div className='style-card-header layer-card-header'>
-          {this.title}
-        </div>
-        <div className='style-card-body layer-card-body'>
-          <Layers/>
-        </div>
-      </div>
+      <div>asd</div>
+      // <div className={`layer-card`} id={`card-${id}`}>
+      //   <div className='style-card-header layer-card-header'>
+      //     {this.title}
+      //   </div>
+      //   <div className='style-card-body layer-card-body'>
+      //     {/* <Layers/> */}
+      //   </div>
+      // </div>
     )
   }
 }

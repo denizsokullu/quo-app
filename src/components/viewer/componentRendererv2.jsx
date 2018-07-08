@@ -3,11 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 // import Draggable from '../draggable/react-draggable';
-import { COMPONENT_MOVE,COMPONENT_SELECT } from '../../redux/actions';
+import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER } from '../../redux/actions';
 
 import uuidv1 from 'uuid/v1';
 
 import SelectionFrame from '../selectionFrame';
+
+import TextArea from '../inputElements/dynamicTextArea';
 
 //every core-component needs to be aware of the data passed in as props
 //every core-component has their own syling methods.
@@ -38,7 +40,9 @@ class ComponentRendererCore extends React.Component {
       layers:data,
       components:props.components,
       id:data.id,
+      type:this.decideType(props.components),
       testid:data.id,
+      draggable:true,
       drag:{
         start:{
           x:0,
@@ -51,64 +55,27 @@ class ComponentRendererCore extends React.Component {
       }
     };
 
-    let components = this.state.components;
-
-    //svg CoreComponent
-    if(components.path){
-      this.setState({type :'svg'});
-    }
-    else if(components.textData){
-      this.setState({type :'text'});
-    }
-
-    else if(components._class === 'page' || (components.shapeType && components.layers) || components._class === 'group'){
-      //group container(more ComponentRenderers)
-      if(this.props.isParent){
-        this.setState({type :'parent'});
-      }
-      else if(components._class === 'group'){
-        this.setState({type :'group'});
-        this.setState({dragChildren :true});
-      }
-      //rectangle CoreComponent
-      else{
-        this.setState({type :'rect'});
-        this.setState({dragSelf :'true'});
-      }
-    }
-
-    // this.state.location = this.getPosition();
     this.onClick = this.onClick.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
-    // this.onMouseEnter = this.onMouseEnter.bind(this);
-    // this.onMouseLeave = this.onMouseLeave.bind(this);
-    // this.onDragStart = this.onDragStart.bind(this);
-    // this.onDragStop = this.onDragStop.bind(this);
-    // this.onFocus = this.onFocus.bind(this);
 
     // this.onClick = this.onClick.bind(this);
     // this.onDoubleClick = this.onDoubleClick.bind(this);
 
   }
 
+  decideType(data){
+    return (
+      data.path ? 'svg' :
+      data._class === 'text' ? 'text' :
+      data._class === 'page' || (data.shapeType && data.layers) || data._class === 'group' ?
+      this.props.isParent ? 'parent' :
+      data._class === 'group' ? 'group' :
+      'rect' : 'rect'
+    )
+  }
+
   componentWillReceiveProps(nextProps) {
-    // this.setState({data: nextProps.summary},()=>{
-    //   // this.setState({location:this.getPosition()});
-    // });
-    // this.setState({controller: nextProps.controller,
-    //                editState:nextProps.editState
-    //              });
-    //
-    // // if(nextProps.selection.id != this.state.id){
-    // //   this.setState({clicked:false})
-    // // }
-    // console.log(this.state);
-    // console.log(nextProps,this.state.components);
-    // // if(nextProps.components[this.state.id].interactions.clicked){
-    // //   alert('clicked on', this.state.id);
-    // // }
-    //
     this.setState({
       id:nextProps.summary.id,
       components:nextProps.components,
@@ -117,16 +84,6 @@ class ComponentRendererCore extends React.Component {
       editState:nextProps.editState,
       currentPage:nextProps.currentPage
     })
-    //new properties
-    // this.setState({
-    //   components:nextProps.components,
-    //   layers:nextProps.summary
-    // },()=>{
-    // });
-  }
-
-  componentWillUpdate(nextProps,nextState){
-    // console.log(nextProps,nextState);
   }
 
   // TODO: Update this to check if component.interactions.clicked == true
@@ -176,10 +133,13 @@ class ComponentRendererCore extends React.Component {
 
   onClick(e){
     if(!this.props.isParent && this.state.components._class !== 'artboard'){
-
+      // if(this.state.type === 'text'){
+      //   console.log('clicked on text');
+      //   e.stopPropagation();
+      //   return
+      // }
       e.stopPropagation();
       const { dispatch } = this.props;
-      console.log(this.state.currentPage);
       dispatch(COMPONENT_SELECT(this.state.id,this.state.currentPage));
 
     }
@@ -232,6 +192,7 @@ class ComponentRendererCore extends React.Component {
     document.removeEventListener('mousemove',this.onMouseMove);
     document.removeEventListener('mouseup',this.onMouseUp);
     e.preventDefault();
+
   }
 
   onMouseMove(e) {
@@ -289,16 +250,32 @@ class ComponentRendererCore extends React.Component {
 
     let selectedClass = this.isSelected() ? 'selected' : '';
 
-    return (
-      <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-        style={style}
-        onClick={this.onClick}
-        ref='handle'
-        onMouseDown={this.onMouseDownHandler.bind(this)}
-      >
-        { content }
-        {/* {!this.props.isParent && this.state.components.interactions.clicked  ? <SelectionFrame/> : null} */}
-    </div>)
+    if(this.state.draggable){
+      return (
+        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+          style={style}
+          onClick={this.onClick}
+          ref='handle'
+          onMouseDown={this.onMouseDownHandler.bind(this)}
+        >
+          { content }
+      </div>)
+    }
+
+    else {
+      return (
+        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+          style={style}
+        >
+          { content }
+      </div>)
+    }
+
+
+  }
+
+  changeDrag(b){
+    this.setState({draggable:b});
   }
 
   render(){
@@ -330,7 +307,15 @@ class ComponentRendererCore extends React.Component {
     if(this.state.components._class === 'text'){
 
       nonParentContent = (
-        <TextComponent data={this.state.components}></TextComponent>
+        <TextComponent data={this.state.components} changeDrag={this.changeDrag.bind(this)}></TextComponent>
+      )
+
+    }
+
+    if(this.state.layers.class === 'shape'){
+
+      nonParentContent = (
+        <ShapeComponent data={this.state.components}/>
       )
 
     }
@@ -479,20 +464,160 @@ class SvgComponent extends CoreComponent{
     )
   }
 }
+function isFloat(n) {
+    return n === +n && n !== (n|0);
+}
+
+class ShapeComponent extends CoreComponent{
+
+  constructor(props){
+    super(props);
+    this.code = [];
+  }
+  getTheLastPathAdded(){
+    return this.code[this.code.length - 1];
+  }
+  createNewPath(){
+    this.code.push('');
+  }
+  addToPath(str){
+    this.code[this.code.length-1] += str;
+  }
+  isLine(edge){
+    return !edge.p1.hasCurveFrom && !edge.p2.hasCurveTo
+  }
+  isCurve(edge){
+    return edge.p1.hasCurveFrom || edge.p2.hasCurveTo
+  }
+  isSmoothCurve(edge){
+    return edge.p2.curveMode === 2
+  }
+  getControlPoints(edge,frame){
+    return [edge.p1.curveFrom,edge.p2.curveTo];
+  }
+  createPathCode(data){
+    let frame = data.frame;
+    let edges = [];
+
+    data.points.map((point)=>{
+      point.point = this.extractPoints(point.point,frame);
+      point.curveFrom = this.extractPoints(point.curveFrom,frame);
+      point.curveTo = this.extractPoints(point.curveTo,frame)
+      return point
+    })
+
+    data.points.map((point,index) => {
+      //close the last edge
+      if(index === data.points.length - 1 && index !== 0){
+        edges.push({p1:point,p2:data.points[0]});
+      }
+      //connect a point with the next point
+      else{
+        edges.push({p1:point,p2:data.points[index+1]});
+      }
+    })
+
+    edges.map((edge,i) => {
+
+      //create a starting point
+      if(i == 0){
+        //add M
+        this.addToPath(this.createM(edge.p1.point));
+      }
+
+      //add a curve
+      if(this.isCurve(edge)){
+        let controlPoints = this.getControlPoints(edge);
+        let endPoint = edge.p2.point
+        this.addToPath(this.createC(controlPoints[0],controlPoints[1],endPoint));
+        //if the second point is a mirrored bezier curve
+        //add an s-curve
+        if(this.isSmoothCurve(edge)){
+          this.addToPath(this.createS(controlPoints[1],endPoint));
+        }
+      }
+
+      //add a line
+      else if(this.isLine(edge)){
+        this.addToPath(this.createL(edge.p2.point));
+      }
+
+      //add a Z to close off
+      if(i === edges.length - 1){
+        this.addToPath(this.createZ());
+      }
+
+    });
+
+  }
+  extractPoints(point,frame){
+    return point.replace(/[{}]/g, '').replace(/\s/g, '').split(',').map(parseFloat).map((p,i)=>{
+      if(i === 0) return parseFloat(parseFloat((p * frame.width) + frame.x).toFixed(4));
+      if(i === 1) return parseFloat(parseFloat((p * frame.height) + frame.y).toFixed(4));
+    });
+  }
+  p2s(points){
+    return `${points[0]} ${points[1]}`;
+  }
+  createM(points){
+    return `M ${this.p2s(points)} `
+  }
+  createL(points){
+    return `L ${this.p2s(points)} `
+  }
+  createC(curveFrom,curveTo,points){
+    return `C ${this.p2s(curveFrom)} ${this.p2s(curveTo)} ${this.p2s(points)} `
+  }
+  createS(curveFrom,endPoint){
+    return `S ${this.p2s(curveFrom)} ${this.p2s(endPoint)} `
+  }
+  createZ(){
+    return 'Z '
+  }
+  calculatePath(shape){
+    //execute path algorithm
+    this.createNewPath();
+    shape.paths.map((path,index)=>{
+      this.createPathCode(path)
+    })
+    //return last added path
+    return ( <path d={this.getTheLastPathAdded()}/> )
+  }
+  render(){
+    return(
+      <div style={{position:'relative'}}>
+      {
+        this.props.data.shapeData.map((shape,index)=>{
+          return (
+            <svg style={{...shape.style, position:'absolute'}} key={index}>
+              {
+                this.calculatePath(shape)
+              }
+            </svg>
+          )
+        })
+      }
+      </div>
+    )
+  }
+}
 
 class TextComponent extends CoreComponent{
   constructor(props){
     super(props);
     // let that = this;
+    this.state.editMode = false;
     this.state.textData = this.state.data.textData
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
   }
+
   getColor(){
     let c = this.state.textData.color;
     return (
       `rgba(${c.r},${c.g},${c.b},${c.a})`
     )
   }
+
   getFontFamily(){
     return (
       `"${this.state.textData.fontName}", sans-serif`
@@ -500,31 +625,62 @@ class TextComponent extends CoreComponent{
   }
 
   handleDoubleClick(){
-    console.log('yo')
-    alert('hello');
+    // const { dispatch } = this.props;
+    // dispatch(TEXT_EDIT_TRIGGER(this.state.id));
+    // dispatch(COMPONENT_TEXT_EDIT_MODE(''))
+    this.setState({editMode:true});
+    this.props.changeDrag(false);
+    // console.log(this.state);
   }
 
-  handleClick(){
-    alert('hello');
+  componentWillReceiveProps(nextProps){
+    if(nextProps.selection !== this.state.data.id && this.state.editMode){
+      this.setState({editMode:false},()=>{
+        this.props.changeDrag(true);
+      })
+    }
   }
 
-  render(){
-    return (this.state.textData ?
+  //things that change(width,height,string)
+
+  renderTextElement(){
+    if(this.state.editMode && this.props.selection === this.state.data.id){
+      let editStates = this.state.data.editStates;
+      let style = editStates[editStates.current].style
+      let w = style.width;
+      let h = style.height;
+      return (
+        <span className='text-outer edit-mode'>
+          <TextArea className='text-inner'
+            width={w}
+            height={h}
+            style={{
+                fontFamily:style.fontFamily,
+                fontSize:style.fontSize,
+              }
+            }
+          >
+            {this.state.textData.text}
+          </TextArea>
+        </span>
+      )
+    }
+    else{
+      return(
         <span className='text-outer'
           onDoubleClick={this.handleDoubleClick}
         >
-          <span className='text-inner'
-            style={
-              {
-                fontSize:this.state.textData.fontSize, color:this.getColor(),
-                fontFamily:this.getFontFamily()
-              }}>
+          <p className='text-inner'>
             {this.state.textData.text}
-          </span>
+          </p>
         </span>
-    :
-    <p></p>
-    )
+      )
+    }
+  }
+
+
+  render(){
+    return ( this.state.textData ? this.renderTextElement() : <p></p>)
   }
 }
 
@@ -546,6 +702,13 @@ function mapStateToProps(state,ownProps) {
          }
 }
 
+function mapStateToPropsForTextComponent(state){
+  return {
+    selection:state.present.newSelection,
+  }
+}
+
+TextComponent = connect(mapStateToPropsForTextComponent)(TextComponent);
 const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);
 
 export default ComponentRenderer

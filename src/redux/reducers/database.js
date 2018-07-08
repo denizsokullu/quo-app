@@ -35,6 +35,7 @@ const CLEAR_VIEWER = (state,action) => {
   newState.newSelection = '';
   newState.editState = 'none';
   newState.currentPage = '';
+  newState.textEdit = '';
 
   return { ...newState }
 

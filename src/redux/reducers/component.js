@@ -35,11 +35,25 @@ function COMPONENT_SELECT(state = {}, action){
     }
 
     if(action.payload === ''){
-      return {...state, newSelection:action.payload, editState:'none'}
+      //reset the editState,selection, and possible textEdit
+      if(state.textEdit !== '') {
+        return {...state, newSelection:action.payload, editState:'none', textEdit:''}
+      }
+      else{
+          return {...state, newSelection:action.payload, editState:'none'}
+      }
+
     }
 
     return {...state, newSelection:action.payload}
+
 }
+
+function TEXT_EDIT_TRIGGER(state = {}, action){
+  //trigger open
+  return {...state, textEdit:action.payload, newSelection:''}
+}
+
 
 function COMPONENT_MOVE(state = {}, action){
 
@@ -93,34 +107,6 @@ function COMPONENT_RESIZE(state = {}, action){
   return {...state, newAssets:newAssetsWhole}
 }
 
-function COMPONENT_BOXSHADOW(state = {}, action){
-
-  // let target = dc(state.newAssets[state.currentPage].components[action.payload.id]);
-  //
-  // let style = target.editStates[state.editState].style
-  //
-  // let x = (parseInt(style.width.slice(0,-2)) + parseInt(action.payload.w)) + 'px'
-  // let y = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
-  // let blur = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
-  // let spread = (parseInt(style.height.slice(0,-2)) + parseInt(action.payload.h)) + 'px'
-  // let color =
-  //
-  // let updatedStyle = {...style,width:width,height:height}
-  //
-  // let newAssets = dc(state.newAssets[state.currentPage].components);
-  //
-  // target.editStates[state.editState].style = updatedStyle
-  //
-  // newAssets[action.payload.id] = target;
-  //
-  // let newAssetsWhole = {...state.newAssets}
-  //
-  // newAssetsWhole[state.currentPage].components = newAssets
-  //
-  // return {...state, newAssets:newAssetsWhole}
-
-  return state
-}
 
 function COMPONENT_STYLE_CHANGE(state = {}, action){
 
@@ -169,4 +155,4 @@ function addUpdatedComponentToState(state,action,component){
 
 
 
-export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_BOXSHADOW, COMPONENT_STYLE_CHANGE}
+export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE, TEXT_EDIT_TRIGGER}
