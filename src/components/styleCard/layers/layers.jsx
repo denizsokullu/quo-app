@@ -286,6 +286,6 @@ function mapStateToProps(state) {
   return {data: state.present.newAssets[state.present.currentPage]}
 }
 
-// Layers = connect(mapStateToProps)(Layers)
+Layers = connect(mapStateToProps)(Layers)
 const LayerConnected = connect()(Layer);
 export { Page, Layers }

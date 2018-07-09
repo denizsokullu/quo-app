@@ -133,15 +133,9 @@ class ComponentRendererCore extends React.Component {
 
   onClick(e){
     if(!this.props.isParent && this.state.components._class !== 'artboard'){
-      // if(this.state.type === 'text'){
-      //   console.log('clicked on text');
-      //   e.stopPropagation();
-      //   return
-      // }
       e.stopPropagation();
       const { dispatch } = this.props;
       dispatch(COMPONENT_SELECT(this.state.id,this.state.currentPage));
-
     }
 
   }
@@ -441,33 +435,6 @@ class CoreComponent extends React.Component{
   }
 }
 
-class SvgComponent extends CoreComponent{
-  style(positionOnly = false) {
-    return this.state.data.css;
-  }
-  points(){
-    let data = this.state.data.path;
-    let frame = this.state.data.frame
-    return data.points.map(point => {
-      let points = point.point.replace(/[{}]/g, '').replace(/\s/g, '').split(',');
-      return [
-        parseFloat(points[0]) * frame.width,
-        parseFloat(points[1]) * frame.height
-      ].join(',');
-    })
-  }
-  render(){
-    return (
-      <svg style={this.style(true)}>
-        <polygon style={this.style()} points={this.points().join(' ')}></polygon>
-      </svg>
-    )
-  }
-}
-function isFloat(n) {
-    return n === +n && n !== (n|0);
-}
-
 class ShapeComponent extends CoreComponent{
 
   constructor(props){
@@ -499,25 +466,7 @@ class ShapeComponent extends CoreComponent{
     let frame = data.frame;
     let edges = [];
 
-    data.points.map((point)=>{
-      point.point = this.extractPoints(point.point,frame);
-      point.curveFrom = this.extractPoints(point.curveFrom,frame);
-      point.curveTo = this.extractPoints(point.curveTo,frame)
-      return point
-    })
-
-    data.points.map((point,index) => {
-      //close the last edge
-      if(index === data.points.length - 1 && index !== 0){
-        edges.push({p1:point,p2:data.points[0]});
-      }
-      //connect a point with the next point
-      else{
-        edges.push({p1:point,p2:data.points[index+1]});
-      }
-    })
-
-    edges.map((edge,i) => {
+    data.edges.map((edge,i) => {
 
       //create a starting point
       if(i == 0){
@@ -550,12 +499,14 @@ class ShapeComponent extends CoreComponent{
     });
 
   }
+
   extractPoints(point,frame){
     return point.replace(/[{}]/g, '').replace(/\s/g, '').split(',').map(parseFloat).map((p,i)=>{
       if(i === 0) return parseFloat(parseFloat((p * frame.width) + frame.x).toFixed(4));
       if(i === 1) return parseFloat(parseFloat((p * frame.height) + frame.y).toFixed(4));
     });
   }
+
   p2s(points){
     return `${points[0]} ${points[1]}`;
   }
@@ -583,13 +534,31 @@ class ShapeComponent extends CoreComponent{
     //return last added path
     return ( <path d={this.getTheLastPathAdded()}/> )
   }
+  getStylePropsFromParent(){
+
+    let style = this.getCurStyle(this.props.data);
+    return { fill:style.fill,border:style.border }
+  }
+
+  getCurStyle(obj){
+    return obj.editStates[obj.editStates.current].style
+  }
   render(){
     return(
-      <div style={{position:'relative'}}>
+      // <div style={{position:'relative'}}>
+      <React.Fragment>
       {
         this.props.data.shapeData.map((shape,index)=>{
+          //do this more compherensively doing fill only is retarded
+          let style;
+          if(shape.style.fill){
+            style = this.getStylePropsFromParent();
+          }
+          else{
+            style = {};
+          }
           return (
-            <svg style={{...shape.style, position:'absolute'}} key={index}>
+            <svg style={{...shape.style, ...style, position:'absolute'}} key={index}>
               {
                 this.calculatePath(shape)
               }
@@ -597,7 +566,7 @@ class ShapeComponent extends CoreComponent{
           )
         })
       }
-      </div>
+    </React.Fragment>
     )
   }
 }

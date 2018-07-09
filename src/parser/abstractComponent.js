@@ -27,6 +27,7 @@ export class AbstractComponentSimple{
     if(this.isArtboard || this.isGroup){
       this.isGroupObject = true;
     }
+    //
 
     this.interactions = {
       clicked:false
@@ -40,25 +41,69 @@ export class AbstractComponentSimple{
     //check the inner layer element of a shapeGroup to get the type.
     if(this.isShape){
       //shape group
-      console.log('asdasdasd',data.layers);
+
       this.shapeData = data.layers.map((shape)=>{
         let obj = {};
+
         obj.style = this.generateStyle(shape);
         let outerStyle = this.generateStyle(shape);
+
         obj.frame = shape.frame;
         //path group
         obj.paths = shape.layers.map((path)=>{
           let innerObj = {};
+
           innerObj.style = this.generateStyle(path);
           innerObj.style.fill = outerStyle.fill;
           innerObj.style.border = outerStyle.border;
           innerObj.frame = path.frame;
           innerObj.points = path.points
+
+          let frame = path.frame;
+
+          innerObj.points.map(point =>{
+            point.point = this.extractPoints(point.point,frame);
+            point.curveFrom = this.extractPoints(point.curveFrom,frame);
+            point.curveTo = this.extractPoints(point.curveTo,frame)
+          })
+
+          let edges = [];
+
+          innerObj.points.map((point,index) => {
+            //close the last edge
+            if(index === innerObj.points.length - 1 && index !== 0){
+              edges.push({p1:point,p2:innerObj.points[0]});
+            }
+            //connect a point with the next point
+            else{
+              edges.push({p1:point,p2:innerObj.points[index+1]});
+            }
+          })
+
+          innerObj.edges = edges;
+
           return innerObj;
         })
+
+        if(data.layers[0].style.fills){
+          data.style = this.setIfExists(['fills','border','stroke','strokeWidth'],data.layers[0].style, data.style)
+        }
+        else{
+          data.style = this.setIfExists(['fills','border','stroke','strokeWidth'],data.layers[1].style, data.style)
+        }
+
+        console.log(data.style)
+        //the style attributes are located in the child of the svg so we
+        //need to provide them to the parent
+
+
+        //currently haven't thought of a better way for this
         return obj
+
       });
+
       this.createCSS(data);
+      console.log(this.css);
     }
 
     //Text needs styling too, therefore call the styling in it.
@@ -74,7 +119,7 @@ export class AbstractComponentSimple{
           let attributes = rawTextData.attributes['0'].attributes;
           let colorAttr = attributes.MSAttributedStringColorAttribute
           let fontAttr = attributes.MSAttributedStringFontAttribute
-          // console.log()
+
           this.textData.fontSize = fontAttr.attributes.size;
           this.textData.fontName = fontAttr.attributes.name;
           // Add more style options later
@@ -95,17 +140,22 @@ export class AbstractComponentSimple{
       this.createCSS(data);
     }
 
-    //store these as objects tbh!
-    // if(data.layers){
-    //   data.layers.map(layer=>{
-    //     // if (!pathElements.includes(layer._class)){
-    //       this.layers.push(new AbstractComponent(layer))
-    //     // }
-    //   })
-    // }
-    //and also have a flattened version at all times?
-
   }
+
+  setIfExists(properties,src,dest){
+    properties.map(property=>{
+      if(src[property]) dest[property] = src[property];
+    })
+    return dest;
+  }
+
+  extractPoints(point,frame){
+    return point.replace(/[{}]/g, '').replace(/\s/g, '').split(',').map(parseFloat).map((p,i)=>{
+      if(i === 0) return parseFloat(parseFloat((p * frame.width) + frame.x).toFixed(4));
+      if(i === 1) return parseFloat(parseFloat((p * frame.height) + frame.y).toFixed(4));
+    });
+  }
+
 
   combineFrames(outer,inner){
 
@@ -172,8 +222,6 @@ export class AbstractComponentSimple{
   }
 
   generateStyle(data){
-
-    // if(data._class === 'shapeGroup') console.log(data);
 
     let frame = data.frame
     let position = {
@@ -346,10 +394,8 @@ export class AbstractComponent{
     if(this._class === 'shapeGroup'){
       if(data.layers.length > 0){
         this.shapeType = data.layers[0]._class;
-        // console.log(data.layers[0]);
         if(pathElements.includes(this.shapeType)){
           this.path = data.layers[0].path;
-          // console.log(this.path);
         }
       }
     }

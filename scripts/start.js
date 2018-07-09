@@ -49,6 +49,10 @@ var handleCompile;
 //   process.exit(1)
 // });
 
+// setInterval(()=>{
+//   console.log(process.memoryUsage().heapUsed)
+// },1000);
+
 
 // You can safely remove this after ejecting.
 // We only use this block for testing of Create React App itself:

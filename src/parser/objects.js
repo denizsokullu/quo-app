@@ -68,7 +68,6 @@ class Artboard extends ComponentCore{
   constructor(data){
     super(data);
     data.layers.map(this.mapLayersToComponents);
-    console.log(this.components);
   }
 }
 

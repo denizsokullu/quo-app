@@ -22,10 +22,18 @@ class Fill extends React.Component{
 
   getColor(selection){
     if(selection.editStates){
-
-      let color = (selection.editStates[selection.editStates.current].style.backgroundColor.split('(')[1].split(')')[0].split(',').map((color,i)=>{
-        if(i === 3) return parseFloat(color)
-        else return parseInt(color,10)
+      console.log(selection._class)
+      let propertyName = selection._class === 'shape' ? 'fill' : 'backgroundColor';
+      console.log(selection.editStates[selection.editStates.current]
+                  .style)
+      let color = (selection.editStates[selection.editStates.current]
+                  .style[propertyName]
+                  .split('(')[1].split(')')[0].split(',')
+                  .map((color,i)=>{
+        if(i === 3){
+          return parseFloat(color)
+        }
+        return parseInt(color,10)
       }))
 
       return {
@@ -50,16 +58,26 @@ class Fill extends React.Component{
     let c = this.state.color
     let colorArr = [color.rgb.r - c.r ,color.rgb.g - c.g, color.rgb.b - c.b ,0]
     this.setState({ color: color.rgb })
-    dispatch(COMPONENT_STYLE_CHANGE('BG_COLOR',{bgColor:colorArr,id:this.state.selection.id}))
+    this.dispatchEvent(colorArr);
 
   };
+
+  dispatchEvent(colorArr){
+    const { dispatch } = this.props
+    if(this.state.selection._class === 'shape'){
+      dispatch(COMPONENT_STYLE_CHANGE('FILL_COLOR',{fillColor:colorArr,id:this.state.selection.id}))
+    }
+    else{
+      dispatch(COMPONENT_STYLE_CHANGE('BG_COLOR',{bgColor:colorArr,id:this.state.selection.id}))
+    }
+  }
 
   handleSliderChange = (alpha) => {
 
     const { dispatch } = this.props
     let colorArr = [0,0,0, alpha / 100  - this.state.color.a ]
 
-    dispatch(COMPONENT_STYLE_CHANGE('BG_COLOR',{bgColor:colorArr,id:this.state.selection.id}))
+    this.dispatchEvent(colorArr);
 
     let color = {...this.state.color}
     color.a = alpha / 100;

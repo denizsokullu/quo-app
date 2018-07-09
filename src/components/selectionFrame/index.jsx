@@ -57,36 +57,20 @@ class SelectionFrame extends React.Component {
 
   render(){
 
-    // return(
-    //     // this.state.visible ?
-    //     // <div className='selection-frame-wrapper' style={
-    //     //   {
-    //     //     left:`${this.state.position.x}px`,
-    //     //     top:`${this.state.position.y}px`,
-    //     //     width:`${this.state.size.w}px`,
-    //     //     height:`${this.state.size.h}px`,
-    //     //   }
-    //     // }>
-    //     //   <div className='selection-frame top left'></div>
-    //     //   <div className='selection-frame top middle-w'></div>
-    //     //   <div className='selection-frame top right'></div>
-    //     //   <div className='selection-frame bottom left'></div>
-    //     //   <div className='selection-frame bottom middle-w'></div>
-    //     //   <div className='selection-frame bottom right'></div>
-    //     //   <div className='selection-frame middle-h left'></div>
-    //     //   <div className='selection-frame middle-h right'></div>
-    //     // </div>
-    //     // : null
-    // )
-
     if(this.state.target){
 
       let style = { transform:`scale(${1/this.state.scale})` }
+      let lineStyleH = { transform: `scale(1,${1/this.state.scale})`}
+      let lineStyleV = { transform: `scale(${1/this.state.scale},1)`}
       return(
         ReactDOM.createPortal(
 
             this.state.visible ?
               <React.Fragment>
+                <div className='selection-line top h' style={lineStyleH}></div>
+                <div className='selection-line bottom h' style={lineStyleH}></div>
+                <div className='selection-line left v' style={lineStyleV}></div>
+                <div className='selection-line right v' style={lineStyleV}></div>
                 <div className='selection-frame top left' style={style}></div>
                 <div className='selection-frame top middle-w' style={style}></div>
                 <div className='selection-frame top right' style={style}></div>

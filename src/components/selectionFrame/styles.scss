@@ -1,7 +1,7 @@
 .selection-frame{
 
-  $border-thickness:7px;
-  $border-offset:-5px;
+  $border-thickness:5px;
+  $border-offset:-3px;
 
   width:$border-thickness;
   height:$border-thickness;
@@ -28,5 +28,34 @@
   }
   &.middle-h{
     top:calc(50% + #{$border-offset});
+  }
+
+}
+
+.selection-line{
+  $line-thickness: 1px;
+  background-color:rgba(0,0,0,.3);
+  position:absolute;
+  &.h {
+    width:100%;
+    height:$line-thickness;
+    left:0;
+  }
+  &.v {
+    height:100%;
+    width:$line-thickness;
+    top:0;
+  }
+  &.top{
+    top:0;
+  }
+  &.bottom{
+    bottom:0
+  }
+  &.left{
+    left:0;
+  }
+  &.right{
+    right:0;
   }
 }

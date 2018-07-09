@@ -128,6 +128,12 @@ function COMPONENT_STYLE_CHANGE(state = {}, action){
 
   }
 
+  if(action.type === 'FILL_COLOR'){
+
+    newStyle = StyleChangeReducer.FILL_COLOR(state,action);
+
+  }
+
   if(action.type === 'BOX_SHADOW'){
 
     newStyle = StyleChangeReducer.BOX_SHADOW(state,action);

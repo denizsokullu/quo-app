@@ -100,7 +100,7 @@ class SideBarLeft extends Component {
         {/* <div className='sidebar-wrapper sidebar-resizable'> */}
           <div className={`sidebar-container sidebar-left`}>
             <ContentPagesCard/>
-            {/* <LayersCard/> */}
+            <LayersCard/>
           </div>
           <div className='interaction-nav left-nav'>
             {
@@ -126,16 +126,25 @@ class StylesContent extends React.Component{
   constructor(props){
     super(props);
   }
-  render(){
-    return (
-      <div className='styles-content'>
-        {
-          this.props.selection._class === 'text' ?
+  renderContent(){
+    switch(this.props.selection._class){
+        case 'text':
+          return(
             <React.Fragment>
               <Position/>
               <Size/>
             </React.Fragment>
-          :
+          )
+        case 'shape':
+          return(
+            <React.Fragment>
+              <Position/>
+              <Size/>
+              <Fill/>
+            </React.Fragment>
+          )
+        default:
+          return(
             <React.Fragment>
               <Position/>
               <Size/>
@@ -147,6 +156,14 @@ class StylesContent extends React.Component{
               <CopyState/>
               <Movement/>
             </React.Fragment>
+          )
+    }
+  }
+  render(){
+    return (
+      <div className='styles-content'>
+        {
+          this.renderContent()
         }
       </div>
     )
