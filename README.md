@@ -1,5 +1,7 @@
 # Quo - Prototyping with components
 
+Max Stein, Deniz Sokullu
+
 ### Quo solves the gap in prototyping
 - Much of UX design revolves around reusing components that exist in design systems and throughout the industry
 - Current limitations in prototyping tools cause designers to miss out on opportunities to test with users
