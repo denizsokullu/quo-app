@@ -8,13 +8,14 @@ const controller = {
 
 const data = {
   newAssets:{
-
+    
   },
   linkPreview:{
     received:false,
     component:null
   },
   newSelection:'',
+  selectionSiblings:[],
   currentProject:'-LGParuUInchgusujCer',
   currentPage:"",
   viewerZoom:1,

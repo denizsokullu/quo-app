@@ -27,8 +27,8 @@ class TopBar extends React.Component {
     return (
       <div className='top-bar'>
         <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/>
-        {/* <ButtonCore title='Push Project' onClick={this.pushProject}/>
-        <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
+        <ButtonCore title='Push Project' onClick={this.pushProject}/>
+        {/* <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
       </div>
     )
   }

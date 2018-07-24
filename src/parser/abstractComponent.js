@@ -11,7 +11,7 @@ import bplist from 'bplist'
 const pathElements = ['triangle','shapePath'];
 
 export class AbstractComponentSimple{
-  constructor(data){
+  constructor(data,siblings){
 
     this.pageName = data.name;
     this.frame = data.frame;
@@ -22,8 +22,21 @@ export class AbstractComponentSimple{
       this.style = data.style;
     }
 
+    if(siblings){
+      //remove the id of the element itself from the siblings
+      let siblingSelfIndex = siblings.indexOf(this.id);
+      if( siblingSelfIndex > -1){
+        siblings.splice(siblingSelfIndex,1);
+      }
+      this.siblings = siblings;
+    }
+    else{
+      this.siblings = []
+    }
+
     //Define grouping state for the component
     this.isGroupObject = false;
+
     if(this.isArtboard || this.isGroup){
       this.isGroupObject = true;
     }
@@ -36,6 +49,13 @@ export class AbstractComponentSimple{
     //assign shape class to those that have children shapeGroups
     if(this._class === 'group' && this.areChildrenAllShapeGroups(data)){
       this._class = 'shape'
+    }
+
+    this.initDynamicProperties();
+
+    if(this._class === 'bitmap'){
+      this._class = 'image';
+      this.imageURL = data.image._ref;
     }
 
     //check the inner layer element of a shapeGroup to get the type.
@@ -54,8 +74,12 @@ export class AbstractComponentSimple{
           let innerObj = {};
 
           innerObj.style = this.generateStyle(path);
-          innerObj.style.fill = outerStyle.fill;
-          innerObj.style.border = outerStyle.border;
+          if(outerStyle.fill){
+            innerObj.style.fill = outerStyle.fill;
+          }
+          if(outerStyle.border){
+              innerObj.style.border = outerStyle.border;
+          }
           innerObj.frame = path.frame;
           innerObj.points = path.points
 
@@ -92,7 +116,6 @@ export class AbstractComponentSimple{
           data.style = this.setIfExists(['fills','border','stroke','strokeWidth'],data.layers[1].style, data.style)
         }
 
-        console.log(data.style)
         //the style attributes are located in the child of the svg so we
         //need to provide them to the parent
 
@@ -103,7 +126,7 @@ export class AbstractComponentSimple{
       });
 
       this.createCSS(data);
-      console.log(this.css);
+
     }
 
     //Text needs styling too, therefore call the styling in it.
@@ -116,6 +139,11 @@ export class AbstractComponentSimple{
           this.textData = {}
           //These are constant array slots dedicated for text content & stlying information
           this.textData.text = rawTextData.string;
+
+          //setting it in the dynamicProps
+
+          this.setPropertyOfEditStates('textString',rawTextData.string);
+
           let attributes = rawTextData.attributes['0'].attributes;
           let colorAttr = attributes.MSAttributedStringColorAttribute
           let fontAttr = attributes.MSAttributedStringFontAttribute
@@ -130,6 +158,8 @@ export class AbstractComponentSimple{
           let a = parseFloat(colorAttr.alpha);
           //
           this.textData.color = {r:r,g:g,b:b,a:a};
+
+          console.log(this.editStates);
 
         // }
       this.createCSS(data);
@@ -149,16 +179,18 @@ export class AbstractComponentSimple{
     return dest;
   }
 
+  setPropertyOfEditStates(property,val){
+    let editStates = ['none','pressed','hover','focused'];
+    editStates.map(state=>{
+      this.editStates[state][property] = val;
+    })
+  }
+
   extractPoints(point,frame){
     return point.replace(/[{}]/g, '').replace(/\s/g, '').split(',').map(parseFloat).map((p,i)=>{
       if(i === 0) return parseFloat(parseFloat((p * frame.width) + frame.x).toFixed(4));
       if(i === 1) return parseFloat(parseFloat((p * frame.height) + frame.y).toFixed(4));
     });
-  }
-
-
-  combineFrames(outer,inner){
-
   }
 
   get isArtboard(){
@@ -173,6 +205,10 @@ export class AbstractComponentSimple{
     return this._class === 'shape';
   }
 
+  get isImage(){
+    return this._class === 'image';
+  }
+
   get isText(){
     return this._class === 'text';
   }
@@ -183,27 +219,40 @@ export class AbstractComponentSimple{
       },true);
   }
 
-  createCSS(data){
-    this.css = this.generateStyle(data);
-    this.editStates = {
-      current:'none',
-      none:{
-        active:true,
-        style:this.css,
-      },
-      hover:{
+  initDynamicProperties(){
+    let dynamicProps;
+    if(this.isShape){
+      dynamicProps = {
         active:false,
-        style:this.css,
-      },
-      pressed:{
-        active:false,
-        style:this.css,
-      },
-      focused:{
-        active:false,
-        style:this.css,
+        style:{},
       }
     }
+    else if(this.isText){
+      dynamicProps = {
+        active:false,
+        style:{},
+        textString:''
+      }
+    }
+    else{
+      dynamicProps = {
+        active:false,
+        style:{},
+      }
+    }
+    this.editStates = {
+      current:'none',
+      none:{...dynamicProps},
+      hover:{...dynamicProps},
+      pressed:{...dynamicProps},
+      focused:{...dynamicProps},
+    }
+    //activate the none state as the current styling
+    this.swapState('none');
+  }
+
+  createCSS(data){
+    this.setPropertyOfEditStates('style',this.generateStyle(data));
   }
 
   swapState(target){
@@ -219,6 +268,10 @@ export class AbstractComponentSimple{
     let b = parseInt(color.blue * 255)
     let a = color.alpha
     return `rgba(${r},${g},${b},${a})`
+  }
+
+  gerenateTextData(data){
+
   }
 
   generateStyle(data){
@@ -365,17 +418,6 @@ export class AbstractComponentSimple{
       })
 
   }
-  getComponent(id){
-    if(this.id === id){
-      return this;
-    }
-    else{
-      let results = this.layers.map(component=>{
-        return component.getComponent(id);
-      })
-      return _.reduce(results,(objects,obj)=>{return (typeof obj === 'object' ? obj : objects)}, undefined);
-    }
-  }
 }
 
 export class AbstractComponent{
@@ -431,6 +473,8 @@ export class AbstractComponent{
     else{
       this.createCSS(data);
     }
+
+
 
     //store these as objects tbh!
     if(data.layers){

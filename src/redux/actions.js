@@ -5,6 +5,11 @@ export const UPLOAD_SKETCH = uploadData => ({
   payload: uploadData
 });
 
+export const UPLOAD_IMAGE = uploadData => ({
+  type: 'UPLOAD_IMAGE',
+  payload: uploadData
+});
+
 export const VIEWER_RESIZE = zoomAmount => ({
   type: 'VIEWER_RESIZE',
   payload: zoomAmount
@@ -13,6 +18,10 @@ export const VIEWER_RESIZE = zoomAmount => ({
 export const COMPONENT_MOVE = component => ({
   type: 'COMPONENT_MOVE',
   payload: component
+});
+export const TEXT_STRING_UPDATE = payload => ({
+  type: 'TEXT_STRING_UPDATE',
+  payload: payload
 });
 
 export const COMPONENT_RESIZE = component => ({
@@ -64,12 +73,12 @@ export const TEXT_EDIT_TRIGGER = (payload) => ({
 
 export const RETRIEVE_COMPONENT = (projectId,pageId,componentId) => {
   return (dispatch) => {
-      firebase.database.ref('/projects')
-      .child(projectId) // access the certain project
+      firebase.database.ref('/mainProject')
+      // .child(projectId) // access the certain project
       .child(pageId) // access the page the component is on
-      .child('components') // access the object of components
-      .child(componentId) // access the specific component
-      .on('value',(data)=>{
+      // .child('components') // access the object of components
+      // .child(componentId) // access the specific component
+      .once('value',(data)=>{
         //if the component is there
         let component = data.val();
         if( component === null ) dispatch(DATABASE_ACTION('RETRIEVE_COMPONENT_FINISH',{status:false}));

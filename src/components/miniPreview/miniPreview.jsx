@@ -21,6 +21,7 @@ import ReplyIcon from 'material-ui-icons/Reply';
 
 import { push } from 'react-router-redux'
 
+import { findComponentTree } from '../../parser/helpers';
 
 
 class MiniPreview extends React.Component{
@@ -38,7 +39,9 @@ class MiniPreview extends React.Component{
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({component:nextProps.selection, currentProject:nextProps.currentProject, currentPage:nextProps.currentPage});
+    this.setState({component:nextProps.selection,
+                   currentProject:nextProps.currentProject,
+                   currentPage:nextProps.currentPage});
   }
 
   handleMinimizeClick() {
@@ -47,7 +50,12 @@ class MiniPreview extends React.Component{
     }));
   }
   renderPreviewComponent(){
-    return (<PreviewComponent id={this.state.component} component={this.state.component}/>)
+    return (
+      <PreviewComponent
+        id={this.state.component}
+        component={this.state.component}
+        componentTree={this.props.componentTree}
+      />)
   }
 
   openInNewTab(url) {
@@ -67,7 +75,7 @@ class MiniPreview extends React.Component{
             </span>
             <span className='right-side-icons'>
               <span className='flip'>
-                <ReplyIcon onClick={()=>{this.openInNewTab(`http://localhost:3000/p/${this.state.currentProject}/${this.state.currentPage}/${this.state.component.id}`)}}/>
+                <ReplyIcon onClick={()=>{this.openInNewTab(`http://localhost:3000/p/39F50ACC-9E48-4F8E-976C-9C33F2D4B850/46367B6D-A7F5-4B0D-A456-03F90024D9F3`)}}/>
               </span>
 
               <PictureInPictureAltIcon/>
@@ -83,11 +91,15 @@ class MiniPreview extends React.Component{
 }
 
 function mapStateToProps(state){
+
     let component = state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
+    let componentTree = findComponentTree(component.id,state.present.newAssets[state.present.currentPage]);
+
     return ({
       selection:component,
       currentProject:state.present.currentProject,
       currentPage:state.present.currentPage,
+      componentTree:componentTree,
     });
 }
 

@@ -8,7 +8,8 @@ const getPage = (state,id) => {
 
 const PUSH_PROJECT = (state,action) => {
   //if the newAssets is empty, the push is no-op
-  firebase.database.ref('/mainProject').set({...state.newAssets});
+  console.log('pushing project')
+  firebase.database.ref('/mainProject').set({...state.newAssets}).then(()=>{console.log('upload completed')});
   // //retrieve the page, and push a ref with the id to the core database
   return state
 }
@@ -33,6 +34,7 @@ const CLEAR_VIEWER = (state,action) => {
 
   newState.newAssets = {};
   newState.newSelection = '';
+  newState.selectionSiblings = [];
   newState.editState = 'none';
   newState.currentPage = '';
   newState.textEdit = '';
@@ -42,8 +44,8 @@ const CLEAR_VIEWER = (state,action) => {
 }
 
 const RETRIEVE_COMPONENT_FINISH = (state,action) => {
-  if(action.payload.status)   return {...state, previewLink:{received:true,component:action.payload.payload}};
-  return {...state,previewLink:{received:false,component:null}};
+  if(action.payload.status)   return {...state, previewLink:{received:true,assets:action.payload.payload}};
+  return {...state, previewLink:{ received:false, component:null } };
 }
 
 const RETRIEVE_MAIN_PROJECT_FINISH = (state,action) => {

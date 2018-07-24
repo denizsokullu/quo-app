@@ -1,10 +1,6 @@
 import { dc } from '../helpers';
 import { sketchParser,
-         // sketchParserNew,
          Page,
-         // Artboard,
-         // Group,
-         // Component
         } from '../../parser';
 
 
@@ -17,6 +13,19 @@ function addPage(state,page){
     newAssets[newPage.id] = newPage;
     return newAssets;
 
+}
+
+export function UPLOAD_IMAGE(state = {}, action){
+  let images;
+  if(images){
+     images = dc(state.newAssets.images);
+  }
+  else{
+    images = {};
+  }
+  images[action.payload.filename] = action.payload.imageData
+  state.newAssets.images = images;
+  return { ...state }
 }
 
 export function UPLOAD_SKETCH(state = {}, action){

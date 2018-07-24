@@ -8,8 +8,8 @@ function sketchParser(data){
   return new AbstractComponent(data);
 }
 
-function sketchParserNew(data){
-  return new AbstractComponentSimple(data);
+function sketchParserNew(data,siblings){
+  return new AbstractComponentSimple(data,siblings);
 }
 
 export { Page, Artboard, Group, Component, sketchParser, sketchParserNew };

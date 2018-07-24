@@ -4,38 +4,23 @@ import { RETRIEVE_COMPONENT } from '../../redux/actions';
 import PreviewComponent from '../previewComponent/previewComponent';
 
 class PreviewLink extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      // pageId : this.props.pageId,
-      // componentId : this.props.id,
-      // projectId: this.props.projectId
-      loading:true
-    }
-  }
-
-  componentWillReceiveProps(nextProps){
-    this.setState({component:nextProps.component,loading:nextProps.loading},()=>{console.log(this.state)});
-    console.log(nextProps);
-  }
 
   componentDidMount(){
     const { dispatch } = this.props;
-    console.log(this.props.projectId,this.props.pageId,this.props.id);
     dispatch(RETRIEVE_COMPONENT(this.props.projectId,this.props.pageId,this.props.id));
   }
 
   render(){
     return(
-      <div>
+      <div style={{width:'100vw',height:'100vh',display:'flex',justifyContent:'center',alignItems:'center'}}>
         {
-          this.state.loading
+          this.props.loading
           ?
           <p style={{color:'white'}}>Loading</p>
           :
-          this.state.component
+          this.props.assets
           ?
-          <PreviewComponent component={this.state.component}/>
+          <PreviewComponent component={this.props.assets.components[this.props.id]} dim={{w:1200,h:800}} previewLink componentTree={this.props.assets}/>
           :
           <p style={{color:'white'}}>Component doesn't exist</p>
         }
@@ -45,8 +30,12 @@ class PreviewLink extends React.Component{
 }
 
 function mapStateToProps(state,ownProps){
-    if(state.present.previewLink && state.present.previewLink.received) return {component:state.present.previewLink.component,loading:false}
-    else return {}
+    if(state.present.previewLink && state.present.previewLink.received) {
+        return {assets:state.present.previewLink.assets,loading:false}
+    }
+    else{
+      return { loading:true }
+    }
 
 }
 

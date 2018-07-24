@@ -3,9 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 // import Draggable from '../draggable/react-draggable';
-import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER } from '../../redux/actions';
+import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from '../../redux/actions';
 
 import uuidv1 from 'uuid/v1';
+
+import { findComponentTree } from '../../parser/helpers';
 
 import SelectionFrame from '../selectionFrame';
 
@@ -68,6 +70,7 @@ class ComponentRendererCore extends React.Component {
     return (
       data.path ? 'svg' :
       data._class === 'text' ? 'text' :
+      data._class === 'image' ? 'image' :
       data._class === 'page' || (data.shapeType && data.layers) || data._class === 'group' ?
       this.props.isParent ? 'parent' :
       data._class === 'group' ? 'group' :
@@ -76,18 +79,25 @@ class ComponentRendererCore extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if(this.state.type === 'image'){
+      console.log(nextProps.imageData);
+    }
     this.setState({
       id:nextProps.summary.id,
       components:nextProps.components,
       layers:nextProps.summary,
       selection:nextProps.selection,
       editState:nextProps.editState,
-      currentPage:nextProps.currentPage
+      currentPage:nextProps.currentPage,
+      imageData:nextProps.imageData
     })
   }
 
   // TODO: Update this to check if component.interactions.clicked == true
-  isSelected(){
+  isSelected(id){
+    if(id){
+      return this.state.selection === id;
+    }
     return this.state.selection === this.state.id;
   }
 
@@ -132,11 +142,21 @@ class ComponentRendererCore extends React.Component {
   }
 
   onClick(e){
-    if(!this.props.isParent && this.state.components._class !== 'artboard'){
+    if(!this.props.isParent){
+      // if(this.state.components._class === 'group'){
+      //   e.stopPropagation();
+      //   console.log('clicked on a grouped component')
+      //   return
+      // }
+      console.log(this.state.components.id)
       e.stopPropagation();
       const { dispatch } = this.props;
-      dispatch(COMPONENT_SELECT(this.state.id,this.state.currentPage));
+      dispatch(COMPONENT_SELECT(this.state.id));
+
     }
+
+    //only group components selectable,
+    //if double clicked, it takes
 
   }
 
@@ -218,16 +238,20 @@ class ComponentRendererCore extends React.Component {
     e.preventDefault();
   }
 
-  handleDoubleClick(){
-    // console.log('yo')
-  }
-
   calcDragOffset(style){
 
     let left = (parseInt(style.left.slice(0,-2)) + this.state.drag.offset.x) + 'px';
     let top = (parseInt(style.top.slice(0,-2)) + this.state.drag.offset.y) + 'px';
     return {left:left,top:top}
 
+  }
+
+  isNestedComponent(){
+    return (this.state.components._class === 'artboard' || this.state.components._class === 'group')
+  }
+
+  isSiblingSelected(){
+    return _.filter(this.siblings,this.isSelected).length > 0;
   }
 
   renderWrapper(content){
@@ -244,7 +268,9 @@ class ComponentRendererCore extends React.Component {
 
     let selectedClass = this.isSelected() ? 'selected' : '';
 
-    if(this.state.draggable){
+    //selected component just works normally
+
+    if(this.isSelected()){
       return (
         <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
           style={style}
@@ -256,7 +282,75 @@ class ComponentRendererCore extends React.Component {
       </div>)
     }
 
-    else {
+    //artboard can be selected with 1 click always
+
+    else if(this.state.components._class === 'artboard'){
+      return (
+        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+          style={style}
+          onClick={this.onClick}
+          ref='handle'
+          onMouseDown={this.onMouseDownHandler.bind(this)}
+        >
+          { content }
+      </div>)
+    }
+
+    //group
+
+    //if the outermost group, can be selected with 1 click
+    //if inner, can be selected with 2 clicks
+
+    else if(this.state.components._class === 'group' && this.props.selectable){
+      if(this.props.selectionType === 1){
+        return (
+          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+            style={style}
+            onClick={this.onClick}
+          >
+            { content }
+        </div>)
+      }
+      else if(this.props.selectionType === 2){
+        return (
+          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+            style={style}
+            onDoubleClick={this.onClick}
+          >
+            { content }
+        </div>)
+      }
+
+    }
+
+    //any other component that is currently selectable
+
+    else if(this.props.selectable){
+      if(this.props.selectionType === 1){
+        return (
+          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+            style={style}
+            onClick={this.onClick}
+          >
+            { content }
+        </div>)
+      }
+      else if(this.props.selectionType === 2){
+        //solved sibling selection
+        // console.log(this.isSiblingSelected(),this.state.selection,this.state.components.siblings);
+        return (
+          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+            style={style}
+            onDoubleClick={this.onClick}
+            onClick={(e)=>{e.stopPropagation()}}
+          >
+            { content }
+        </div>)
+      }
+    }
+
+    //component isnt selectable
+    else{
       return (
         <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
           style={style}
@@ -264,7 +358,6 @@ class ComponentRendererCore extends React.Component {
           { content }
       </div>)
     }
-
 
   }
 
@@ -287,18 +380,43 @@ class ComponentRendererCore extends React.Component {
       )
     });
 
-    let nonParentContent = _.keys(this.state.layers.components).map(key => {
-      return (
-        <ComponentRenderer
-          isParent={false}
-          summary={this.state.layers.components[key]}
-          componentId={key}
-          key={key}
-        />
-      )
-    })
+    let nonParentContent;
 
-    if(this.state.components._class === 'text'){
+    if(this.state.components._class === 'artboard'){
+
+      nonParentContent = _.keys(this.state.layers.components).map(key => {
+        return (
+          <ComponentRenderer
+            isParent={false}
+            selectable={true}
+            selectionType={1}
+            summary={this.state.layers.components[key]}
+            componentId={key}
+            key={key}
+          />
+        )
+      });
+
+    }
+
+    else if(this.state.components._class === 'group'){
+
+      nonParentContent = _.keys(this.state.layers.components).map(key => {
+        return (
+          <ComponentRenderer
+            isParent={false}
+            selectable={this.state.components.id === this.state.selection}
+            selectionType={2}
+            summary={this.state.layers.components[key]}
+            componentId={key}
+            key={key}
+          />
+        )
+      });
+
+    }
+
+    else if(this.state.components._class === 'text'){
 
       nonParentContent = (
         <TextComponent data={this.state.components} changeDrag={this.changeDrag.bind(this)}></TextComponent>
@@ -306,13 +424,38 @@ class ComponentRendererCore extends React.Component {
 
     }
 
-    if(this.state.layers.class === 'shape'){
+    else if(this.state.layers.class === 'shape'){
 
       nonParentContent = (
         <ShapeComponent data={this.state.components}/>
       )
 
     }
+
+    else if(this.state.components._class === 'image'){
+
+      nonParentContent = (
+        <ImageComponent data={this.state.imageData}/>
+      )
+
+    }
+
+    else{
+
+      nonParentContent = _.keys(this.state.layers.components).map(key => {
+        return (
+          <ComponentRenderer
+            isParent={false}
+            summary={this.state.layers.components[key]}
+            componentId={key}
+            key={key}
+          />
+        )
+      })
+
+    }
+
+
 
     return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
 
@@ -432,6 +575,15 @@ class CoreComponent extends React.Component{
   }
   componentWillReceiveProps(nextProps) {
     this.setState({data: nextProps.data});
+  }
+}
+
+class ImageComponent extends React.Component{
+  render(){
+    const imgData = `data:image/png;base64,${this.props.data}`;
+    return(
+      <img src={imgData}></img>
+    )
   }
 }
 
@@ -576,8 +728,8 @@ class TextComponent extends CoreComponent{
     super(props);
     // let that = this;
     this.state.editMode = false;
-    this.state.textData = this.state.data.textData
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
+    this.newText = this.getText();
   }
 
   getColor(){
@@ -602,12 +754,42 @@ class TextComponent extends CoreComponent{
     // console.log(this.state);
   }
 
+  deselect(){
+    this.setState({editMode:false},()=>{
+      this.dispatchTextStringUpdate(this.newText)
+      this.props.changeDrag(true);
+    })
+  }
+
+  dispatchTextStringUpdate(string){
+    const { dispatch } = this.props;
+    dispatch(TEXT_STRING_UPDATE({textString:string,id:this.state.data.id}));
+  }
+
+  getText(){
+    let editStates = this.state.data.editStates;
+    return editStates[this.props.editState].textString
+  }
+
+  textUpdate(str){
+    this.newText = str
+  }
+
+  selectThis(){
+    const { dispatch } = this.props;
+    dispatch(COMPONENT_SELECT(this.state.data.id));
+  }
+
   componentWillReceiveProps(nextProps){
     if(nextProps.selection !== this.state.data.id && this.state.editMode){
       this.setState({editMode:false},()=>{
+        this.dispatchTextStringUpdate(this.newText)
         this.props.changeDrag(true);
+        this.selectThis();
       })
     }
+    if(!this.state.editMode) this.setState({data:nextProps.data});
+
   }
 
   //things that change(width,height,string)
@@ -615,7 +797,8 @@ class TextComponent extends CoreComponent{
   renderTextElement(){
     if(this.state.editMode && this.props.selection === this.state.data.id){
       let editStates = this.state.data.editStates;
-      let style = editStates[editStates.current].style
+      let style = editStates[this.props.editState].style
+      let string = editStates[this.props.editState].textString
       let w = style.width;
       let h = style.height;
       return (
@@ -623,14 +806,15 @@ class TextComponent extends CoreComponent{
           <TextArea className='text-inner'
             width={w}
             height={h}
+            value={string}
+            deselect={this.deselect.bind(this)}
+            textUpdate={this.textUpdate.bind(this)}
             style={{
                 fontFamily:style.fontFamily,
                 fontSize:style.fontSize,
               }
             }
-          >
-            {this.state.textData.text}
-          </TextArea>
+          />
         </span>
       )
     }
@@ -640,7 +824,7 @@ class TextComponent extends CoreComponent{
           onDoubleClick={this.handleDoubleClick}
         >
           <p className='text-inner'>
-            {this.state.textData.text}
+            {this.getText()}
           </p>
         </span>
       )
@@ -649,7 +833,7 @@ class TextComponent extends CoreComponent{
 
 
   render(){
-    return ( this.state.textData ? this.renderTextElement() : <p></p>)
+    return ( this.renderTextElement() )
   }
 }
 
@@ -657,12 +841,21 @@ function mapStateToProps(state,ownProps) {
 
   let components = state.present.newAssets[state.present.currentPage].components
 
-
   if(!ownProps.isParent){
     components = components[ownProps.summary.id];
   }
 
+  let props = {};
+
+  if(state.present.newAssets.images){
+    if(components._class === 'image'){
+      let url = components.imageURL;
+      props.imageData = state.present.newAssets.images[url];
+    }
+  }
+
   return {
+            ...props,
             controller:state.present.controller,
             components:components,
             selection:state.present.newSelection,
@@ -674,6 +867,7 @@ function mapStateToProps(state,ownProps) {
 function mapStateToPropsForTextComponent(state){
   return {
     selection:state.present.newSelection,
+    editState:state.present.editState,
   }
 }
 

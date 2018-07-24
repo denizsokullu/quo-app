@@ -22,10 +22,7 @@ class Fill extends React.Component{
 
   getColor(selection){
     if(selection.editStates){
-      console.log(selection._class)
       let propertyName = selection._class === 'shape' ? 'fill' : 'backgroundColor';
-      console.log(selection.editStates[selection.editStates.current]
-                  .style)
       let color = (selection.editStates[selection.editStates.current]
                   .style[propertyName]
                   .split('(')[1].split(')')[0].split(',')

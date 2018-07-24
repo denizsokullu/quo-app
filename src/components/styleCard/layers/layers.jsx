@@ -160,14 +160,11 @@ class Layer extends React.Component {
       isMinimized:true
     }
     this.handleMinimizeChange = this.handleMinimizeChange.bind(this);
-    console.log(props.layer);
   }
 
   handleMinimizeChange(e){
-    this.setState({isMinimized:!this.state.isMinimized},()=>{
-      console.log(this.isMinimized);
-    });
-    e.stopPropagation()
+    this.setState({isMinimized:!this.state.isMinimized});
+    e.stopPropagation();
   }
 
   selectComponent(){

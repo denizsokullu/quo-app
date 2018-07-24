@@ -59,15 +59,17 @@ class App extends Component {
                       </KeyController>
                     )
                   } } />
-                  <Route path="/p/:projectId/:pageId/:componentId" render={ ({ match }) => {
+                  <Route path="/p/:pageId/:componentId" render={ ({ match }) => {
                     return (
                       <PreviewLink
-                        projectId={match.params.projectId}
+                        // projectId={match.params.projectId}
                         pageId={match.params.pageId}
                         id={match.params.componentId}
                       ></PreviewLink>
                     )
                   } } />
+
+                  {/*  /39F50ACC-9E48-4F8E-976C-9C33F2D4B850/46367B6D-A7F5-4B0D-A456-03F90024D9F3*/}
                   {/* -LGParuUInchgusujCer/39F50ACC-9E48-4F8E-976C-9C33F2D4B850/45550208-8288-4905-9AC9-AC7B55C5E9F2 */}
                 </Switch>
               </main>

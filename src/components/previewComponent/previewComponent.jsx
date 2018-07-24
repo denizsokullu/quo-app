@@ -2,10 +2,451 @@ import _ from 'underscore';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from "styled-components";
+import { findComponentTree } from '../../parser/helpers';
 
 function px2int(str){
   return parseInt(str.slice(0,-2));
 }
+
+function obj2rgba(arr){
+  return `rgba(${arr.r},${arr.g},${arr.b},${arr.a})`
+}
+
+class PreviewComponentInner extends React.PureComponent{
+  constructor(props) {
+    super(props);
+    this.state = this.createInitialState(props);
+  }
+
+  createInitialState(props){
+    return {
+      hovered:false,
+      pressed:false,
+      focused:false
+    }
+  }
+
+  bindDOMActions(){
+    this.onClick = this.onClick.bind(this);
+  }
+
+  mouseDownHandler(e){
+    this.setState({focused:false,pressed:true})
+    // e.preventDefault();
+    // e.stopPropagation();
+  }
+
+  mouseUpHandler(e){
+    this.setState({focused:true,pressed:false})
+    // e.preventDefault();
+    // e.stopPropagation();
+  }
+
+  mouseEnterHandler(e){
+    this.setState({hovered:true});
+    // alert('ENTERED CHILD EL')
+    // e.preventDefault();
+    // e.stopPropagation();
+  }
+
+  mouseLeaveHandler(e){
+    this.setState({hovered:false});
+    // e.preventDefault();
+    // e.stopPropagation();
+  }
+
+  resetInteraction(e){
+    this.setState({focused:false,pressed:false})
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  convertCSSRule(rule){
+
+    const callback = (dashChar, char) => { return '-' + dashChar.toLowerCase() };
+
+    const pattern = /[A-Z]/g;
+
+    return rule.replace(pattern, callback);
+
+  }
+
+  generateStyleChunks(styles,watchList){
+    let styleChunk = ``;
+    let convertedCSSPropertiesTable = Object.keys(styles).map(property => {
+      if(!watchList.includes(property)){
+        let convertedProperty = this.convertCSSRule(property);
+        styleChunk += `${convertedProperty}:${styles[property]};\n`
+      }
+    })
+    return styleChunk;
+  }
+  generateComponent() {
+
+
+    let states = this.props.component.editStates;
+
+    let style = states[this.props.component.editStates.current].style
+
+
+    // a preview component applies the style from edit states into a const variable
+
+    //the component must be more versatile as there should be a couple Types
+
+    //// TODO:
+
+
+    //Make the preview render:
+    //simple type rect
+    //text
+    //svg
+
+    //Make the preview render children
+
+    //Make th
+
+    let Component;
+
+
+    if(this.props.component._class === 'shape'){
+      Component = (styled.svg`
+        position:absolute;
+        ${this.generateStyleChunks(states['none'].style,[])};
+        &.hovered {
+          ${this.generateStyleChunks(states['hover'].style,[])}
+        }
+        &.pressed{
+          ${this.generateStyleChunks(states['pressed'].style,[])}
+        }
+        &.focused{
+          ${this.generateStyleChunks(states['focused'].style,[])}
+        }
+      `)
+    }
+    else{
+      Component = (styled.div`
+        position:absolute;
+        ${this.generateStyleChunks(states['none'].style,[])};
+        &.hovered {
+          ${this.generateStyleChunks(states['hover'].style,[])}
+        }
+        &.pressed{
+          ${this.generateStyleChunks(states['pressed'].style,[])}
+        }
+        &.focused{
+          ${this.generateStyleChunks(states['focused'].style,[])}
+        }
+      `)
+    }
+
+
+
+    return Component
+  }
+
+  generateTextComponent(){
+
+        let states = this.props.component.editStates;
+
+        let style = states[this.props.component.editStates.current].style
+
+
+        // a preview component applies the style from edit states into a const variable
+
+        //the component must be more versatile as there should be a couple Types
+
+        //// TODO:
+
+
+        //Make the preview render:
+        //simple type rect
+        //text
+        //svg
+
+        //Make the preview render children
+
+        //Make th
+
+        const Component = (styled.div`
+          position:absolute;
+          color:${obj2rgba(this.props.component.textData.color)};
+
+          font-family:${this.props.component.textData.fontFamily};
+          ${this.generateStyleChunks(states['none'].style,['font-size'])}
+          &.hovered {
+            ${this.generateStyleChunks(states['hover'].style,['font-size'])}
+          }
+          &.pressed{
+            ${this.generateStyleChunks(states['pressed'].style,['font-size'])}
+          }
+          &.focused{
+            ${this.generateStyleChunks(states['focused'].style,['font-size'])}
+          }
+          font-size:${this.props.component.textData.fontSize}px;
+        `)
+
+        return Component
+  }
+
+  renderWrapper(content){
+
+    const PreviewComponent =
+      this.props.component._class === 'text'
+      ? this.generateTextComponent() :
+      this.props.component._class === 'shape' ?
+      this.generateComponent() :
+      this.generateComponent()
+
+    const focusedClass = this.state.focused ? 'focused' : ''
+    const pressedClass = this.state.pressed ? 'pressed' : ''
+    const hoveredClass = this.state.hovered ? 'hovered' : ''
+
+    // console.log('rendered')
+
+    console.log('THIS IS THE COMPONENT');
+    console.log('ID:',this.props.component.pageName);
+    console.log('CLASSES:');
+    console.log('hover',this.state.hovered);
+    console.log('pressed',this.state.pressed);
+    console.log('focused',this.state.focused);
+
+    // currently creates a div only = make it so that the render
+    // calls previewComponentCore for the inner components as well.
+    // Also instead of changing the width of the element, the scaling should
+    // be done by the container.
+
+    return (
+      // <React.Fragment>
+      // <div className={`preview-component-container`} }>
+        <PreviewComponent
+          // onClick={this.resetInteraction.bind(this)}
+          onMouseDown={this.mouseDownHandler.bind(this)}
+          onMouseUp={this.mouseUpHandler.bind(this)}
+          onMouseEnter={this.mouseEnterHandler.bind(this)}
+          onMouseLeave={this.mouseLeaveHandler.bind(this)}
+          className={`${hoveredClass} ${pressedClass} ${focusedClass}`}>
+          {
+            this.props.component.textData ? this.props.component.textData.text :
+            this.props.component._class === 'shape' ? <ShapeComponent data={this.props.component}/> : null
+          }
+        </PreviewComponent>
+      // </div>
+      // </React.Fragment>
+    )
+  }
+  render(){
+    // const content = _.keys(this.props.componentTree).map((id)=>{
+    //       return ( <PreviewComponentInnerConnected id={id} key={id}/> )
+    // });
+    return (this.renderWrapper())
+  }
+}
+
+class ShapeComponent extends React.Component{
+
+  constructor(props){
+    super(props);
+    this.code = [];
+  }
+  getTheLastPathAdded(){
+    return this.code[this.code.length - 1];
+  }
+  createNewPath(){
+    this.code.push('');
+  }
+  addToPath(str){
+    this.code[this.code.length-1] += str;
+  }
+  isLine(edge){
+    return !edge.p1.hasCurveFrom && !edge.p2.hasCurveTo
+  }
+  isCurve(edge){
+    return edge.p1.hasCurveFrom || edge.p2.hasCurveTo
+  }
+  isSmoothCurve(edge){
+    return edge.p2.curveMode === 2
+  }
+  getControlPoints(edge,frame){
+    return [edge.p1.curveFrom,edge.p2.curveTo];
+  }
+  createPathCode(data){
+    let frame = data.frame;
+    let edges = [];
+
+    data.edges.map((edge,i) => {
+
+      //create a starting point
+      if(i == 0){
+        //add M
+        this.addToPath(this.createM(edge.p1.point));
+      }
+
+      //add a curve
+      if(this.isCurve(edge)){
+        let controlPoints = this.getControlPoints(edge);
+        let endPoint = edge.p2.point
+        this.addToPath(this.createC(controlPoints[0],controlPoints[1],endPoint));
+        //if the second point is a mirrored bezier curve
+        //add an s-curve
+        if(this.isSmoothCurve(edge)){
+          this.addToPath(this.createS(controlPoints[1],endPoint));
+        }
+      }
+
+      //add a line
+      else if(this.isLine(edge)){
+        this.addToPath(this.createL(edge.p2.point));
+      }
+
+      //add a Z to close off
+      if(i === edges.length - 1){
+        this.addToPath(this.createZ());
+      }
+
+    });
+
+  }
+
+  extractPoints(point,frame){
+    return point.replace(/[{}]/g, '').replace(/\s/g, '').split(',').map(parseFloat).map((p,i)=>{
+      if(i === 0) return parseFloat(parseFloat((p * frame.width) + frame.x).toFixed(4));
+      if(i === 1) return parseFloat(parseFloat((p * frame.height) + frame.y).toFixed(4));
+    });
+  }
+
+  p2s(points){
+    return `${points[0]} ${points[1]}`;
+  }
+  createM(points){
+    return `M ${this.p2s(points)} `
+  }
+  createL(points){
+    return `L ${this.p2s(points)} `
+  }
+  createC(curveFrom,curveTo,points){
+    return `C ${this.p2s(curveFrom)} ${this.p2s(curveTo)} ${this.p2s(points)} `
+  }
+  createS(curveFrom,endPoint){
+    return `S ${this.p2s(curveFrom)} ${this.p2s(endPoint)} `
+  }
+  createZ(){
+    return 'Z '
+  }
+  calculatePath(shape){
+    //execute path algorithm
+    this.createNewPath();
+    shape.paths.map((path,index)=>{
+      this.createPathCode(path)
+    })
+    //return last added path
+    return ( <path d={this.getTheLastPathAdded()}/> )
+  }
+  getStylePropsFromParent(){
+
+    let style = this.getCurStyle(this.props.data);
+    return { fill:style.fill,border:style.border }
+  }
+
+  getCurStyle(obj){
+    return obj.editStates[obj.editStates.current].style
+  }
+  render(){
+    return(
+      // <div style={{position:'relative'}}>
+      <React.Fragment>
+      {
+        this.props.data.shapeData.map((shape,index)=>{
+          //do this more compherensively doing fill only is retarded
+          let style;
+          if(shape.style.fill){
+            style = this.getStylePropsFromParent();
+          }
+          else{
+            style = {};
+          }
+          return (
+            // <svg style={{...shape.style, ...style, position:'absolute'}} key={index}>
+            //   {
+                this.calculatePath(shape)
+            //   }
+            // </svg>
+          )
+        })
+      }
+    </React.Fragment>
+    )
+  }
+}
+
+
+
+// Returns a size that fits into the docked container.
+// Keeps aspect ratio for the element.
+function computeDockedSize(w,h,containerSize){
+
+  let c = containerSize
+  let rInner = w/h;
+  let rContainer = c.w / c.h;
+
+  return rContainer > rInner ? { w: parseInt(w * c.h / h), h: parseInt(c.h) } : { w: parseInt(c.w), h: parseInt(h * c.w / w) }
+}
+
+function generateOuterComponent(states,containerSize) {
+
+  let style = states[states.current].style
+  let size = computeDockedSize(px2int(style.width),px2int(style.height),containerSize);
+  let resizeRatio = {x:size.w/px2int(style.width),y:size.h/px2int(style.height)}
+
+  // a preview component applies the style from edit states into a const variable
+
+  //the component must be more versatile as there should be a couple Types
+
+  //// TODO:
+
+  const Component = (styled.div`
+    width:${size.w}px;
+    height:${size.h}px;
+    .content{
+      position:relative;
+      transform:scale(${resizeRatio.x});
+      transform-origin:0 0;
+    }
+    ${generateStyleChunks(states['none'].style,['left','top','height','width'])}
+    &.hovered {
+      ${generateStyleChunks(states['hover'].style,['left','top','height','width'])}
+    }
+    &.pressed{
+      ${generateStyleChunks(states['pressed'].style,['left','top','height','width'])}
+    }
+    &.focused{
+      ${generateStyleChunks(states['focused'].style,['left','top','height','width'])}
+    }
+  `)
+
+  return Component
+}
+
+function convertCSSRule(rule){
+
+  const callback = (dashChar, char) => { return '-' + dashChar.toLowerCase() };
+
+  const pattern = /[A-Z]/g;
+
+  return rule.replace(pattern, callback);
+
+}
+
+function generateStyleChunks(styles,watchList){
+  let styleChunk = ``;
+  let convertedCSSPropertiesTable = Object.keys(styles).map(property => {
+    if(!watchList.includes(property)){
+      let convertedProperty = convertCSSRule(property);
+      styleChunk += `${convertedProperty}:${styles[property]};\n`
+    }
+  })
+  return styleChunk;
+}
+
 
 class PreviewComponentCore extends React.Component {
   constructor(props) {
@@ -17,61 +458,20 @@ class PreviewComponentCore extends React.Component {
 
   createInitialState(props){
     return {
-      containerSize:{ w: 220, h: 150 },
-      id:props.id,
-      component:props.component,
+      containerSize:props.dim ? props.dim : { w: 220, h: 126 },
       hovered:false,
       pressed:false,
-      focused:false
+      focused:false,
     }
   }
 
-  componentWillReceiveProps(nextProps){
-    this.setState({component:nextProps.component})
-    console.log('change happened')
-  }
+  // componentWillReceiveProps(nextProps){
+  //   this.setState({component:nextProps.component});
+  //   this.setState({componentTree:nextProps.componentTree});
+  // }
 
   bindDOMActions(){
     this.onClick = this.onClick.bind(this);
-  }
-
-  declareTypes(){
-    let components = this.state.components;
-
-    //svg CoreComponent
-    if(components.path){
-      this.setState({type:'svg'});
-    }
-    else if(components.textData){
-      this.setState({type:'text'});
-    }
-
-    else if(components._class === 'page' || (components.shapeType && components.layers) || components._class === 'group'){
-
-      //group container(more ComponentRenderers)
-      if(this.props.isParent){
-        this.setState({type:'parent'});
-      }
-      else if(components._class === 'group'){
-        this.setState({type:'group'});
-      }
-      //rectangle CoreComponent
-      else{
-        this.setState({type:'rect'});
-      }
-    }
-  }
-
-
-  // Returns a size that fits into the docked container.
-  // Keeps aspect ratio for the element.
-  computeDockedSize(w,h){
-
-    let c = {w:this.state.containerSize.w,h:this.state.containerSize.h}
-    let rInner = w/h;
-    let rContainer = c.w / c.h;
-
-    return rContainer > rInner ? { w: parseInt(w * c.h / h), h: parseInt(c.h) } : { w: parseInt(c.w), h: parseInt(h * c.w / w) }
   }
 
   mouseDownHandler(){
@@ -116,32 +516,37 @@ class PreviewComponentCore extends React.Component {
     return styleChunk;
   }
 
-  generateBoundaries(){
+  generateComponent(editStates) {
 
-  }
+    let states = editStates;
 
-  generateComponent() {
-
-
-    let states = this.state.component.editStates;
-
-    let style = states[this.state.component.editStates.current].style
+    let style = states[editStates.current].style
     let size = this.computeDockedSize(px2int(style.width),px2int(style.height));
+    let resizeRatio = {x:size.w/px2int(style.width),y:size.h/px2int(style.height)}
 
     // a preview component applies the style from edit states into a const variable
+
+    //the component must be more versatile as there should be a couple Types
+
+    //// TODO:
 
     const Component = (styled.div`
       width:${size.w}px;
       height:${size.h}px;
-      ${this.generateStyleChunks(states['none'].style,['width','height'])}
+      .content{
+        position:relative;
+        transform:scale(${resizeRatio.x});
+        transform-origin:0 0;
+      }
+      ${this.generateStyleChunks(states['none'].style,['left','top','height','width'])}
       &.hovered {
-        ${this.generateStyleChunks(states['hover'].style,['width','height'])}
+        ${this.generateStyleChunks(states['hover'].style,['left','top','height','width'])}
       }
       &.pressed{
-        ${this.generateStyleChunks(states['pressed'].style,['width','height'])}
+        ${this.generateStyleChunks(states['pressed'].style,['left','top','height','width'])}
       }
       &.focused{
-        ${this.generateStyleChunks(states['focused'].style,['width','height'])}
+        ${this.generateStyleChunks(states['focused'].style,['left','top','height','width'])}
       }
     `)
 
@@ -150,7 +555,7 @@ class PreviewComponentCore extends React.Component {
 
   renderWrapper(content){
 
-    const PreviewComponent = this.generateComponent();
+    const PreviewComponent = generateOuterComponent(this.props.component.editStates,this.state.containerSize);
 
     const focusedClass = this.state.focused ? 'focused' : ''
     const pressedClass = this.state.pressed ? 'pressed' : ''
@@ -161,268 +566,57 @@ class PreviewComponentCore extends React.Component {
     // Also instead of changing the width of the element, the scaling should
     // be done by the container.
 
+    console.log('\n\n\n\n');
+
     return (
-      <React.Fragment>
       <div className={`preview-component-container`} onClick={this.resetInteraction.bind(this)}>
         <PreviewComponent
-          onMouseDown={this.mouseDownHandler.bind(this)}
-          onMouseUp={this.mouseUpHandler.bind(this)}
-          onMouseEnter={this.mouseEnterHandler.bind(this)}
-          onMouseLeave={this.mouseLeaveHandler.bind(this)}
-          className={`${hoveredClass} ${pressedClass} ${focusedClass}`}>
+          // onMouseDown={this.mouseDownHandler.bind(this)}
+          // onMouseUp={this.mouseUpHandler.bind(this)}
+          // onMouseEnter={this.mouseEnterHandler.bind(this)}
+          // onMouseLeave={this.mouseLeaveHandler.bind(this)}
+          // className={`${hoveredClass} ${pressedClass} ${focusedClass}`}
+          >
+          <div className='content'>
+            { this.props.previewLink
+              ?
+              _.keys(findComponentTree(this.props.component.id,this.props.componentTree)).map((id)=>{
+              return ( <PreviewComponentInnerConnected id={id} key={id} previewLink/>)})
+              :
+              _.keys(this.props.componentTree).map((id)=>{
+                return ( <PreviewComponentInnerConnected id={id} key={id}/> )
+              })
+            }
+          </div>
         </PreviewComponent>
       </div>
-      </React.Fragment>
     )
   }
   render(){
-    const content = (
-      <p>
-
-      </p>
-    )
-    return (this.renderWrapper(content));
-
-    // let innerDOM = this.renderInnerDOM;
-
-    // let parentContent = _.keys(this.state.layers).map(key => {
-    //   return (
-    //     <ComponentRenderer
-    //       isParent={false}
-    //       summary={this.state.layers[key]}
-    //       key={key}
-    //     />
-    //   )
-    // });
-    //
-    // let nonParentContent = _.keys(this.state.layers.components).map(key => {
-    //   return (
-    //     <ComponentRenderer
-    //       isParent={false}
-    //       summary={this.state.layers.components[key]}
-    //       key={key}
-    //     />
-    //   )
-    // })
-
-    // if(this.state.components._class === 'text'){
-    //
-    //   nonParentContent = (
-    //     <TextComponent data={this.state.components}></TextComponent>
-    //   )
-    //
-    // }
-
-    // return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
-
-    // console.log(this.props.enableParentDragging,this.props.disableParentDragging)
-    // let innerDOM = (<div
-    //   className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
-    //   style={this.getStyle()}
-    //   onMouseEnter={this.onMouseEnter}
-    //   onMouseLeave={this.onMouseLeave}
-    //   onClick={this.onClick}
-    //   onDoubleClick={this.onDoubleClick}
-    //                 >
-    //   {
-    //     this.state.data.layers.map((layer, index) => {
-    //       return (
-    //         <ComponentRenderer
-    //           summary={layer}
-    //           controller={this.state.controller}
-    //           selection={this.state.selection}
-    //           editState={this.state.editState}
-    //           key={layer.id}
-    //           dispatch={this.props.dispatch}
-    //           dragSelf={this.state.dragChildren}
-    //         />
-    //       )
-    //     })
-    //   }
-    //   {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
-    // </div>)
-    //
-    // //parent container element
-    // if(this.state.type === 'parent'){
-    //   return innerDOM;
-    // }
-    //
-    // //group element that contains groups/primitive shapes
-    // else if (this.state.type === 'group'){
-    //   return (<Draggable
-    //     onStart={this.onDragStart}
-    //     onStop={this.onDragStop}
-    //     onDrag={this.onDrag.bind(this)}
-    //     defaultPosition={this.state.location}
-    //     disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
-    //       onMouseEnter={this.onMouseEnter}
-    //       onMouseLeave={this.onMouseLeave}
-    //       onClick={this.onClick}>
-    //       {
-    //         this.state.data.layers.map((layer, index) => {
-    //           return (
-    //             <ComponentRenderer
-    //               summary={layer}
-    //               controller={this.state.controller}
-    //               selection={this.state.selection}
-    //               editState={this.state.editState}
-    //               key={index}
-    //               dispatch={this.props.dispatch}
-    //               dragSelf={this.state.dragChildren}
-    //             />)
-    //         })
-    //       }
-    //       {this.state.clicked ? <ClickFrame/> : null}
-    //     </div>
-    //   </Draggable>)
-    // }
-    //
-    // //basic element
-    // else if(this.state.type === 'rect'){
-    //   return (
-    //   <Draggable
-    //     onStart={this.onDragStart} onStop={this.onDragStop}
-    //     defaultPosition={this.state.location}
-    //     onDrag={this.onDrag.bind(this)}
-    //     disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     {innerDOM}
-    //   </Draggable>)
-    // }
-    //
-    // else if(this.state.type === 'text'){
-    // return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-    //   key={this.generateKey()}>
-    //   <div className='component-container text-component child' style={{...this.getDimensions()}}
-    //     // ...{left:this.getPosition().x,top:this.getPosition().y},
-    //     onClick={this.onClick} onDoubleClick={this.handleDoubleClick}>
-    //     <TextComponent data={this.state.data}></TextComponent>
-    //     {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
-    //   </div>
-    // </Draggable>)
-    // }
-    // //svg
-    // else if (this.state.type === 'svg') {
-    //   console.log({...this.getPosition(),...this.getDimensions()});
-    //   return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     <div className='component-container child' style={this.getPosition()}>
-    //       <SvgComponent data={this.state.data}></SvgComponent>
-    //     </div>
-    //   </Draggable>)
-    // }
-    //
-    // //empty
-    // else{
-    //   return null
-    // }
+    return this.renderWrapper();
 
   }
 }
 
-// class CoreComponent extends React.Component{
-//   constructor(props){
-//     super(props);
-//     this.state = {
-//       data: props.data
-//     };
-//     //add other stuff here
-//   }
-//   componentWillReceiveProps(nextProps) {
-//     this.setState({data: nextProps.data});
-//   }
-// }
-//
-// class SvgComponent extends CoreComponent{
-//   style(positionOnly = false) {
-//     return this.state.data.css;
-//   }
-//   points(){
-//     let data = this.state.data.path;
-//     let frame = this.state.data.frame
-//     return data.points.map(point => {
-//       let points = point.point.replace(/[{}]/g, '').replace(/\s/g, '').split(',');
-//       return [
-//         parseFloat(points[0]) * this.state.data.frame.width,
-//         parseFloat(points[1]) * this.state.data.frame.height
-//       ].join(',');
-//     })
-//   }
-//   render(){
-//     return (
-//       <svg style={this.style(true)}>
-//         <polygon style={this.style()} points={this.points().join(' ')}></polygon>
-//       </svg>
-//     )
-//   }
-// }
-//
-// class TextComponent extends CoreComponent{
-//   constructor(props){
-//     super(props);
-//     // let that = this;
-//     this.state.textData = this.state.data.textData
-//     this.handleDoubleClick = this.handleDoubleClick.bind(this);
-//   }
-//   getColor(){
-//     let c = this.state.textData.color;
-//     return (
-//       `rgba(${c.r},${c.g},${c.b},${c.a})`
-//     )
-//   }
-//   getFontFamily(){
-//     return (
-//       `"${this.state.textData.fontName}", sans-serif`
-//     )
-//   }
-//
-//   handleDoubleClick(){
-//     console.log('yo')
-//     alert('hello');
-//   }
-//
-//   handleClick(){
-//     alert('hello');
-//   }
-//
-//   render(){
-//     return (this.state.textData ?
-//         <span className='text-outer'
-//           onDoubleClick={this.handleDoubleClick}
-//         >
-//           <span className='text-inner'
-//             style={
-//               {
-//                 fontSize:this.state.textData.fontSize, color:this.getColor(),
-//                 fontFamily:this.getFontFamily()
-//               }}>
-//             {this.state.textData.text}
-//           </span>
-//         </span>
-//     :
-//     <p></p>
-//     )
-//   }
-// }
-//
-// function mapStateToProps(state,ownProps) {
-//   if(state.present.currentPage !== ''){
-//       let data = state.present.newAssets[state.present.currentPage].components[ownProps.id];
-//       return {
-//                 data:data,
-//              }
-//   }
-//   else{
-//     return {
-//       data:{}
-//     }
-//   }
-//
-//
-// }
-// //
-// const PreviewComponent = connect(mapStateToProps)(PreviewComponentCore);
+function mapStateToProps(state,ownProps){
+
+    let component;
+    let componentTree;
+    if(ownProps.previewLink && state.present.previewLink.received){
+      component =  state.present.previewLink.assets.components[ownProps.id];
+      componentTree = findComponentTree(component.id,state.present.previewLink.assets)
+    }
+    else{
+      component =  state.present.newAssets[state.present.currentPage].components[ownProps.id];
+      componentTree = findComponentTree(component.id,state.present.newAssets[state.present.currentPage])
+    }
+
+    return {
+      component,
+      componentTree,
+    }
+}
+
+const PreviewComponentInnerConnected = connect(mapStateToProps)(PreviewComponentInner);
 
 export default PreviewComponentCore;

@@ -128,6 +128,20 @@ class StylesContent extends React.Component{
   }
   renderContent(){
     switch(this.props.selection._class){
+      case 'artboard':
+        return(
+          <React.Fragment>
+            <Position/>
+            <Size/>
+            <Fill/>
+          </React.Fragment>
+        )
+        case 'group':
+          return(
+            <React.Fragment>
+              <Position/>
+            </React.Fragment>
+          )
         case 'text':
           return(
             <React.Fragment>

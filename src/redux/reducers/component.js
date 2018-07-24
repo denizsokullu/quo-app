@@ -25,12 +25,14 @@ function COMPONENT_SELECT(state = {}, action){
       oldSelection = dc(state.newAssets[state.currentPage].components[state.newSelection]);
       oldSelection.interactions.clicked = false;
       state.newAssets[state.currentPage].components[state.newSelection] = oldSelection;
+      state.selectionSiblings = [];
     }
 
     //if the new selection is selecting something
     if(action.payload !== ''){
       newSelection = dc(state.newAssets[state.currentPage].components[action.payload]);
       newSelection.interactions.clicked = true;
+      state.selectionSiblings = newSelection.siblings;
       state.newAssets[state.currentPage].components[action.payload] = newSelection;
     }
 
@@ -40,7 +42,7 @@ function COMPONENT_SELECT(state = {}, action){
         return {...state, newSelection:action.payload, editState:'none', textEdit:''}
       }
       else{
-          return {...state, newSelection:action.payload, editState:'none'}
+          return {...state, newSelection:action.payload}
       }
 
     }
@@ -146,9 +148,41 @@ function COMPONENT_STYLE_CHANGE(state = {}, action){
 
 }
 
+function TEXT_STRING_UPDATE(state = {},action){
+
+  let component = getComponentFromStateDirect(state,action)
+
+  let editState = getEditState(component);
+
+  editState.textString = action.payload.textString;
+
+  component = setEditState(component,editState);
+
+  console.log(component)
+
+  return addUpdatedComponentToState(state,action,component)
+
+}
+
+function getEditState(component){
+  return component.editStates[component.editStates.current]
+}
+
+function setEditState(component,val){
+  component.editStates[component.editStates.current] = val
+  return component
+}
+
+
 function getComponentFromState(state,action){
 
   return dc(state.newAssets[state.currentPage].components[action.payload.payload.id]);
+
+}
+
+function getComponentFromStateDirect(state,action){
+
+  return dc(state.newAssets[state.currentPage].components[action.payload.id]);
 
 }
 
@@ -161,4 +195,4 @@ function addUpdatedComponentToState(state,action,component){
 
 
 
-export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE, TEXT_EDIT_TRIGGER}
+export {VIEWER_RESIZE, COMPONENT_SELECT, COMPONENT_MOVE, COMPONENT_RESIZE, COMPONENT_STYLE_CHANGE, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE}

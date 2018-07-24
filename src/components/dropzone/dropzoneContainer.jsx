@@ -2,7 +2,7 @@ import React from 'react';
 import Dropzone from 'react-dropzone';
 import JSZip from 'jszip';
 import { connect } from 'react-redux'
-import { UPLOAD_SKETCH } from '../../redux/actions';
+import { UPLOAD_SKETCH, UPLOAD_IMAGE } from '../../redux/actions';
 
 class DropzoneContainer extends React.Component {
   constructor() {
@@ -25,12 +25,18 @@ class DropzoneContainer extends React.Component {
   }
 
   onDrop(files) {
+    const { dispatch } = this.props
     files.map(curFile => {
       JSZip.loadAsync(curFile).then(zip => {
         Object.keys(zip.files).forEach(filename => {
+          let file = zip.files[filename]
+          if (filename.includes('.png') && filename.includes('images/')){
+            file.async('base64').then(imageData => {
+              dispatch(UPLOAD_IMAGE({filename,imageData}));
+            });
+          }
           if (filename.includes('.json') && filename.includes('pages/')) {
-            zip.files[filename].async('string').then(fileData => {
-              const { dispatch } = this.props
+            file.async('string').then(fileData => {
               dispatch(UPLOAD_SKETCH(JSON.parse(fileData)));
             });
           }

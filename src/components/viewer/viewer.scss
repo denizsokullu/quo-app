@@ -84,7 +84,7 @@ $artboard-size-h:2100px;
       fill:transparent;
     }
 
-    &.child:hover {
+    &.child.hover-active:hover {
 
       outline:2px solid $highlight-color;
       cursor:default;
@@ -104,8 +104,9 @@ $artboard-size-h:2100px;
         overflow:hidden;
       }
 
-      .text-outer.edit-mode ~ .selection-frame {
-        display:none
+      .text-outer.edit-mode ~ .selection-frame,
+      .text-outer.edit-mode ~ .selection-line {
+        display:none;
       }
 
       &:hover {

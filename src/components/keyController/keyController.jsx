@@ -6,7 +6,7 @@ import keydown from 'react-keydown';
 // import Draggable from 'react-draggable';
 // import {bindActionCreators} from 'redux';
 // import ComponentRenderer from './componentRenderer';
-import {KEY_UP,KEY_DOWN} from '../../redux/actions';
+import {KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux/actions';
 
 import { ActionCreators } from 'redux-undo';
 
@@ -65,6 +65,18 @@ class KeyController extends React.Component {
       const { dispatch } = this.props
       this.setState({keyDown:true},()=>{
         dispatch(KEY_DOWN(e));
+      })
+    }
+  }
+
+  @keydown('esc')
+  dispatchDeselectComponent(e){
+    e.preventDefault();
+    if(!this.state.keyDown){
+      const { dispatch } = this.props
+      this.setState({keyDown:true},()=>{
+        dispatch(KEY_DOWN(e));
+        dispatch(COMPONENT_SELECT(''));
       })
     }
   }
