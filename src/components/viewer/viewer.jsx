@@ -296,18 +296,20 @@ class Viewer extends React.Component {
   }
 }
 
+//The viewer views the current window
+
 function mapStateToProps(state) {
-  if(_.isEmpty(state.present.newAssets)) {
+  if(_.isEmpty(state.domain.assets)) {
     return {
-      controller:state.present.controller,
+      controller:state.ui.controller,
     }
   }
-  return {
-    controller:state.present.controller,
-    selection:state.present.selection,
-    newData: state.present.newAssets[state.present.currentPage],
-    newSelection: state.present.newSelection
-  }
+  // return {
+  //   controller:state.present.controller,
+  //   selection:state.present.selection,
+  //   newData: state.present.newAssets[state.present.currentPage],
+  //   newSelection: state.present.newSelection
+  // }
 }
 
 export default connect(mapStateToProps)(Viewer);

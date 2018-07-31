@@ -19,6 +19,7 @@ export const COMPONENT_MOVE = component => ({
   type: 'COMPONENT_MOVE',
   payload: component
 });
+
 export const TEXT_STRING_UPDATE = payload => ({
   type: 'TEXT_STRING_UPDATE',
   payload: payload

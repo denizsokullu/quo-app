@@ -3,12 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import keydown from 'react-keydown';
 
-// import Draggable from 'react-draggable';
-// import {bindActionCreators} from 'redux';
-// import ComponentRenderer from './componentRenderer';
 import {KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux/actions';
-
-import { ActionCreators } from 'redux-undo';
 
 class KeyController extends React.Component {
   constructor(props) {
@@ -28,22 +23,22 @@ class KeyController extends React.Component {
     }
   }
 
-  @keydown('cmd+shift+z')
-  dispatchRedo(e){
-    const { dispatch } = this.props
-    dispatch(ActionCreators.redo());
-    e.preventDefault();
-  }
-
-  @keydown('cmd+z')
-  dispatchUndo(e){
-    e.preventDefault();
-    if(!this.state.keyDown){
-      const { dispatch } = this.props
-      dispatch(ActionCreators.undo());
-      this.setState({keyDown:true})
-    }
-  }
+  // @keydown('cmd+shift+z')
+  // dispatchRedo(e){
+  //   const { dispatch } = this.props
+  //   dispatch(ActionCreators.redo());
+  //   e.preventDefault();
+  // }
+  //
+  // @keydown('cmd+z')
+  // dispatchUndo(e){
+  //   e.preventDefault();
+  //   if(!this.state.keyDown){
+  //     const { dispatch } = this.props
+  //     dispatch(ActionCreators.undo());
+  //     this.setState({keyDown:true})
+  //   }
+  // }
 
   @keydown('cmd+s')
   dispatchSave(e){
@@ -52,7 +47,7 @@ class KeyController extends React.Component {
 
   render() {
     return (
-      <div className='main-container' tabIndex='0' onKeyUp={this.keyReleased} onWheel={this.onWheel}>
+      <div className='main-container' tabIndex='0' onKeyUp={this.keyReleased} >
         {this.props.children}
       </div>
     )
@@ -60,7 +55,6 @@ class KeyController extends React.Component {
 
   @keydown('space')
   dragEnable(e){
-    e.preventDefault();
     if(!this.state.keyDown){
       const { dispatch } = this.props
       this.setState({keyDown:true},()=>{
@@ -71,6 +65,7 @@ class KeyController extends React.Component {
 
   @keydown('esc')
   dispatchDeselectComponent(e){
+    console.log('asd')
     e.preventDefault();
     if(!this.state.keyDown){
       const { dispatch } = this.props
@@ -84,8 +79,4 @@ class KeyController extends React.Component {
 
 }
 
-function mapStateToProps(state) {
-  return {}
-}
-
-export default connect(mapStateToProps)(KeyController);
+export default connect()(KeyController);
