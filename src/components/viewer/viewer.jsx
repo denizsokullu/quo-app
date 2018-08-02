@@ -37,8 +37,8 @@ class Viewer extends React.Component {
       draggable: this.props.controller[32],
       draggableClick: false,
       selection: this.props.selection,
-      newData:this.props.newData,
-      newSelection:this.props.newSelection,
+      // newData:this.props.newData,
+      // newSelection:this.props.newSelection,
       viewerPos:{x:-(viewerSize.w/2),y:-(viewerSize.h/2)},
       origin:{x:0,y:0},
       viewerSize:viewerSize,
@@ -70,11 +70,11 @@ class Viewer extends React.Component {
   componentWillReceiveProps(nextProps) {
 
     //Old code
-    this.setState({data:nextProps.data,selection:nextProps.selection});
-    this.setState({draggable:nextProps.controller.key[32]});
+    // this.setState({data:nextProps.data,selection:nextProps.selection});
+    // this.setState({draggable:nextProps.controller.key[32]});
 
     //New code
-    this.setState({newData:nextProps.newData, newSelection:nextProps.newSelection});
+    // this.setState({newData:nextProps.newData, newSelection:nextProps.newSelection});
 
   }
 
@@ -246,7 +246,7 @@ class Viewer extends React.Component {
     return (
       <React.Fragment>
 
-      <SelectionFrame scale={this.state.scale}/>
+      {/* <SelectionFrame scale={this.state.scale}/> */}
 
       <div
         className='viewer-wrapper scroll-disabled'
@@ -285,9 +285,9 @@ class Viewer extends React.Component {
               width:`${mainArtboardSize.w}px`,
               height:`${mainArtboardSize.h}px`,
             }}>
-            {
+            {/* {
               this.state.newData ? this.renderComponents() : null
-            }
+            } */}
           </div>
         </div>
       </div>
@@ -299,17 +299,15 @@ class Viewer extends React.Component {
 //The viewer views the current window
 
 function mapStateToProps(state) {
-  if(_.isEmpty(state.domain.assets)) {
+  if(_.isEmpty(state.domain.tabs.allTabs)) {
     return {
       controller:state.ui.controller,
     }
   }
-  // return {
-  //   controller:state.present.controller,
-  //   selection:state.present.selection,
-  //   newData: state.present.newAssets[state.present.currentPage],
-  //   newSelection: state.present.newSelection
-  // }
+  return {
+    tabs:state.domain.tabs,
+    selection:state.app.selection
+  }
 }
 
 export default connect(mapStateToProps)(Viewer);

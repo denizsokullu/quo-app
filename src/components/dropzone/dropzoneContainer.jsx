@@ -2,7 +2,7 @@ import React from 'react';
 import Dropzone from 'react-dropzone';
 import JSZip from 'jszip';
 import { connect } from 'react-redux'
-import { UPLOAD_SKETCH, UPLOAD_IMAGE } from '../../redux/actions';
+import { UPLOAD_SKETCH, UPLOAD_IMAGE, NEW_TAB, DELETE_TAB } from '../../redux/actions';
 
 class DropzoneContainer extends React.Component {
   constructor() {

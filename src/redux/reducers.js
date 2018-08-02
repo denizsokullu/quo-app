@@ -1,5 +1,7 @@
 import _ from 'underscore';
 
+import { combineReducers } from 'redux';
+
 //Parser imports
 // import { getComponent } from '../parser/abstractComponent';
 
@@ -9,16 +11,39 @@ import _ from 'underscore';
 //
 // import { DATABASE_ACTION } from './reducers/database';
 
-import { combineReducers } from 'redux';
+import { assetsReducer, componentReducer, projectsReducer } from './reducers/domain';
+import { appModeReducer, selectionReducer } from './reducers/app';
+import { controllerReducer } from './reducers/ui';
 
-import domain from './domain';
-import app from './app';
-import ui from './ui';
+// import { dc } from './helpers';
+
+//actions
+
+// Domain Change
+// App Data Change
+// UI State Change
+
+const domainReducer = combineReducers({
+  assets:assetsReducer,
+  components:componentsReducer,
+  projects:projectsReducer,
+})
+
+const appReducer = combineReducers({
+  appMode:appModeReducer,
+  selection:selectionReducer,
+})
+
+const uiReducer = combineReducers({
+  controller:controllerReducer,
+})
+
+//domain
 
 export default combineReducers({
-  domain,
-  app,
-  ui,
+  domain:domainReducer,
+  app:appReducer,
+  ui:uiReducer,
 })
 
 // function reducer(state = {}, action){

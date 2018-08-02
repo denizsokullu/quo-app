@@ -28,7 +28,8 @@ const domain = {
   projects:{},
   tabs:{
     activeTab:'',
-    allTabs:[],
+    allTabs:{},
+    tabCount:0
   }
 }
 
@@ -39,10 +40,10 @@ const selection = {
   details:{},
 }
 
-const appState = {
+const app = {
   user:{},
   appMode: 'EDIT',
-  selection:selection,
+  selection,
 }
 
 const controller = {
@@ -52,14 +53,27 @@ const controller = {
     }
   }
 
-const uiState = {
-  controller:controller,
+const sidebars = {
+  left:{
+    selected:'assets',
+    tabs:['assets','layers','globalLinks'],
+    width:230,
+  },
+  right:{
+    selected:'styles',
+    tabs:['styles','links','interactions'],
+  }
+}
+
+const ui = {
+  controller,
+  sidebars,
 }
 
 const store_initial = {
-  domain:domain,
-  app:appState,
-  ui:uiState,
+  domain,
+  app,
+  ui,
 };
 
 const constants = {

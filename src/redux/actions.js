@@ -1,5 +1,24 @@
 import { firebase } from '../firebase';
 
+export const NEW_TAB = (data) => ({
+  type: 'NEW_TAB',
+  payload: data
+})
+
+export const DELETE_TAB = () => ({
+  type: 'DELETE_TAB'
+})
+
+export const UPDATE_SIDEBAR_TAB = (payload) => ({
+  type:'UPDATE_SIDEBAR_TAB',
+  payload:payload,
+})
+
+export const RESIZE_SIDEBAR = (payload) => ({
+  type:'RESIZE_SIDEBAR',
+  payload:payload,
+})
+
 export const UPLOAD_SKETCH = uploadData => ({
   type: 'UPLOAD_SKETCH',
   payload: uploadData

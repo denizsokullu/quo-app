@@ -4,13 +4,16 @@ const newTab = (tabs,action) => {
 
   let newTab = {
     id:uuidv1(),
-    data:{},
+    name:`Tab ${tabs.tabCount}`,
+    data:action.payload ? action.payload : {},
     tabCount:tabs.tabCount
   }
   //add it to the list of tabs
   tabs.allTabs[newTab.id] = newTab;
+
   //switch the active tab to the new tab
   tabs.activeTab = newTab.id;
+
   // increment the tabCount
   tabs.tabCount += 1;
 
@@ -26,7 +29,7 @@ const editTab = (tabs,action) => {
 
 const deleteTab = (tabs,action) => {
   //if tab exists
-  if(tabs.allTabs[action.payload.id]){
+  if(action.payload && tabs.allTabs[action.payload.id]){
       //get rid of the tab data
       delete tabs.allTabs[action.payload.id];
       if(tabs.activeTab === action.payload.id){

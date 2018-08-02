@@ -48,10 +48,10 @@ class App extends Component {
                      <KeyController>
                         <DropzoneContainer>
                           <Viewer/>
-                      </DropzoneContainer>
-                     {/*//    <TopBar/>
+                        </DropzoneContainer>
+                     //    <TopBar/>
                      //    <SideBarLeft/>
-                     //    <SideBarRight/> */}
+                     //    <SideBarRight/>
                      </KeyController>
                     )
                   } } />

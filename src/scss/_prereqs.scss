@@ -29,7 +29,7 @@ $font-m:11px;
 $font-l:14px;
 
 $card-body-main-text:$font-l;
-$card-header-font-size:$font-m;
+$card-header-font-size:$font-s;
 $card-body-title:$font-s;
 $card-body-bottom-border:$color-bg-10;
 $button-font-size:$font-m;
@@ -92,7 +92,7 @@ $top-bar-height:44px;
 
 @mixin CardHeader {
 
-  height:28px;
+  height:24px;
   padding:0 6px 0 .75rem;
   box-sizing:border-box;
 
