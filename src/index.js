@@ -19,6 +19,7 @@ import DropzoneContainer from './components/dropzone/dropzoneContainer';
 import Viewer from './components/viewer/viewer';
 
 import PreviewLink from './components/previewLink';
+import MessageStack from './components/messageStack';
 
 import KeyController from './components/keyController/keyController';
 
@@ -52,6 +53,7 @@ class App extends Component {
                      //    <TopBar/>
                      //    <SideBarLeft/>
                      //    <SideBarRight/>
+                        <MessageStack/>
                      </KeyController>
                     )
                   } } />

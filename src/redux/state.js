@@ -65,9 +65,12 @@ const sidebars = {
   }
 }
 
+const messages = [];
+
 const ui = {
   controller,
   sidebars,
+  messages,
 }
 
 const store_initial = {

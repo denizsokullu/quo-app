@@ -1,5 +1,15 @@
 import { firebase } from '../firebase';
 
+export const ADD_MESSAGE = (message) => ({
+  type: 'ADD_MESSAGE',
+  payload: message,
+})
+
+export const REMOVE_MESSAGE = (message) => ({
+  type: 'REMOVE_MESSAGE',
+  payload: message,
+})
+
 export const NEW_TAB = (data) => ({
   type: 'NEW_TAB',
   payload: data
@@ -19,7 +29,17 @@ export const RESIZE_SIDEBAR = (payload) => ({
   payload:payload,
 })
 
-export const UPLOAD_SKETCH = uploadData => ({
+// export const UPLOAD_SKETCH = uploadData => ({
+//   type: 'UPLOAD_SKETCH',
+//   payload: uploadData
+// });
+
+export const UPLOAD_SKETCH  = (uploadData) => (dispatch) => {
+  dispatch(UPLOAD_SKETCH_ACTION(uploadData));
+  dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Sketch page uploaded'}));
+}
+
+export const UPLOAD_SKETCH_ACTION = (uploadData) => ({
   type: 'UPLOAD_SKETCH',
   payload: uploadData
 });
