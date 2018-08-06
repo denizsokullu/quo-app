@@ -1,4 +1,5 @@
 import { firebase } from '../firebase';
+import { getState as getSubState } from './state';
 
 export const ADD_MESSAGE = (message) => ({
   type: 'ADD_MESSAGE',
@@ -9,6 +10,18 @@ export const REMOVE_MESSAGE = (message) => ({
   type: 'REMOVE_MESSAGE',
   payload: message,
 })
+
+export const ADD_COMPONENT_ACTION = (payload,domain) => ({
+  type:'ADD_COMPONENT',
+  payload:payload,
+  domain:domain,
+})
+
+export const ADD_COMPONENT = (payload) => (dispatch,getState) => {
+  let domain = getSubState(getState(),'domain');
+  dispatch(ADD_COMPONENT_ACTION(payload,domain));
+  dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Added component'}));
+}
 
 export const NEW_TAB = (data) => ({
   type: 'NEW_TAB',
@@ -29,20 +42,15 @@ export const RESIZE_SIDEBAR = (payload) => ({
   payload:payload,
 })
 
-// export const UPLOAD_SKETCH = uploadData => ({
-//   type: 'UPLOAD_SKETCH',
-//   payload: uploadData
-// });
+export const UPLOAD_SKETCH_ACTION = (uploadData) => ({
+  type: 'UPLOAD_SKETCH',
+  payload: uploadData
+});
 
 export const UPLOAD_SKETCH  = (uploadData) => (dispatch) => {
   dispatch(UPLOAD_SKETCH_ACTION(uploadData));
   dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Sketch page uploaded'}));
 }
-
-export const UPLOAD_SKETCH_ACTION = (uploadData) => ({
-  type: 'UPLOAD_SKETCH',
-  payload: uploadData
-});
 
 export const UPLOAD_IMAGE = uploadData => ({
   type: 'UPLOAD_IMAGE',

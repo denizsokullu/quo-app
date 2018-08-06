@@ -37,7 +37,7 @@ class DropzoneContainer extends React.Component {
           }
           if (filename.includes('.json') && filename.includes('pages/')) {
             file.async('string').then(fileData => {
-              dispatch(UPLOAD_SKETCH(JSON.parse(fileData)));
+              dispatch(UPLOAD_SKETCH({data:JSON.parse(fileData),filetype:'sketch'}));
             });
           }
         });

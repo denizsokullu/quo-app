@@ -22,7 +22,9 @@
 
 const domain = {
   //Flat Files
-  assets:{},
+  assets:{
+    sketch:{},
+  },
   //Edited Components
   components:{},
   projects:{},
@@ -79,9 +81,16 @@ const store_initial = {
   ui,
 };
 
+const getState = (state,target) => {
+  //later on, the main root(domain, app, ui) might be pushed
+  //deeper in the tree, having to update mapStateToProps on
+  //the components might be annoying so use this method instead.
+  return state[target]
+}
+
 const constants = {
   appModes:['EDIT','PREVIEW'],
 
 }
 
-export { store_initial, constants }
+export { store_initial, constants, getState }

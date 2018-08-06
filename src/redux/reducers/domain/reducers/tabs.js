@@ -5,7 +5,7 @@ const newTab = (tabs,action) => {
   let newTab = {
     id:uuidv1(),
     name:`Tab ${tabs.tabCount}`,
-    data:action.payload ? action.payload : {},
+    components:action.payload ? action.payload : {},
     tabCount:tabs.tabCount
   }
   //add it to the list of tabs

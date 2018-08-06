@@ -2,8 +2,8 @@ import { combineReducers } from 'redux';
 
 import { combineReducersLoop } from '../../helpers';
 
-import { updateTab, resizeSidebar } from './sidebars.js';
-import { addMessage, removeMessage } from './messages.js';
+import { updateTab, resizeSidebar } from './reducers/sidebars.js';
+import { addMessage, removeMessage } from './reducers/messages.js';
 
 const controller = (state = {}, action) => { return state };
 

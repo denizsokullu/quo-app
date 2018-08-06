@@ -240,14 +240,10 @@ class Viewer extends React.Component {
     )
   }
 
-  render() {
+  renderViewer(){
     let draggableClass = this.state.draggable ? 'draggable' : ''
     const pos = this.state.viewerPos
     return (
-      <React.Fragment>
-
-      {/* <SelectionFrame scale={this.state.scale}/> */}
-
       <div
         className='viewer-wrapper scroll-disabled'
         onWheel={this.onWheel.bind(this)}
@@ -291,7 +287,20 @@ class Viewer extends React.Component {
           </div>
         </div>
       </div>
+    )
+  }
+
+  render() {
+    let draggableClass = this.state.draggable ? 'draggable' : ''
+    const pos = this.state.viewerPos
+    return (
+      <React.Fragment>
+      {/* <SelectionFrame scale={this.state.scale}/> */}
+      {
+        (!this.props.tabs || _.isEmpty(this.props.tabs.allTabs)) ? null : this.renderViewer()
+      }
       </React.Fragment>
+
       )
   }
 }

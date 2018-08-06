@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { REMOVE_MESSAGE } from '../../redux/actions';
+import { getState } from '../../redux/state';
 
 
 class MessageStack extends Component{
@@ -25,9 +26,10 @@ class Message extends Component {
       fade:''
     }
   }
+
   setSelfDestructTimer(){
     setTimeout(()=>{
-      this.setState({fade:'fade-out'})
+      this.setState({fade:'fade-out'});
       setTimeout(()=>{
         const { dispatch } = this.props
         dispatch(REMOVE_MESSAGE({id:this.props.message.id}))
@@ -37,17 +39,20 @@ class Message extends Component {
   componentDidMount(){
     this.setSelfDestructTimer();
   }
+
   render(){
     return(
-      <div class={`ui-message ${this.props.message.type}-message ${this.state.fade}`}>
+      <div className={`ui-message ${this.props.message.type}-message ${this.state.fade}`}>
         { this.props.message.text }
       </div>
     )
   }
+
 }
 
 const mapState = (state) =>{
-  return { messages:state.ui.messages.slice() };
+  return { messages:getState(state,'ui').messages.slice() };
 }
+
 Message = connect()(Message)
 export default connect(mapState)(MessageStack)

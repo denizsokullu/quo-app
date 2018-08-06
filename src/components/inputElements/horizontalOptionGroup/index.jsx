@@ -21,11 +21,12 @@ export default class HorizontalOptionGroup extends Component {
     return (
       <div className='horizontal-option-group-wrapper'>
         {
-          this.props.options.map(option=>{
+          this.props.options.map((option,i)=>{
             return (
               <div
                 className={`horizontal-option ${option.text === this.state.selected.text ? 'selected' : ''}`}
-                onClick={()=>{this.handleChange(option)}}>
+                onClick={()=>{this.handleChange(option)}}
+                key={i}>
                 {option.text}
               </div>
             )

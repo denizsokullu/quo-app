@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LayerCard } from '../../styleCard/styleCard';
-import _ from 'underscore';
+import _ from 'lodash';
 
 import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
-import { ADD_MESSAGE } from '../../../redux/actions';
+import { ADD_COMPONENT } from '../../../redux/actions';
 
 class AssetsTab extends Component {
   constructor(props){
     super(props);
     this.state = {
-      currentTab:'static'
+      currentTab:'static',
+      filetype:'sketch',
     }
     this.updateTab = this.updateTab.bind(this)
   }
@@ -32,7 +33,7 @@ class AssetsTab extends Component {
         {
           this.state.currentTab === 'static'
           ?
-          <AssetsViewer assets={this.props.assets} components={this.props.components}/>
+          <AssetsViewer assets={this.props.assets[this.state.filetype]} components={this.props.components}/>
           :
           null
         }
@@ -48,7 +49,10 @@ class AssetPreview extends Component {
   }
   addAssetToEditor(){
     const { dispatch } = this.props;
-    dispatch(ADD_MESSAGE({text:'Added component',type:'status',duration:2000}))
+    dispatch(ADD_COMPONENT({source:this.props.source,
+                            filetype:this.props.filetype,
+                            page:this.props.page,
+                            component:this.props.component}));
   }
   render(){
     return (
@@ -93,20 +97,37 @@ class AssetsViewer extends Component {
   onPageChange(page){
     this.setState({selected:page});
   }
+
   renderFirstDepthComponents(){
     //find all the artboards
-    let artboards = this.props.assets[this.state.selected.id].layers;
+    let artboardIDs = this.props.assets[this.state.selected.id].children;
     //search all the first depth components
-    let firstDepthComponents = Object.keys(artboards).map(artboardId=>{
-      return artboards[artboardId].components
-    }).reduce((acc, val) => {return {...acc,...val}},[]);
+
+    let firstDepthComponents = artboardIDs.map( artboardID =>{
+      //get the children of the artboard;
+      let components = this.props.assets[this.state.selected.id].components
+      let artboard = components[artboardID];
+      return artboard.children.map( childID => {
+        return components[childID]
+      })
+    })
+
+    let flattenedfirstDepthComponents = [];
+
+    firstDepthComponents.map(components => {
+      components.map(component => {
+        flattenedfirstDepthComponents.push(component);
+      })
+    })
+    firstDepthComponents = flattenedfirstDepthComponents;
+
     return (
         !_.isEmpty(firstDepthComponents) ?
           <div className='asset-preview-table'>
             {
               Object.keys(firstDepthComponents).map((o,i)=>{
                 let component = firstDepthComponents[o]
-                return <AssetPreview key={i} filetype='sketch' title={`${component.name}`}/>
+                return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
               })
             }
           </div>
@@ -125,9 +146,9 @@ class AssetsViewer extends Component {
         </div>
         <div className='card-body'>
           {
-            this.state.pages.map(page=>{
+            this.state.pages.map((page,i)=>{
               return(
-                <div className={`page ${page.id === this.state.selected.id ? 'selected' : ''}`} onClick={()=>{this.onPageChange(page)}}>{page.name}</div>
+                <div className={`page ${page.id === this.state.selected.id ? 'selected' : ''}`} key={i} onClick={()=>{this.onPageChange(page)}}>{page.name}</div>
               )
             })
           }
