@@ -1,0 +1,44 @@
+
+@keyframes fade-in {
+  from {
+    opacity:0
+  }
+  to {
+    opacity:1
+  }
+}
+
+.message-stack-wrapper{
+  position:absolute;
+  bottom:1rem;
+  left:0;
+  right:0;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  width:180px;
+
+  .ui-message{
+
+
+    background-color:$color-blue;
+    color:$color-text-2;
+    margin-top:1rem;
+    padding:.75rem 1rem;
+    border-radius:1rem;
+    text-align:center;
+    font-size:$font-l;
+    animation-name: fade-in;
+    animation-duration: .4s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+
+    &.fade-out{
+      transition: opacity .3s;
+      opacity:0;
+    }
+
+  }
+
+}

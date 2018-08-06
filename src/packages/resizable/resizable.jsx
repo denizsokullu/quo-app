@@ -89,6 +89,7 @@ export default class Resizable extends Component {
           <div
             className='resizable-dragger right'
             onMouseDown={(event)=>(this.handleMouseState(event,'down'))}
+            onMouseUp={()=>{this.props.onResize(d.w)}}
           ></div>
         </div>
         { this.props.children }

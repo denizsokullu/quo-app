@@ -19,12 +19,11 @@ import DropzoneContainer from './components/dropzone/dropzoneContainer';
 import Viewer from './components/viewer/viewer';
 
 import PreviewLink from './components/previewLink';
+import MessageStack from './components/messageStack';
 
 import KeyController from './components/keyController/keyController';
 
 import './scss/main.scss';
-
-import { createBrowserHistory } from 'history';
 
 import { firebase } from "./firebase";
 
@@ -36,27 +35,26 @@ import { firebase } from "./firebase";
 //   storageBucket: "quo-app-data.appspot.com",
 // };
 
-const history = syncHistoryWithStore( createBrowserHistory(), store )
-
 //Testing
 
 class App extends Component {
   render() {
     return (
        <Provider store={ store }>
-         <Router forceRefresh={true} history={ history }>
+         <Router forceRefresh={true}>
              <main className="quo-content">
                <Switch>
                  <Route exact={ true } path="/" render={ () => {
                    return (
                      <KeyController>
-                       <DropzoneContainer>
+                        <DropzoneContainer>
                           <Viewer/>
                         </DropzoneContainer>
-                        <TopBar/>
-                        <SideBarLeft/>
-                        <SideBarRight/>
-                      </KeyController>
+                     //    <TopBar/>
+                     //    <SideBarLeft/>
+                     //    <SideBarRight/>
+                        <MessageStack/>
+                     </KeyController>
                     )
                   } } />
                   <Route path="/p/:pageId/:componentId" render={ ({ match }) => {

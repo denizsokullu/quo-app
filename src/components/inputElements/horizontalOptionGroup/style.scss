@@ -1,0 +1,39 @@
+.horizontal-option-group-wrapper {
+
+  display:flex;
+  align-items:center;
+  justify-content: space-around;
+
+  .horizontal-option{
+
+    text-align:center;
+    color:$color-text-2;
+    font-size:$font-m;
+    background-color:$color-bg-3;
+    width:100%;
+    padding:.5rem 0;
+    user-select: none;
+    border-collapse: separate;
+
+    &:not(:last-child) {
+      border-right:1px solid $color-bg-2;
+    }
+    &:last-child {
+      border-radius:0 8px 8px 0;
+    }
+    &:first-child {
+      border-radius: 8px 0 0 8px;
+    }
+    &:last-child:first-child {
+      border:none;
+      border-radius:8px;
+    }
+    &:hover {
+      cursor:pointer;
+      background-color:$color-bg-5;
+    }
+    &.selected {
+      background-color:$color-blue;
+    }
+  }
+}

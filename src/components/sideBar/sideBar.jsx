@@ -47,79 +47,9 @@ import LayersIcon from 'material-ui-icons/Layers';
 import WebAssetIcon from 'material-ui-icons/WebAsset';
 import LinkIcon from 'material-ui-icons/Link';
 
-class SideBarLeft extends Component {
+import { UPDATE_SIDEBAR_TAB, RESIZE_SIDEBAR } from '../../redux/actions';
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected : 'layers',
-      icons : {assets:WebAssetIcon, layers:LayersIcon, globalLinks:LinkIcon},
-      width:230,
-      height:'100%'
-    }
-
-    this.onClickNav = this.onClickNav.bind(this);
-
-  }
-
-  onClickNav(e) {
-    this.setState({selected:e.currentTarget.id});
-  }
-
-  render(){
-    return(
-      <Resizable
-        height='100%'
-        width='230px'
-        minWidth='180'
-        //   maxWidth='1000'
-      //   className='resizable-wrapper'
-      //   // enable={{
-      //   //   top:false,
-      //   //   right:true,
-      //   //   bottom:false,
-      //   //   left:false,
-      //   //   topRight:false,
-      //   //   bottomRight:false,
-      //   //   bottomLeft:false,
-      //   //   topLeft:false
-      //   // }}
-      //   minWidth='150'
-      //   maxWidth='1000'
-      //   // size={{ width: this.state.width, height: this.state.height }}
-      //   onResizeStop={(e, direction, ref, d) => {
-      //     this.setState({
-      //       width: this.state.width + d.width,
-      //     },()=>{console.log(this.state.width)});
-      //   }}
-      //   // defaultSize={{
-      //   //   width:'230',
-      //   //   height:'100%',
-      //   // }}
-      >
-        {/* <div className='sidebar-wrapper sidebar-resizable'> */}
-          <div className={`sidebar-container sidebar-left`}>
-            <ContentPagesCard/>
-            <LayersCard/>
-          </div>
-          <div className='interaction-nav left-nav'>
-            {
-              Object.keys(this.state.icons).map((icon,key)=>{
-                let selected = this.state.selected === icon ? 'selected-icon' : '';
-                let CurrentIcon = this.state.icons[icon];
-                return (
-                  <div className={`nav-el ${selected}`} key={key} onClick={this.onClickNav} id={icon}>
-                    <CurrentIcon/>
-                  </div>
-                )
-              })
-            }
-          </div>
-        {/* </div> */}
-      </Resizable>
-      )
-  }
-}
+import AssetsTab from './assets/assets';
 
 class StylesContent extends React.Component{
   //the styles content should be aware of what component is selected
@@ -210,6 +140,62 @@ class LinksContent extends React.Component{
   }
 }
 
+class SideBarLeft extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      options : props.tabs,
+      components : {assets:AssetsTab, layers:AssetsTab, globalLinks:AssetsTab},
+      icons : {assets:WebAssetIcon, layers:LayersIcon, globalLinks:LinkIcon },
+      width:230,
+      height:'100%',
+    }
+
+    this.onClickNav = this.onClickNav.bind(this);
+    this.dispatchResize = this.dispatchResize.bind(this);
+
+  }
+
+  dispatchResize(width){
+    width = parseInt(width.slice(0,-2));
+    const { dispatch } = this.props;
+    dispatch(RESIZE_SIDEBAR({target:'left', width }));
+  }
+
+  onClickNav(e) {
+    if(e.currentTarget.id !== this.props.selected){
+      const { dispatch } = this.props;
+      dispatch(UPDATE_SIDEBAR_TAB({target:'left',selected:e.currentTarget.id}));
+    }
+  }
+
+  render(){
+    const CurrentComponent = this.state.components[this.props.selected];
+    return(
+      <Resizable height='100%' width={`${this.state.width}px`} minWidth='230' onResize={this.dispatchResize}>
+          <div className={`sidebar-container sidebar-left`}>
+            <CurrentComponent/>
+          </div>
+          <div className='interaction-nav left-nav'>
+            {
+              this.state.options.map((icon,key)=>{
+                let selected = this.props.selected === icon ? 'selected-icon' : '';
+                let CurrentIcon = this.state.icons[icon];
+                return (
+                  <div className={`nav-el ${selected}`} onClick={this.onClickNav} id={icon} key={key}>
+                    <CurrentIcon/>
+                  </div>
+                )
+              })
+            }
+          </div>
+        {/* </div> */}
+      </Resizable>
+      )
+  }
+}
+
 class SideBarRight extends Component {
 
   constructor(props) {
@@ -217,8 +203,7 @@ class SideBarRight extends Component {
     super(props);
 
     this.state = {
-      selected : 'styles',
-      options : ['styles','links','interactions'],
+      options : props.tabs,
       components : {styles:StylesContent, links:LinksContent, interactions:ActionsContent},
       icons : {styles:ColorLensIcon, links:FlashOnIcon, interactions:GamesIcon},
       selectedComponent : props.selection
@@ -226,10 +211,6 @@ class SideBarRight extends Component {
 
     this.onClickNav = this.onClickNav.bind(this);
 
-  }
-
-  componentWillReceiveProps(nextProps){
-    this.setState({selectedComponent:nextProps.selection})
   }
 
   onClickNav(e) {
@@ -241,29 +222,29 @@ class SideBarRight extends Component {
   }
 
   render() {
-    const CurrentComponent = this.state.components[this.state.selected];
+    const CurrentComponent = this.state.components[this.props.selected];
     return (
       <div className='sidebar-wrapper'>
         <div className={`sidebar-container sidebar-right`}>
           {
-            !_.isEmpty(this.state.selectedComponent)
-              ?
+            // !_.isEmpty(this.state.selectedComponent)
+            //   ?
                 <React.Fragment>
-                  <ComponentStates/>
-                  <CurrentComponent selection={this.state.selectedComponent}/>
-                  <MiniPreview/>
+                  {/* <ComponentStates/> */}
+                  {/* <CurrentComponent selection={this.state.selectedComponent}/> */}
+                  {/* <MiniPreview/> */}
                   <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr}/>
                 </React.Fragment>
-              :
-            null
+            //   :
+            // null
           }
         </div>
         <div className='interaction-nav right-nav'>
           {
-            !_.isEmpty(this.state.selectedComponent)
-              ?
+            // !_.isEmpty(this.state.selectedComponent)
+              // ?
                 this.state.options.map((icon,key)=>{
-                  let selected = this.state.selected === icon ? 'selected-icon' : '';
+                  let selected = this.props.selected === icon ? 'selected-icon' : '';
                   let CurrentIcon = this.state.icons[icon];
                   return (
                     <div className={`nav-el ${selected}`} onClick={this.onClickNav} id={icon} key={key}>
@@ -271,8 +252,8 @@ class SideBarRight extends Component {
                     </div>
                   )
                 })
-              :
-              null
+              // :
+              // null
           }
         </div>
       </div>
@@ -280,16 +261,15 @@ class SideBarRight extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  if(state.present.currentPage !== ''){
-    return { selection:state.present.newAssets[state.present.currentPage].components[state.present.newSelection]}
-  }
-  else{
-      return { selection:{} }
-  }
-
+function mapStateToPropsRight(state) {
+  return { ...state.ui.sidebars.right }
 }
 
-SideBarRight = connect(mapStateToProps)(SideBarRight)
+function mapStateToPropsLeft(state) {
+  return { ...state.ui.sidebars.left, test:state.ui.sidebars }
+}
+
+SideBarRight = connect(mapStateToPropsRight)(SideBarRight)
+SideBarLeft = connect(mapStateToPropsLeft)(SideBarLeft)
 
 export { SideBarLeft, SideBarRight }
