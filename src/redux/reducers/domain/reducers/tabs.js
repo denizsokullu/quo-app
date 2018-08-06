@@ -3,7 +3,7 @@ import uuidv1 from 'uuid/v1';
 const newTab = (tabs,action) => {
 
   let newTab = {
-    id:uuidv1(),
+    id:uuidv1().toUpperCase(),
     name:`Tab ${tabs.tabCount}`,
     components:action.payload ? action.payload : {},
     tabCount:tabs.tabCount

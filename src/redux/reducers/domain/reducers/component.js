@@ -27,6 +27,8 @@ export const addComponent = (tabs,action) => {
   // let componentTree = payload.component.components
   let component = source.components[payload.component.id];
 
+  console.log(component,source.components);
+
   let allTheComponentsToAdd = traverseAndAdd(component,source.components,{});
 
   target.components = _.merge(target.components,allTheComponentsToAdd);
@@ -94,8 +96,8 @@ export const addComponent = (tabs,action) => {
 const traverseAndAdd = (component,components,collector) => {
 
   //create a new id, and add it to the collector
-  let newID = uuidv1();
-  collector[newID] = components[component.id];
+  let newID = uuidv1().toUpperCase();
+  collector[newID] = {...components[component.id]};
   collector[newID].id = newID;
 
   //recursively call it for the children
