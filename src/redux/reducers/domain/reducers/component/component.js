@@ -1,12 +1,8 @@
 import uuidv1 from 'uuid/v1';
 import _ from 'lodash';
-import { newTab } from './tabs';
+import { newTab } from '../tabs';
 
 export const addComponent = (tabs,action) => {
-
-  //find tab
-  //use the location of the component
-  //add it using a new ID
 
   //add a tab if there is none
   if(_.isEmpty(tabs.allTabs)){
@@ -18,19 +14,12 @@ export const addComponent = (tabs,action) => {
   //unpack action
   let domain = action.domain;
   let payload = action.payload;
-
   //target tab to add
-
   let target = tabs.allTabs[domain.tabs.activeTab];
-
   let source = domain[payload.source][payload.filetype][payload.page]
   // let componentTree = payload.component.components
   let component = source.components[payload.component.id];
-
-  console.log(component,source.components);
-
   let allTheComponentsToAdd = traverseAndAdd(component,source.components,{});
-
   target.components = _.merge(target.components,allTheComponentsToAdd);
 
   return { ...tabs };
@@ -38,6 +27,7 @@ export const addComponent = (tabs,action) => {
 }
 
 export const removeComponent = (tabs,action) => {
+
   let domain = action.domain;
   let payload = action.payload;
   let target = tabs.allTabs[domain.tabs.activeTab];
@@ -66,22 +56,4 @@ const traverseAndAdd = (component,components,collector) => {
 
   return collector;
 
-}
-
-export const removeComponent = (tabs,action) => {
-
-  //find tab
-  //use the location of the component
-  //add it using a new ID
-
-  // //add it to the list of tabs
-  // tabs.allTabs[newTab.id] = newTab;
-  //
-  // //switch the active tab to the new tab
-  // tabs.activeTab = newTab.id;
-  //
-  // // increment the tabCount
-  // tabs.tabCount += 1;
-
-  return tabs
 }

@@ -48,8 +48,10 @@ import WebAssetIcon from 'material-ui-icons/WebAsset';
 import LinkIcon from 'material-ui-icons/Link';
 
 import { UPDATE_SIDEBAR_TAB, RESIZE_SIDEBAR } from '../../redux/actions';
+import { getState } from '../../redux/state';
 
 import AssetsTab from './assets/assets';
+import LinksTab from './links';
 
 class StylesContent extends React.Component{
   //the styles content should be aware of what component is selected
@@ -204,7 +206,7 @@ class SideBarRight extends Component {
 
     this.state = {
       options : props.tabs,
-      components : {styles:StylesContent, links:LinksContent, interactions:ActionsContent},
+      components : {styles:LinksTab, links:LinksTab, interactions:LinksTab},
       icons : {styles:ColorLensIcon, links:FlashOnIcon, interactions:GamesIcon},
       selectedComponent : props.selection
     }
@@ -214,46 +216,39 @@ class SideBarRight extends Component {
   }
 
   onClickNav(e) {
-    this.setState({selected:e.currentTarget.id});
+    if(e.currentTarget.id !== this.props.selected){
+      const { dispatch } = this.props;
+      dispatch(UPDATE_SIDEBAR_TAB({target:'right',selected:e.currentTarget.id}));
+    }
   }
 
   onClickAddToArr() {
 
   }
 
+  // {/* <ComponentStates/> */}
+  // {/* <MiniPreview/> */}
+  // {/* <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr}/> */}
+
   render() {
     const CurrentComponent = this.state.components[this.props.selected];
     return (
       <div className='sidebar-wrapper'>
         <div className={`sidebar-container sidebar-right`}>
-          {
-            // !_.isEmpty(this.state.selectedComponent)
-            //   ?
-                <React.Fragment>
-                  {/* <ComponentStates/> */}
-                  {/* <CurrentComponent selection={this.state.selectedComponent}/> */}
-                  {/* <MiniPreview/> */}
-                  <ButtonCore className='add-to-arrangement' title='Add to Arrangement' onClick={this.onClickAddToArr}/>
-                </React.Fragment>
-            //   :
-            // null
-          }
+            <CurrentComponent/>
+            {this.props.selected}
         </div>
         <div className='interaction-nav right-nav'>
           {
-            // !_.isEmpty(this.state.selectedComponent)
-              // ?
-                this.state.options.map((icon,key)=>{
-                  let selected = this.props.selected === icon ? 'selected-icon' : '';
-                  let CurrentIcon = this.state.icons[icon];
-                  return (
-                    <div className={`nav-el ${selected}`} onClick={this.onClickNav} id={icon} key={key}>
-                      <CurrentIcon/>
-                    </div>
-                  )
-                })
-              // :
-              // null
+            this.state.options.map((icon,key)=>{
+              let selected = this.props.selected === icon ? 'selected-icon' : '';
+              let CurrentIcon = this.state.icons[icon];
+              return (
+                <div className={`nav-el ${selected}`} onClick={this.onClickNav} id={icon} key={key}>
+                  <CurrentIcon/>
+                </div>
+              )
+            })
           }
         </div>
       </div>
@@ -262,11 +257,13 @@ class SideBarRight extends Component {
 }
 
 function mapStateToPropsRight(state) {
-  return { ...state.ui.sidebars.right }
+  let ui = getState(state,'ui')
+  return { ...ui.sidebars.right }
 }
 
 function mapStateToPropsLeft(state) {
-  return { ...state.ui.sidebars.left, test:state.ui.sidebars }
+  let ui = getState(state,'ui')
+  return { ...ui.sidebars.left }
 }
 
 SideBarRight = connect(mapStateToPropsRight)(SideBarRight)
