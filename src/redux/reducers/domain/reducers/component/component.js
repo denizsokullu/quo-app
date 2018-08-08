@@ -28,10 +28,12 @@ export const addComponent = (tabs,action) => {
   let rootComponentID;
 
   //assign new IDs to all the keys.
+  let oldIDMappings = {}
 
    _.forEach(newComps,(o)=>{
      let newID = uuidv1().toUpperCase();
      let oldID = o.id.slice();
+     oldIDMappings[oldID] = newID;
      //if it is the root comp, save the id.
      if(o.id === payload.component.id){
        rootComponentID = newID;
@@ -39,6 +41,12 @@ export const addComponent = (tabs,action) => {
      o.id = newID;
      //replace the key
      delete Object.assign(newComps, {[newID]: newComps[oldID] })[oldID]
+  })
+
+  _.forEach(newComps,(o)=>{
+    o.children = o.children.map(child=>{
+      return oldIDMappings[child]
+    })
   })
 
   //add the new components to the existing component obj.

@@ -26,7 +26,7 @@ class LinksTab extends Component {
           lineIndices={actionLineIndices}
           onChange={(value)=>{
             const { dispatch } = this.props;
-            dispatch(ADD_MESSAGE({type:status,text:`Selected '${value}' as the option`,duration:1500}))
+            dispatch(ADD_MESSAGE({type:status,text:`Selected '${value}' as the option`,duration:6000}))
           }}
         />
         <Card collapsed title='Linked Element'/>

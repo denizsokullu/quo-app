@@ -6,7 +6,11 @@ import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE 
 
 import uuidv1 from 'uuid/v1';
 
+import { translatePropData } from '../../parser/propTranslator';
+
 import { findComponentTree } from '../../parser/helpers';
+
+import { getState } from '../../redux/state';
 
 import SelectionFrame from '../selectionFrame';
 
@@ -24,25 +28,24 @@ class ComponentRendererCore extends React.Component {
   constructor(props) {
     super(props);
 
-    let data = props.summary;
+    // let data = props.summary;
 
-    this.id = data.id;
+    // this.id = data.id;
 
     this.state = {
       // data: data,
       controller: props.controller,
       clicked:false,
 
-      selection:props.selection,
+      // selection:props.selection,
       // id: data.id,
-      editState:props.editState,
+      // editState:props.editState,
 
       //new properties
-      layers:data,
-      components:props.components,
-      id:data.id,
-      type:this.decideType(props.components),
-      testid:data.id,
+      // layers:data,
+      // components:props.components,
+      id:props.id,
+      // type:this.decideType(props.components),
       draggable:true,
       drag:{
         start:{
@@ -60,6 +63,8 @@ class ComponentRendererCore extends React.Component {
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
 
+
+    this.getStyle();
     // this.onClick = this.onClick.bind(this);
     // this.onDoubleClick = this.onDoubleClick.bind(this);
 
@@ -77,27 +82,28 @@ class ComponentRendererCore extends React.Component {
     )
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(this.state.type === 'image'){
-      console.log(nextProps.imageData);
-    }
-    this.setState({
-      id:nextProps.summary.id,
-      components:nextProps.components,
-      layers:nextProps.summary,
-      selection:nextProps.selection,
-      editState:nextProps.editState,
-      currentPage:nextProps.currentPage,
-      imageData:nextProps.imageData
-    })
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if(this.state.type === 'image'){
+  //     console.log(nextProps.imageData);
+  //   }
+  //   this.setState({
+  //     id:nextProps.summary.id,
+  //     components:nextProps.components,
+  //     layers:nextProps.summary,
+  //     selection:nextProps.selection,
+  //     editState:nextProps.editState,
+  //     currentPage:nextProps.currentPage,
+  //     imageData:nextProps.imageData
+  //   })
+  // }
 
   // TODO: Update this to check if component.interactions.clicked == true
   isSelected(id){
-    if(id){
-      return this.state.selection === id;
-    }
-    return this.state.selection === this.state.id;
+    return false;
+    // if(id){
+    //   return this.state.selection === id;
+    // }
+    // return this.state.selection === this.state.id;
   }
 
   getPosition(){
@@ -122,13 +128,17 @@ class ComponentRendererCore extends React.Component {
       return;
     }
 
-    if(this.isSelected()){
-      return this.state.components.editStates[this.state.editState].style;
-    }
+    // if(this.isSelected()){
+    //   return this.state.components.editStates[this.state.editState].style;
+    // }
+    //
+    // else{
+    //   return this.state.components.editStates['none'].style;
+    // }
+    let props = this.props.component.state.states[this.props.component.state.current].props
+    let style = translatePropData('abstract','css',props)
 
-    else{
-      return this.state.components.editStates['none'].style;
-    }
+    return style
   }
 
   generateKey(){
@@ -147,7 +157,6 @@ class ComponentRendererCore extends React.Component {
       //   console.log('clicked on a grouped component')
       //   return
       // }
-      console.log(this.state.components.id)
       e.stopPropagation();
       const { dispatch } = this.props;
       dispatch(COMPONENT_SELECT(this.state.id));
@@ -271,7 +280,7 @@ class ComponentRendererCore extends React.Component {
 
     if(this.isSelected()){
       return (
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`} id={this.state.id}
           style={style}
           onClick={this.onClick}
           ref='handle'
@@ -283,75 +292,75 @@ class ComponentRendererCore extends React.Component {
 
     //artboard can be selected with 1 click always
 
-    else if(this.state.components._class === 'artboard'){
-      return (
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-          style={style}
-          onClick={this.onClick}
-          ref='handle'
-          onMouseDown={this.onMouseDownHandler.bind(this)}
-        >
-          { content }
-      </div>)
-    }
+    // else if(this.state.component.class === 'artboard'){
+    //   return (
+    //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+    //       style={style}
+    //       onClick={this.onClick}
+    //       ref='handle'
+    //       onMouseDown={this.onMouseDownHandler.bind(this)}
+    //     >
+    //       { content }
+    //   </div>)
+    // }
 
     //group
 
     //if the outermost group, can be selected with 1 click
     //if inner, can be selected with 2 clicks
 
-    else if(this.state.components._class === 'group' && this.props.selectable){
-      if(this.props.selectionType === 1){
-        return (
-          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-            style={style}
-            onClick={this.onClick}
-          >
-            { content }
-        </div>)
-      }
-      else if(this.props.selectionType === 2){
-        return (
-          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-            style={style}
-            onDoubleClick={this.onClick}
-          >
-            { content }
-        </div>)
-      }
-
-    }
+    // else if(this.state.components._class === 'group' && this.props.selectable){
+    //   if(this.props.selectionType === 1){
+    //     return (
+    //       <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+    //         style={style}
+    //         onClick={this.onClick}
+    //       >
+    //         { content }
+    //     </div>)
+    //   }
+    //   else if(this.props.selectionType === 2){
+    //     return (
+    //       <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+    //         style={style}
+    //         onDoubleClick={this.onClick}
+    //       >
+    //         { content }
+    //     </div>)
+    //   }
+    //
+    // }
 
     //any other component that is currently selectable
 
-    else if(this.props.selectable){
-      if(this.props.selectionType === 1){
-        return (
-          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-            style={style}
-            onClick={this.onClick}
-          >
-            { content }
-        </div>)
-      }
-      else if(this.props.selectionType === 2){
-        //solved sibling selection
-        // console.log(this.isSiblingSelected(),this.state.selection,this.state.components.siblings);
-        return (
-          <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-            style={style}
-            onDoubleClick={this.onClick}
-            onClick={(e)=>{e.stopPropagation()}}
-          >
-            { content }
-        </div>)
-      }
-    }
+    // else if(this.props.selectable){
+    //   if(this.props.selectionType === 1){
+    //     return (
+    //       <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+    //         style={style}
+    //         onClick={this.onClick}
+    //       >
+    //         { content }
+    //     </div>)
+    //   }
+    //   else if(this.props.selectionType === 2){
+    //     //solved sibling selection
+    //     // console.log(this.isSiblingSelected(),this.state.selection,this.state.components.siblings);
+    //     return (
+    //       <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} hover-active component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+    //         style={style}
+    //         onDoubleClick={this.onClick}
+    //         onClick={(e)=>{e.stopPropagation()}}
+    //       >
+    //         { content }
+    //     </div>)
+    //   }
+    // }
 
     //component isnt selectable
     else{
       return (
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`} id={this.state.id}
           style={style}
         >
           { content }
@@ -367,199 +376,89 @@ class ComponentRendererCore extends React.Component {
   render(){
 
     // let innerDOM = this.renderInnerDOM;
-
-    let parentContent = _.keys(this.state.layers).map(key => {
+    let parentContent = this.props.component.children.map(id => {
       return (
         <ComponentRenderer
-          isParent={false}
-          summary={this.state.layers[key]}
-          componentId={key}
-          key={key}
+          id={id}
+          key={id}
         />
       )
     });
 
     let nonParentContent;
 
-    if(this.state.components._class === 'artboard'){
+    // if(this.state.components._class === 'artboard'){
+    //
+    //   nonParentContent = _.keys(this.state.layers.components).map(key => {
+    //     return (
+    //       <ComponentRenderer
+    //         isParent={false}
+    //         selectable={true}
+    //         selectionType={1}
+    //         summary={this.state.layers.components[key]}
+    //         componentId={key}
+    //         key={key}
+    //       />
+    //     )
+    //   });
+    //
+    // }
+    //
+    // else if(this.state.components._class === 'group'){
+    //
+    //   nonParentContent = _.keys(this.state.layers.components).map(key => {
+    //     return (
+    //       <ComponentRenderer
+    //         isParent={false}
+    //         selectable={this.state.components.id === this.state.selection}
+    //         selectionType={2}
+    //         summary={this.state.layers.components[key]}
+    //         componentId={key}
+    //         key={key}
+    //       />
+    //     )
+    //   });
+    //
+    // }
+    //
+    // else if(this.state.components._class === 'text'){
+    //
+    //   nonParentContent = (
+    //     <TextComponent data={this.state.components} changeDrag={this.changeDrag.bind(this)}></TextComponent>
+    //   )
+    //
+    // }
+    //
+    // else if(this.state.layers.class === 'shape'){
+    //
+    //   nonParentContent = (
+    //     <ShapeComponent data={this.state.components}/>
+    //   )
+    //
+    // }
+    //
+    // else if(this.state.components._class === 'image'){
+    //
+    //   nonParentContent = (
+    //     <ImageComponent data={this.state.imageData}/>
+    //   )
+    //
+    // }
 
-      nonParentContent = _.keys(this.state.layers.components).map(key => {
+    // else{
+
+      nonParentContent = this.props.component.children.map(id => {
         return (
           <ComponentRenderer
-            isParent={false}
-            selectable={true}
-            selectionType={1}
-            summary={this.state.layers.components[key]}
-            componentId={key}
-            key={key}
-          />
-        )
-      });
-
-    }
-
-    else if(this.state.components._class === 'group'){
-
-      nonParentContent = _.keys(this.state.layers.components).map(key => {
-        return (
-          <ComponentRenderer
-            isParent={false}
-            selectable={this.state.components.id === this.state.selection}
-            selectionType={2}
-            summary={this.state.layers.components[key]}
-            componentId={key}
-            key={key}
-          />
-        )
-      });
-
-    }
-
-    else if(this.state.components._class === 'text'){
-
-      nonParentContent = (
-        <TextComponent data={this.state.components} changeDrag={this.changeDrag.bind(this)}></TextComponent>
-      )
-
-    }
-
-    else if(this.state.layers.class === 'shape'){
-
-      nonParentContent = (
-        <ShapeComponent data={this.state.components}/>
-      )
-
-    }
-
-    else if(this.state.components._class === 'image'){
-
-      nonParentContent = (
-        <ImageComponent data={this.state.imageData}/>
-      )
-
-    }
-
-    else{
-
-      nonParentContent = _.keys(this.state.layers.components).map(key => {
-        return (
-          <ComponentRenderer
-            isParent={false}
-            summary={this.state.layers.components[key]}
-            componentId={key}
-            key={key}
+            id={id}
+            key={id}
           />
         )
       })
 
-    }
-
-
+    // }
 
     return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
-
-    // let innerDOM = (<div
-    //   className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`}
-    //   style={this.getStyle()}
-    //   onMouseEnter={this.onMouseEnter}
-    //   onMouseLeave={this.onMouseLeave}
-    //   onClick={this.onClick}
-    //   onDoubleClick={this.onDoubleClick}
-    //                 >
-    //   {
-    //     this.state.data.layers.map((layer, index) => {
-    //       return (
-    //         <ComponentRenderer
-    //           summary={layer}
-    //           controller={this.state.controller}
-    //           selection={this.state.selection}
-    //           editState={this.state.editState}
-    //           key={layer.id}
-    //           dispatch={this.props.dispatch}
-    //           dragSelf={this.state.dragChildren}
-    //         />
-    //       )
-    //     })
-    //   }
-    //   {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
-    // </div>)
-    //
-    // //parent container element
-    // if(this.state.type === 'parent'){
-    //   return innerDOM;
-    // }
-    //
-    // //group element that contains groups/primitive shapes
-    // else if (this.state.type === 'group'){
-    //   return (<Draggable
-    //     onStart={this.onDragStart}
-    //     onStop={this.onDragStop}
-    //     onDrag={this.onDrag.bind(this)}
-    //     defaultPosition={this.state.location}
-    //     disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.type}`} style={this.getStyle()}
-    //       onMouseEnter={this.onMouseEnter}
-    //       onMouseLeave={this.onMouseLeave}
-    //       onClick={this.onClick}>
-    //       {
-    //         this.state.data.layers.map((layer, index) => {
-    //           return (
-    //             <ComponentRenderer
-    //               summary={layer}
-    //               controller={this.state.controller}
-    //               selection={this.state.selection}
-    //               editState={this.state.editState}
-    //               key={index}
-    //               dispatch={this.props.dispatch}
-    //               dragSelf={this.state.dragChildren}
-    //             />)
-    //         })
-    //       }
-    //       {this.state.clicked ? <ClickFrame/> : null}
-    //     </div>
-    //   </Draggable>)
-    // }
-    //
-    // //basic element
-    // else if(this.state.type === 'rect'){
-    //   return (
-    //   <Draggable
-    //     onStart={this.onDragStart} onStop={this.onDragStop}
-    //     defaultPosition={this.state.location}
-    //     onDrag={this.onDrag.bind(this)}
-    //     disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     {innerDOM}
-    //   </Draggable>)
-    // }
-    //
-    // else if(this.state.type === 'text'){
-    // return(  <Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-    //   key={this.generateKey()}>
-    //   <div className='component-container text-component child' style={{...this.getDimensions()}}
-    //     // ...{left:this.getPosition().x,top:this.getPosition().y},
-    //     onClick={this.onClick} onDoubleClick={this.handleDoubleClick}>
-    //     <TextComponent data={this.state.data}></TextComponent>
-    //     {this.state.clicked && !this.props.isParent ? <ClickFrame/> : null}
-    //   </div>
-    // </Draggable>)
-    // }
-    // //svg
-    // else if (this.state.type === 'svg') {
-    //   console.log({...this.getPosition(),...this.getDimensions()});
-    //   return(<Draggable onStart={this.onDragStart} onStop={this.onDragStop} onDrag={this.onDrag.bind(this)} defaultPosition={this.state.location} disabled={this.state.controller.key[32]}
-    //     key={this.generateKey()}>
-    //     <div className='component-container child' style={this.getPosition()}>
-    //       <SvgComponent data={this.state.data}></SvgComponent>
-    //     </div>
-    //   </Draggable>)
-    // }
-    //
-    // //empty
-    // else{
-    //   return null
-    // }
 
   }
 }
@@ -838,29 +737,47 @@ class TextComponent extends CoreComponent{
 
 function mapStateToProps(state,ownProps) {
 
-  let components = state.present.newAssets[state.present.currentPage].components
+  let domain = getState(state,'domain');
+  let tabRoot = domain.tabs.allTabs[domain.tabs.activeTab]
 
-  if(!ownProps.isParent){
-    components = components[ownProps.summary.id];
-  }
-
-  let props = {};
-
-  if(state.present.newAssets.images){
-    if(components._class === 'image'){
-      let url = components.imageURL;
-      props.imageData = state.present.newAssets.images[url];
+  //return the tabRoot
+  if(ownProps.isParent){
+    return {
+      component:tabRoot,
     }
   }
 
-  return {
-            ...props,
-            controller:state.present.controller,
-            components:components,
-            selection:state.present.newSelection,
-            editState:state.present.editState,
-            currentPage:state.present.currentPage,
-         }
+  //return the component
+  else if(ownProps.id){
+    let component = tabRoot.components[ownProps.id];
+    return {
+      component:component,
+    }
+  }
+
+  // let components = state.present.newAssets[state.present.currentPage].components
+  //
+  // if(!ownProps.isParent){
+  //   components = components[ownProps.summary.id];
+  // }
+  //
+  // let props = {};
+  //
+  // if(state.present.newAssets.images){
+  //   if(components._class === 'image'){
+  //     let url = components.imageURL;
+  //     props.imageData = state.present.newAssets.images[url];
+  //   }
+  // }
+  //
+  // return {
+  //           ...props,
+  //           controller:state.present.controller,
+  //           components:components,
+  //           selection:state.present.newSelection,
+  //           editState:state.present.editState,
+  //           currentPage:state.present.currentPage,
+  //        }
 }
 
 function mapStateToPropsForTextComponent(state){

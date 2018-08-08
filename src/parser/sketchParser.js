@@ -1,6 +1,5 @@
-import { sketchParserNew } from './index';
-import { dc } from '../redux/helpers';
 import _ from 'lodash';
+import { translatePropData } from './propTranslator'
 
 class AbstractComponent {
 
@@ -17,7 +16,7 @@ class AbstractComponent {
 
     //first traverses the tree to create children
     this.initChildren(data);
-    this.initStates();
+    this.initStates(data);
     this.initLinkingStructure();
 
     //class specific properties
@@ -74,13 +73,12 @@ class AbstractComponent {
 
   }
 
-  initStates(){
+  initStates(data){
 
     let dynamicProps = {
       active:false,
-      style:{}
+      props:this.initStyleProps(data)
     }
-
     let states = {
       'none':{...dynamicProps},
       'hover':{...dynamicProps},
@@ -95,6 +93,10 @@ class AbstractComponent {
 
     this.state = AbstractComponent.swapState('none',this.state);
 
+  }
+
+  initStyleProps(data){
+    return translatePropData('sketch','abstract',data);
   }
 
   initLinkingStructure(){

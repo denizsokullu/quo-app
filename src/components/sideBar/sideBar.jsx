@@ -50,7 +50,8 @@ import LinkIcon from 'material-ui-icons/Link';
 import { UPDATE_SIDEBAR_TAB, RESIZE_SIDEBAR } from '../../redux/actions';
 import { getState } from '../../redux/state';
 
-import AssetsTab from './assets/assets';
+import AssetsTab from './assets';
+import LayersTab from './layers';
 import LinksTab from './links';
 
 class StylesContent extends React.Component{
@@ -148,7 +149,7 @@ class SideBarLeft extends Component {
     super(props);
     this.state = {
       options : props.tabs,
-      components : {assets:AssetsTab, layers:AssetsTab, globalLinks:AssetsTab},
+      components : {assets:AssetsTab, layers:LayersTab, globalLinks:AssetsTab},
       icons : {assets:WebAssetIcon, layers:LayersIcon, globalLinks:LinkIcon },
       width:230,
       height:'100%',

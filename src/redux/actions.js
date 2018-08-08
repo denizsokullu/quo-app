@@ -12,7 +12,7 @@ export const REMOVE_MESSAGE = (message) => ({
 })
 
 export const ADD_COMPONENT_ACTION = (payload,domain) => ({
-  type:'ADD_COMPONENT',
+  type:'ADD_COMPONENT_TO_TAB',
   payload:payload,
   domain:domain,
 })
@@ -26,6 +26,11 @@ export const ADD_COMPONENT = (payload) => (dispatch,getState) => {
 export const NEW_TAB = (data) => ({
   type: 'NEW_TAB',
   payload: data
+})
+
+export const CHANGE_ACTIVE_TAB = (data) => ({
+  type:'CHANGE_ACTIVE_TAB',
+  payload: data,
 })
 
 export const DELETE_TAB = () => ({

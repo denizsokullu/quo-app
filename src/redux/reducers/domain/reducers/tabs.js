@@ -18,13 +18,19 @@ const newTab = (tabs,action) => {
   // increment the tabCount
   tabs.tabCount += 1;
 
-  return tabs
+  return { ...tabs }
+}
+
+const changeActiveTab = (tabs,action) => {
+  let newTabs = { ...tabs };
+  newTabs.activeTab = action.payload.id;
+  return newTabs
 }
 
 const editTab = (tabs,action) => {
 
   tabs.allTabs[action.payload.id] = action.payload;
-  return tabs;
+  return { ...tabs };
 
 }
 
@@ -48,4 +54,4 @@ const deleteTab = (tabs,action) => {
   return tabs;
 }
 
-export { newTab, editTab, deleteTab }
+export { newTab, changeActiveTab, editTab, deleteTab }

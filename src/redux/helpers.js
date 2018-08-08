@@ -7,7 +7,6 @@ const combineReducersLoop = (actions) => {
 
     //return if no action types are passed in
     if( !actions ) return state;
-
     //loop through the action handlers
     //and find the one we need
     for(let type in actions){

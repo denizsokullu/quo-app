@@ -223,8 +223,8 @@ class Viewer extends React.Component {
             height:'100%',
             width: '100%'
         }}
-        isParent={true}
-        data={this.props.data}
+        isParent
+        tab={this.props.activeTab}
       />
     )
   }
@@ -271,7 +271,7 @@ class Viewer extends React.Component {
               height:`${mainArtboardSize.h}px`,
             }}>
             {
-              this.props.data ? this.renderComponents() : null
+              this.renderComponents()
             }
           </div>
         </div>
@@ -281,13 +281,13 @@ class Viewer extends React.Component {
 
   render() {
     let draggableClass = this.state.draggable ? 'draggable' : ''
-    console.log(this.props.data);
     const pos = this.state.viewerPos
+    console.log(this.props.activeTab);
     return (
       <React.Fragment>
       {/* <SelectionFrame scale={this.state.scale}/> */}
       {
-        (!this.props.tabs || _.isEmpty(this.props.tabs.allTabs)) ? null : this.renderViewer()
+        this.props.activeTab !== '' ? this.renderViewer() : null
       }
       </React.Fragment>
 
@@ -304,20 +304,21 @@ function mapStateToProps(state) {
   let ui = getState(state,'ui')
 
   //if there are no tabs created, don't display anything
-
+  let activeTab = domain.tabs.activeTab
   if(_.isEmpty(domain.tabs.allTabs)) {
     return {
       controller:ui.controller,
+      activeTab:activeTab,
     }
   }
 
   //if there is an active tab, collect the data from the tab
 
-  let activeTab = domain.tabs.activeTab
+
 
   return {
-    data:domain.tabs.allTabs[activeTab],
-    selection:app.selection
+    controller:ui.controller,
+    activeTab:activeTab,
   }
 }
 
