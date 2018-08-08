@@ -14,13 +14,40 @@ export const addComponent = (tabs,action) => {
   //unpack action
   let domain = action.domain;
   let payload = action.payload;
+
   //target tab to add
   let target = tabs.allTabs[domain.tabs.activeTab];
   let source = domain[payload.source][payload.filetype][payload.page]
-  // let componentTree = payload.component.components
+
   let component = source.components[payload.component.id];
-  let allTheComponentsToAdd = traverseAndAdd(component,source.components,{});
-  target.components = _.merge(target.components,allTheComponentsToAdd);
+  let newComps = traverseAndAdd(component,source.components,{});
+
+  //There is a need to retrieve the new id for the root comp
+  //as it needs to be added to the children of the tab.
+
+  let rootComponentID;
+
+  //assign new IDs to all the keys.
+
+   _.forEach(newComps,(o)=>{
+     let newID = uuidv1().toUpperCase();
+     let oldID = o.id.slice();
+     //if it is the root comp, save the id.
+     if(o.id === payload.component.id){
+       rootComponentID = newID;
+     }
+     o.id = newID;
+     //replace the key
+     delete Object.assign(newComps, {[newID]: newComps[oldID] })[oldID]
+  })
+
+  //add the new components to the existing component obj.
+
+  target.components = _.merge(target.components,newComps);
+
+  //add the root component to the existing children array.
+
+  target.children.push(rootComponentID);
 
   return { ...tabs };
 
@@ -32,6 +59,9 @@ export const removeComponent = (tabs,action) => {
   let payload = action.payload;
   let target = tabs.allTabs[domain.tabs.activeTab];
   let component = target.components[payload.id];
+
+  //NOT WORKING YET!!!
+
   let allTheComponentsToDelete = traverseAndAdd(component,target.components,{});
   Object.keys(allTheComponentsToDelete).map( comp => {
     delete target.components[comp.id]
@@ -41,10 +71,8 @@ export const removeComponent = (tabs,action) => {
 
 const traverseAndAdd = (component,components,collector) => {
 
-  //create a new id, and add it to the collector
-  let newID = uuidv1().toUpperCase();
-  collector[newID] = {...components[component.id]};
-  collector[newID].id = newID;
+  //add it to the collector
+  collector[component.id] = {...components[component.id]};
 
   //recursively call it for the children
   let allTheChildren = component.children.map( childID => {

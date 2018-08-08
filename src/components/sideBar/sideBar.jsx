@@ -236,7 +236,6 @@ class SideBarRight extends Component {
       <div className='sidebar-wrapper'>
         <div className={`sidebar-container sidebar-right`}>
             <CurrentComponent/>
-            {this.props.selected}
         </div>
         <div className='interaction-nav right-nav'>
           {
@@ -257,7 +256,8 @@ class SideBarRight extends Component {
 }
 
 function mapStateToPropsRight(state) {
-  let ui = getState(state,'ui')
+
+  let ui = getState(state,'ui');
   return { ...ui.sidebars.right }
 }
 

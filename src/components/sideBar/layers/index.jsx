@@ -1,35 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { LayerCard } from '../../styleCard/styleCard';
+import { getState } from '../../../redux/state';
 import _ from 'lodash';
 
-import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
-import { ADD_COMPONENT } from '../../../redux/actions';
 
-class AssetsTab extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      currentTab:'static',
-      filetype:'sketch',
-    }
-    this.updateTab = this.updateTab.bind(this)
-  }
-  updateTab(newTab){
-    this.setState({currentTab:newTab})
-  }
-
+class LayersTab extends Component {
   render(){
     return (
-      <div className='assets-tab-wrapper'>
-        <HorizontalOptionGroup
-          options={
-            [
-              {text:'Static',callback:()=>{this.updateTab('static')}},
-              {text:'Reactive',callback:()=>{this.updateTab('reactive')}}
-            ]
-          }
-        />
+      <div className='layers-tab-wrapper'>
+
         {
           this.state.currentTab === 'static'
           ?
@@ -42,32 +21,10 @@ class AssetsTab extends Component {
   }
 }
 
-class AssetPreview extends Component {
+class TabsViewer extends Component {
   constructor(props){
     super(props);
-    this.addAssetToEditor = this.addAssetToEditor.bind(this);
-  }
-  addAssetToEditor(){
-    const { dispatch } = this.props;
-    dispatch(ADD_COMPONENT({source:this.props.source,
-                            filetype:this.props.filetype,
-                            page:this.props.page,
-                            component:this.props.component}));
-  }
-  render(){
-    return (
-      <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
-        <div className='asset-preview-title'>{this.props.title}</div>
-        <div className='asset-preview-image'></div>
-      </div>
-    )
-  }
-}
-
-class AssetsViewer extends Component {
-  constructor(props){
-    super(props);
-    let pages = this.assignPages(props.assets);
+    let tabs = this.assignPages(props.allTabs);
     let selected = undefined;
     if(pages.length > 0){
       selected = pages[0];

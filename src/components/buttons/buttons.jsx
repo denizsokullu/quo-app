@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 class ButtonCore extends React.Component {
@@ -12,6 +13,11 @@ class ButtonCore extends React.Component {
         </div>
       );
     }
+}
+
+ButtonCore.propTypes = {
+  title:PropTypes.string.isRequired,
+  onClick:PropTypes.func,
 }
 
 

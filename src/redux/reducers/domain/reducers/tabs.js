@@ -6,6 +6,7 @@ const newTab = (tabs,action) => {
     id:uuidv1().toUpperCase(),
     name:`Tab ${tabs.tabCount}`,
     components:action.payload ? action.payload : {},
+    children:[],
     tabCount:tabs.tabCount
   }
   //add it to the list of tabs

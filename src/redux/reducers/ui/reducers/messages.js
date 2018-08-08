@@ -1,10 +1,7 @@
 import uuidv1 from 'uuid/v1';
 
 function removeMessageFromStack(messages, message) {
-    let newMessages = messages.slice();
-    newMessages.pop();
-    return newMessages;
-    // return messages.filter( (item, index) => message.id !== item.id);
+  return messages.filter( (item, index) => message.id !== item.id);
 }
 
 function addMessageToStack(messages, message) {
