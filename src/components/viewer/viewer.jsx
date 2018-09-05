@@ -282,7 +282,6 @@ class Viewer extends React.Component {
   render() {
     let draggableClass = this.state.draggable ? 'draggable' : ''
     const pos = this.state.viewerPos
-    console.log(this.props.activeTab);
     return (
       <React.Fragment>
       {/* <SelectionFrame scale={this.state.scale}/> */}

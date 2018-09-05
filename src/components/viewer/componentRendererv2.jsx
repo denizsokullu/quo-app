@@ -382,6 +382,8 @@ class ComponentRendererCore extends React.Component {
 
     let nonParentContent;
 
+    console.log('rendering')
+
     if(this.state.components._class === 'artboard'){
 
       nonParentContent = _.keys(this.state.layers.components).map(key => {

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 const commonTranslators = {
+  id:(v)=>{return v},
   sketch:{
     abstract:{
       color:(o)=>{ return {
@@ -27,75 +28,85 @@ const router = {
   sketch:{
     abstract:{
       width:{
-       prop: 'width',
-       translate: (v) => { return v },
+       prop:'width',
+       translate:commonTranslators.id,
       },
       height:{
         prop:'height',
-        translate:(v) => { return v },
+        translate:commonTranslators.id,
       },
       x:{
         prop:'x',
-        translate:(v) => { return v },
+        translate:commonTranslators.id,
       },
       y:{
         prop:'y',
-        translate:(v) => { return v },
+        translate:commonTranslators.id,
       },
       border:{
        thickness:{
-         prop:'border-width',
-         translate:(v) => { return v },
+         parent:'border',
+         prop:'width',
+         translate:commonTranslators.id,
        },
        color:{
-         prop:'border-color',
+         parent:'border',
+         prop:'color',
          translate:commonTranslators.sketch.abstract.color,
        },
        radius:{
-         prop:'border-radius',
-         translate:(v) => { return v },
+         parent:'border',
+         prop:'radius',
+         translate:commonTranslators.id,
        },
        style:{
-         prop:'border-style',
-         translate:(v) => { return v},
+         parent:'border',
+         prop:'style',
+         translate:commonTranslators.id,
        }
       },
       rotation:{
-        prop:'transform-rotation',
-        translate:(v) => { return v },
+        parent:'transform',
+        prop:'rotation',
+        translate:commonTranslators.id,
       },
-      // shadow:{
-      //   offsetX:{
-      //     prop:'shadow-offset-x',
-      //     translate:(v) => { return v },
-      //   },
-      //   offsetY:{
-      //     prop:'shadow-offset-y',
-      //     translate:(v) => { return v }
-      //   },
-      //   blurRadius:{
-      //     prop:'shadow-blur',
-      //     translate:(v) => { return v },
-      //   },
-      //   spread:{
-      //     prop:'shadow-spread',
-      //     translate:(v) => { return v },
-      //   },
-      //   color:{
-      //     prop:'shadow-color',
-      //     translate:(v) => { return v },
-      //   },
-      // },
+      shadow:{
+        offsetX:{
+          parent:'shadow',
+          prop:'offset-x',
+          translate:commonTranslators.id,
+        },
+        offsetY:{
+          parent:'shadow',
+          prop:'offset-y',
+          translate:commonTranslators.id
+        },
+        blurRadius:{
+          parent:'shadow',
+          prop:'blur',
+          translate:commonTranslators.id,
+        },
+        spread:{
+          parent:'shadow',
+          prop:'spread',
+          translate:commonTranslators.id,
+        },
+        color:{
+          parent:'shadow',
+          prop:'color',
+          translate:commonTranslators.sketch.abstract.color,
+        },
+      },
       fontSize:{
-        prop:'font-size',
-        translate:(v) => { return v },
+        prop:'font size',
+        translate:commonTranslators.id,
       },
       fontFamily:{
-        prop:'font-family',
-        translate:(v) => { return v },
+        prop:'font family',
+        translate:commonTranslators.id,
       },
       color:{
-        prop:'font-color',
+        prop:'font color',
         translate:commonTranslators.sketch.abstract.color,
       },
       backgroundColor:{
@@ -108,7 +119,6 @@ const router = {
       },
     }
   },
-  //this is reversed as the CSS needs the final prop first
   abstract:{
     css:{
       'width':{
@@ -131,45 +141,67 @@ const router = {
         prop:'fill',
         translate:commonTranslators.abstract.css.color
       },
-      'border-width':{
-        prop:'border-width',
-        translate:commonTranslators.abstract.css.int2px,
-      },
-      'border-color':{
-        prop:'border-color',
-        translate:commonTranslators.abstract.css.color,
-      },
-      'border-style':{
-        prop:'border-style',
-        translate:(v)=>{return v},
-      },
-      'border-radius':{
-        prop:'border-radius',
-        translate:(corners) => {
-          let str = ``;
-          corners.map(corner=>{
-            str += commonTranslators.abstract.css.int2px(corner)
-            str += ` `;
-          })
-          return str;
+      border:{
+        prop:'border',
+        translate:(v)=>{
+          let returnObj = {}
+          if(v.thickness && v.color && v.style){
+            returnObj['border'] = `${commonTranslators.abstract.css.int2px(v.thickness)} ${v.style} ${commonTranslators.abstract.css.color(v.color)}`
+          }
+          //add border-radius here later;
+          return returnObj
         }
       },
+      // 'border-width':{
+      //   prop:'border-width',
+      //   translate:commonTranslators.abstract.css.int2px,
+      // },
+      // 'border-color':{
+      //   prop:'border-color',
+      //   translate:commonTranslators.abstract.css.color,
+      // },
+      // 'border-style':{
+      //   prop:'border-style',
+      //   translate:(v)=>{return v},
+      // },
+      // 'border-radius':{
+      //   prop:'border-radius',
+      //   translate:(corners) => {
+      //     let str = ``;
+      //     corners.map(corner=>{
+      //       str += commonTranslators.abstract.css.int2px(corner)
+      //       str += ` `;
+      //     })
+      //     return str;
+      //   }
+      // },
     }
   }
 }
 
+
+
 const convertProps = (from,to,prop,val) => {
-  if(typeof prop === 'string'){
-    return {[router[from][to][prop].prop]:
-            router[from][to][prop].translate(val)}
+
+  let path = router[from][to]
+  let propObj = {...path};
+
+  //find the property obj by going through the list
+  prop.split(' ').map(p=>{
+    propObj = propObj[p];
+  });
+
+  //if it is a nested value
+  if(propObj.parent){
+    let newNode = {};
+    newNode[propObj.parent] = {}
+    newNode[propObj.parent][propObj.prop] = propObj.translate(val);
+    return newNode
   }
-  else if(Array.isArray(prop)){
-    let props = router[from][to];
-    prop.map(p=>{
-      props = props[p];
-    });
-    return {[props.prop]:props.translate(val)}
-  }
+
+  //if its alone
+  return { [propObj.prop]:propObj.translate(val) }
+
 }
 
 const pickEnabledProp = (props) => {
@@ -183,7 +215,16 @@ const pickEnabledProp = (props) => {
 const translateAbstractData = (to,data) => {
   let allProps = {};
   _.forEach(data,(val,prop)=>{
-    allProps[router['abstract'][to][prop].prop] = router['abstract'][to][prop].translate(val)
+    //if there are inner values corresponding
+    let res = router['abstract'][to][prop].translate(val)
+    //if it's a single css rule add it alone
+    if(typeof res === 'string'){
+      allProps[router['abstract'][to][prop].prop] = res;
+    }
+    //if it's multiple css rules, merge them all
+    else{
+      _.merge(allProps,router['abstract'][to][prop].translate(val))
+    }
   })
   return allProps;
 }
@@ -205,9 +246,9 @@ const translateSketchData = (to,data) => {
     if(s.borders){
       let eProp = pickEnabledProp(s.borders);
       if(eProp){
-        addProp(['border','thickness'],eProp.thickness);
-        addProp(['border','color'],eProp.color);
-        addProp(['border','style'],'solid');
+        addProp('border thickness',eProp.thickness);
+        addProp('border color',eProp.color);
+        addProp('border style','solid');
       }
     }
     if(s.fills){

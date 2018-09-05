@@ -21,7 +21,7 @@ class AbstractComponent {
 
     //class specific properties
 
-    if(this.is('shape')){
+    if(this.is('shapeGroup')){
       this.initShapeProps(data);
     }
 
@@ -170,7 +170,7 @@ class AbstractComponent {
 
   //WRITE THESE
   initShapeProps(data){
-
+    this.layers = data.layers;
   }
   initTextProps(data){
 

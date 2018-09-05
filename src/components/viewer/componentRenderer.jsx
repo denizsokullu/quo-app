@@ -124,9 +124,9 @@ class ComponentRendererCore extends React.Component {
 
   getStyle() {
 
-    if(this.props.isParent){
-      return;
-    }
+    if(this.props.isParent)return;
+
+
 
     // if(this.isSelected()){
     //   return this.state.components.editStates[this.state.editState].style;
@@ -387,74 +387,21 @@ class ComponentRendererCore extends React.Component {
 
     let nonParentContent;
 
-    // if(this.state.components._class === 'artboard'){
-    //
-    //   nonParentContent = _.keys(this.state.layers.components).map(key => {
-    //     return (
-    //       <ComponentRenderer
-    //         isParent={false}
-    //         selectable={true}
-    //         selectionType={1}
-    //         summary={this.state.layers.components[key]}
-    //         componentId={key}
-    //         key={key}
-    //       />
-    //     )
-    //   });
-    //
-    // }
-    //
-    // else if(this.state.components._class === 'group'){
-    //
-    //   nonParentContent = _.keys(this.state.layers.components).map(key => {
-    //     return (
-    //       <ComponentRenderer
-    //         isParent={false}
-    //         selectable={this.state.components.id === this.state.selection}
-    //         selectionType={2}
-    //         summary={this.state.layers.components[key]}
-    //         componentId={key}
-    //         key={key}
-    //       />
-    //     )
-    //   });
-    //
-    // }
-    //
-    // else if(this.state.components._class === 'text'){
-    //
-    //   nonParentContent = (
-    //     <TextComponent data={this.state.components} changeDrag={this.changeDrag.bind(this)}></TextComponent>
-    //   )
-    //
-    // }
-    //
-    // else if(this.state.layers.class === 'shape'){
-    //
-    //   nonParentContent = (
-    //     <ShapeComponent data={this.state.components}/>
-    //   )
-    //
-    // }
-    //
-    // else if(this.state.components._class === 'image'){
-    //
-    //   nonParentContent = (
-    //     <ImageComponent data={this.state.imageData}/>
-    //   )
-    //
-    // }
+    switch(this.props.component.class){
+      case 'shapeGroup':
+        return this.renderWrapper(<ShapeComponent component={this.props.component}></ShapeComponent>);
+      default:
 
-    // else{
+    }
 
-      nonParentContent = this.props.component.children.map(id => {
-        return (
-          <ComponentRenderer
-            id={id}
-            key={id}
-          />
-        )
-      })
+    nonParentContent = this.props.component.children.map(id => {
+      return (
+        <ComponentRenderer
+          id={id}
+          key={id}
+        />
+      )
+    })
 
     // }
 
@@ -512,11 +459,46 @@ class ShapeComponent extends CoreComponent{
   getControlPoints(edge,frame){
     return [edge.p1.curveFrom,edge.p2.curveTo];
   }
+
+  convertPoint(point,frame){
+    let newPoint = {...point}
+    newPoint.point = this.extractPoints(point.point,frame)
+    newPoint.curveFrom = this.extractPoints(point.curveFrom,frame)
+    newPoint.curveTo = this.extractPoints(point.curveTo,frame)
+    return newPoint
+  }
+
+  createPointTuples(points,frame,isClosed){
+    let pointTuples = [];
+    points.map((point,index)=>{
+      //Edge case for non closed shapes
+      if(index === points.length - 1 && !isClosed){
+        return;
+      }
+
+      let edge = {}
+      edge.p1 = this.convertPoint(point,frame)
+
+      //last point wraps around
+      if(index === points.length - 1){
+        edge.p2 = this.convertPoint(points[0],frame);
+      }
+
+      else{
+        edge.p2 = this.convertPoint(points[index+1],frame)
+      }
+
+      pointTuples.push(edge);
+
+    })
+    return pointTuples;
+  }
   createPathCode(data){
-    let frame = data.frame;
+    let frame = data.frame
+    let pointTuples = this.createPointTuples(data.points,data.frame,data.isClosed)
     let edges = [];
 
-    data.edges.map((edge,i) => {
+    pointTuples.map((edge,i) => {
 
       //create a starting point
       if(i == 0){
@@ -542,7 +524,7 @@ class ShapeComponent extends CoreComponent{
       }
 
       //add a Z to close off
-      if(i === edges.length - 1){
+      if(i === pointTuples.length - 1){
         this.addToPath(this.createZ());
       }
 
@@ -575,18 +557,15 @@ class ShapeComponent extends CoreComponent{
   createZ(){
     return 'Z '
   }
-  calculatePath(shape){
-    //execute path algorithm
+  calculatePath(shape,index){
     this.createNewPath();
-    shape.paths.map((path,index)=>{
-      this.createPathCode(path)
-    })
-    //return last added path
-    return ( <path d={this.getTheLastPathAdded()}/> )
+    this.createPathCode(shape);
+    return this.getTheLastPathAdded();
   }
+
   getStylePropsFromParent(){
 
-    let style = this.getCurStyle(this.props.data);
+    let style = this.getCurStyle(this.props.components);
     return { fill:style.fill,border:style.border }
   }
 
@@ -594,29 +573,15 @@ class ShapeComponent extends CoreComponent{
     return obj.editStates[obj.editStates.current].style
   }
   render(){
+    const paths = this.props.component.layers.map((shape,index)=>{
+      const pathData = this.calculatePath(shape)
+      return  <path d={pathData} key={index}/>
+    });
+    console.log(paths);
     return(
-      // <div style={{position:'relative'}}>
-      <React.Fragment>
-      {
-        this.props.data.shapeData.map((shape,index)=>{
-          //do this more compherensively doing fill only is retarded
-          let style;
-          if(shape.style.fill){
-            style = this.getStylePropsFromParent();
-          }
-          else{
-            style = {};
-          }
-          return (
-            <svg style={{...shape.style, ...style, position:'absolute'}} key={index}>
-              {
-                this.calculatePath(shape)
-              }
-            </svg>
-          )
-        })
-      }
-    </React.Fragment>
+      <svg style={{position:'absolute'}}>
+        { paths }
+      </svg>
     )
   }
 }

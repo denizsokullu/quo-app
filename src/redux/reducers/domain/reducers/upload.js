@@ -3,7 +3,6 @@ import { Page, AbstractPage } from '../../../../parser';
 const uploadSketch = (assets = {}, action) => {
 
   let newPage = new AbstractPage(action.payload.data);
-  console.log(newPage);
   let filetype = action.payload.filetype
 
   if(!assets[filetype]){
