@@ -14,12 +14,13 @@ import SelectionFrame from '../selectionFrame';
 import ShapeComponent from './components/ShapeComponent';
 import TextComponent from './components/TextComponent';
 import ImageComponent from './components/ImageComponent';
+
 //// TODO:
 //Move the sketch file to the middle.
+//Fix the svg path calculation to abstractComponent
 //Get the color to work
 //Get selection working
 //Get links working
-
 
 class ComponentRendererCore extends React.Component {
   constructor(props) {

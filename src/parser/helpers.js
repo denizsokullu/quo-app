@@ -13,8 +13,6 @@ const findComponentTree = (targetId,parentComponent) => {
 
   else{
 
-
-
     let parentTree = parentComponent.components;
 
     if(!parentTree) return [];

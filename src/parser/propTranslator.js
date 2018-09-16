@@ -227,7 +227,6 @@ const translateAbstractData = (to,data) => {
       _.merge(allProps,router['abstract'][to][prop].translate(val))
     }
   })
-  console.log(allProps)
   return allProps;
 }
 

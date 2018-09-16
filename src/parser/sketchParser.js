@@ -100,7 +100,9 @@ class AbstractComponent {
   }
 
   initLinkingStructure(){
-    this.links = {}
+    this.links = {
+
+    }
     // links = {
     //   linkId:{
     //     trigger:{
@@ -170,6 +172,7 @@ class AbstractComponent {
 
   //WRITE THESE
   initShapeProps(data){
+    //add the code here
     this.layers = data.layers;
   }
   initTextProps(data){
