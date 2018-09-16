@@ -17,7 +17,7 @@ import ImageComponent from './components/ImageComponent';
 
 //// TODO:
 //Move the sketch file to the middle.
-//Fix the svg path calculation to abstractComponent
+//Fix the svg path calculation to sketchParse
 //Get the color to work
 //Get selection working
 //Get links working

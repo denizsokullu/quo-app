@@ -217,7 +217,6 @@ const translateAbstractData = (to,data) => {
   _.forEach(data,(val,prop)=>{
     //if there are inner values corresponding
     let res = router['abstract'][to][prop].translate(val)
-    console.log(res)
     //if it's a single css rule add it alone
     if(typeof res === 'string'){
       allProps[router['abstract'][to][prop].prop] = res;
