@@ -1,39 +1,29 @@
-import _ from 'underscore';
+//React
 import React from 'react';
 import ReactDOM from 'react-dom';
+//Redux
 import { connect } from 'react-redux';
-import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from '../../redux/actions';
-
-import uuidv1 from 'uuid/v1';
-
-import { translatePropData } from '../../parser/propTranslator';
-
-import { findComponentTree } from '../../parser/helpers';
-
 import { getState } from '../../redux/state';
-
+import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from '../../redux/actions';
+//Helpers
+import _ from 'underscore';
+import { translatePropData } from '../../parser/propTranslator';
+//React Classes
 import SelectionFrame from '../selectionFrame';
-
-import TextArea from '../inputElements/dynamicTextArea';
-
-import CoreComponent from './components/CoreComponent';
+//Viewer Component Classes
 import ShapeComponent from './components/ShapeComponent';
+import TextComponent from './components/TextComponent';
+import ImageComponent from './components/ImageComponent';
+//// TODO:
+//Move the sketch file to the middle.
+//Get the color to work
+//Get selection working
+//Get links working
 
-//every core-component needs to be aware of the data passed in as props
-//every core-component has their own syling methods.
-//every core-component has no interaction with the store,
-//                     instead data gets passed down from the renderer.
-// Types of objects svg, rect, text, group(componentRenderer).
-//
-// svg, rect, text all receive new props from componentRenderers -> mainly data
 
 class ComponentRendererCore extends React.Component {
   constructor(props) {
     super(props);
-
-    // let data = props.summary;
-
-    // this.id = data.id;
 
     this.state = {
       // data: data,
@@ -142,10 +132,6 @@ class ComponentRendererCore extends React.Component {
     let style = translatePropData('abstract','css',props)
 
     return style
-  }
-
-  generateKey(){
-    return uuidv1();
   }
 
   onFocus(){
@@ -412,132 +398,6 @@ class ComponentRendererCore extends React.Component {
 
   }
 }
-
-class ImageComponent extends React.Component{
-  render(){
-    const imgData = `data:image/png;base64,${this.props.data}`;
-    return(
-      <img src={imgData}></img>
-    )
-  }
-}
-
-
-
-class TextComponent extends CoreComponent{
-  constructor(props){
-    super(props);
-    // let that = this;
-    this.state.editMode = false;
-    this.handleDoubleClick = this.handleDoubleClick.bind(this);
-    this.newText = this.getText();
-  }
-
-  getColor(){
-    let c = this.state.textData.color;
-    return (
-      `rgba(${c.r},${c.g},${c.b},${c.a})`
-    )
-  }
-
-  getFontFamily(){
-    return (
-      `"${this.state.textData.fontName}", sans-serif`
-    )
-  }
-
-  handleDoubleClick(){
-    // const { dispatch } = this.props;
-    // dispatch(TEXT_EDIT_TRIGGER(this.state.id));
-    // dispatch(COMPONENT_TEXT_EDIT_MODE(''))
-    this.setState({editMode:true});
-    this.props.changeDrag(false);
-    // console.log(this.state);
-  }
-
-  deselect(){
-    this.setState({editMode:false},()=>{
-      this.dispatchTextStringUpdate(this.newText)
-      this.props.changeDrag(true);
-    })
-  }
-
-  dispatchTextStringUpdate(string){
-    const { dispatch } = this.props;
-    dispatch(TEXT_STRING_UPDATE({textString:string,id:this.state.data.id}));
-  }
-
-  getText(){
-    let editStates = this.state.data.editStates;
-    return editStates[this.props.editState].textString
-  }
-
-  textUpdate(str){
-    this.newText = str
-  }
-
-  selectThis(){
-    const { dispatch } = this.props;
-    dispatch(COMPONENT_SELECT(this.state.data.id));
-  }
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.selection !== this.state.data.id && this.state.editMode){
-      this.setState({editMode:false},()=>{
-        this.dispatchTextStringUpdate(this.newText)
-        this.props.changeDrag(true);
-        this.selectThis();
-      })
-    }
-    if(!this.state.editMode) this.setState({data:nextProps.data});
-
-  }
-
-  //things that change(width,height,string)
-
-  renderTextElement(){
-    if(this.state.editMode && this.props.selection === this.state.data.id){
-      let editStates = this.state.data.editStates;
-      let style = editStates[this.props.editState].style
-      let string = editStates[this.props.editState].textString
-      let w = style.width;
-      let h = style.height;
-      return (
-        <span className='text-outer edit-mode'>
-          <TextArea className='text-inner'
-            width={w}
-            height={h}
-            value={string}
-            deselect={this.deselect.bind(this)}
-            textUpdate={this.textUpdate.bind(this)}
-            style={{
-                fontFamily:style.fontFamily,
-                fontSize:style.fontSize,
-              }
-            }
-          />
-        </span>
-      )
-    }
-    else{
-      return(
-        <span className='text-outer'
-          onDoubleClick={this.handleDoubleClick}
-        >
-          <p className='text-inner'>
-            {this.getText()}
-          </p>
-        </span>
-      )
-    }
-  }
-
-
-  render(){
-    return ( this.renderTextElement() )
-  }
-}
-
 function mapStateToProps(state,ownProps) {
 
   let domain = getState(state,'domain');
@@ -558,7 +418,6 @@ function mapStateToProps(state,ownProps) {
     }
   }
 
-  // let components = state.present.newAssets[state.present.currentPage].components
   //
   // if(!ownProps.isParent){
   //   components = components[ownProps.summary.id];
@@ -583,14 +442,6 @@ function mapStateToProps(state,ownProps) {
   //        }
 }
 
-function mapStateToPropsForTextComponent(state){
-  return {
-    selection:state.present.newSelection,
-    editState:state.present.editState,
-  }
-}
-
-TextComponent = connect(mapStateToPropsForTextComponent)(TextComponent);
 const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);
 
 export default ComponentRenderer
