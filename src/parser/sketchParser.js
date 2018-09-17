@@ -58,24 +58,27 @@ class AbstractComponent {
 
         data.layers.map( component => {
             let abstractChild;
-            switch(component._class){
-                case 'artboard':
-                    //only add the artboards/viewports that are under a page.
-                    if(this.is('page')){
-                        abstractChild = new AbstractViewport(component);
-                        this.children.push(abstractChild);
-                    }
-                case 'shapeGroup':
-                    abstractChild = new AbstractShape(component);
-                    this.children.push(abstractChild);
-                case 'shapePath':
-                    break;
-                default:
-                    abstractChild = new AbstractComponent(component);
-                    this.children.push(abstractChild);
-
+            //Special case for artboards that are
+            //contained by a page
+            if(this.is('page') && component._class === 'artboard'){
+                abstractChild = new AbstractViewport(component);
+                this.children.push(abstractChild);
             }
+            else{
+                switch(component._class){
+                    case 'shapeGroup':
+                        abstractChild = new AbstractShape(component);
+                        this.children.push(abstractChild);
+                    case 'artboard':
+                        break
+                    case 'shapePath':
+                        break;
+                    default:
+                        abstractChild = new AbstractComponent(component);
+                        this.children.push(abstractChild);
 
+                }
+            }
         })
     }
 

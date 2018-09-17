@@ -150,7 +150,7 @@ class ShapeComponent extends CoreComponent{
       const pathData = this.calculatePath(shape)
       return  <path d={pathData} key={index}/>
     });
-    console.log(paths);
+
     return(
       <svg style={{position:'absolute',...dimensions}}>
         { paths }
