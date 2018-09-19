@@ -18,14 +18,14 @@ const viewerDimensions = {
 }
 
 const viewerRatio = viewerDimensions.w / viewerDimensions.h
-const viewerHeight = 6000
+const viewerHeight = 3000
 
 const viewerSize = {
   w: parseInt(viewerHeight * viewerRatio,10),
   h: viewerHeight,
 }
 
-const mainArtboardSize = {w:3000,h:2100}
+const mainArtboardSize = {w:1500,h:1050}
 
 const zoomBorderThreshold = 100;
 
