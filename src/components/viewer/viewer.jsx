@@ -220,8 +220,8 @@ class Viewer extends React.Component {
     return (
       <ComponentRenderer
         style={{
-            left:'1500px',
-            top:'1200px',
+            left:'750px',
+            top:'525px',
         }}
         isParent
         tab={this.props.activeTab}

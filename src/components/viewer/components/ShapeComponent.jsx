@@ -134,7 +134,6 @@ class ShapeComponent extends CoreComponent{
     return this.getTheLastPathAdded();
   }
 
-
   getCurrentProps(obj){
     return obj.state.states[obj.state.current].props
   }
@@ -153,14 +152,11 @@ class ShapeComponent extends CoreComponent{
     const style = this.getStyleCSS(props);
     const dimensions = this.getDimensionsCSS(props);
 
-    const paths = this.props.component.layers.map((shape,index)=>{
-      const pathData = this.calculatePath(shape)
-      return  <path d={pathData} key={index}/>
-    });
+    const paths = this.props.component.layers.map((s,i)=> this.calculatePath(s,i)).join('');
 
     return(
       <svg style={{position:'absolute',...dimensions,...style}}>
-        { paths }
+        <path d={paths}/>
       </svg>
     )
   }

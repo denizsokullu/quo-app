@@ -92,11 +92,6 @@ export const COMPONENT_SELECT = (component) => ({
   payload: component
 })
 
-// export const COMPONENT_SELECT = (component) => ({
-//   type:'RETRIEVE_COMPONENT',
-//   payload: component
-// })
-
 // export const COMPONENT_SELECT = (component,currentPage) => {
 //   console.log(currentPage)
 //   return (dispatch) => {

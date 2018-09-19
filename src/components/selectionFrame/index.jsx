@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux';
 import ReactDOM from 'react-dom';
+import { getState } from '../../redux/state';
 
 class SelectionFrame extends React.Component {
   constructor(props){
@@ -94,16 +95,25 @@ class SelectionFrame extends React.Component {
 
 
 function mapStateToProps(state) {
-  if(state.present.currentPage){
-    return {
-      selection: state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
-    }
+
+  let app = getState(state,'app');
+
+  //TODO connect the data correctly here to display the selection
+
+  return {
+    selection:app.selection
   }
-  else{
-    return {
-      selection: state.present.newSelection
-    }
-  }
+
+  // if(state.present.currentPage){
+  //   return {
+  //     selection: state.app.selection
+  //   }
+  // }
+  // else{
+  //   return {
+  //     selection: state.present.newSelection
+  //   }
+  // }
 }
 
 export default connect(mapStateToProps)(SelectionFrame);
