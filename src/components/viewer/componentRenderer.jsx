@@ -264,6 +264,10 @@ class ComponentRendererCore extends React.Component {
 
     }
 
+    else if(this.props.isParent){
+      style = {...this.props.style}
+    }
+
     let selectedClass = this.isSelected() ? 'selected' : '';
 
     //selected component just works normally

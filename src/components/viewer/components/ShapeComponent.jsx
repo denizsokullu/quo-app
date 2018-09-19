@@ -143,8 +143,15 @@ class ShapeComponent extends CoreComponent{
     return translatePropData('abstract','css',{height:props.height,width:props.width});
   }
 
+  getStyleCSS(props){
+    return translatePropData('abstract','css',{fill:props.fill});
+  }
+
   render(){
-    const dimensions = this.getDimensionsCSS(this.getCurrentProps(this.props.component));
+    const props = this.getCurrentProps(this.props.component);
+
+    const style = this.getStyleCSS(props);
+    const dimensions = this.getDimensionsCSS(props);
 
     const paths = this.props.component.layers.map((shape,index)=>{
       const pathData = this.calculatePath(shape)
@@ -152,7 +159,7 @@ class ShapeComponent extends CoreComponent{
     });
 
     return(
-      <svg style={{position:'absolute',...dimensions}}>
+      <svg style={{position:'absolute',...dimensions,...style}}>
         { paths }
       </svg>
     )
