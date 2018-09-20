@@ -19,39 +19,81 @@ class SelectionFrame extends React.Component {
       },
       scale:1
     }
+
   }
 
   componentWillReceiveProps(nextProps){
+    console.log(nextProps.selection)
+    // if(nextProps.selection){
+    //   let el = document.getElementById(nextProps.selection.id);
+    //   this.setState({
+    //     visible:true,
+    //     target:el,
+    //   })
+    // }
     if(nextProps.selection){
-      let el = document.getElementById(nextProps.selection.id);
+      this.setTarget(nextProps)
+      this.calculateScale(nextProps)
+    }
+    else{
+      this.hideSelectionFrame()
+    }
+    // if(nextProps.scale && nextProps.selection){
+    //
+    //   let el = document.getElementById(nextProps.selection.id);
+    //   let elDims = el.getBoundingClientRect();
+    //   let style = window.getComputedStyle(el);
+    //
+    //   // let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale;
+    //
+    //   let styleWidth = style.width.slice(0,-2);
+    //   // - border;
+    //   let computedWidth = elDims.width
+    //
+    //   this.setState({
+    //     scale: computedWidth / styleWidth
+    //   })
+    //
+    // }
+    // else{
+    //   this.setState({
+    //     visible:false
+    //   })
+    // }
+  }
+  hideSelectionFrame(){
+    this.setState({
+      visible:false
+    })
+  }
 
+  isSelectionSingle(selection){
+    return selection.data.length === 1
+  }
+
+  setTarget(nextProps){
+    if(this.isSelectionSingle(nextProps.selection)){
+      let el = document.getElementById(nextProps.selection.data[0]);
       this.setState({
         visible:true,
         target:el,
       })
-
     }
-    if(nextProps.scale && nextProps.selection){
+  }
 
-      let el = document.getElementById(nextProps.selection.id);
+  calculateScale(nextProps){
+    if(this.isSelectionSingle(nextProps.selection)){
+      console.log(nextProps.selection.data[0])
+      let el = document.getElementById(nextProps.selection.data[0]);
       let elDims = el.getBoundingClientRect();
       let style = window.getComputedStyle(el);
-
-      // let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale;
-
       let styleWidth = style.width.slice(0,-2);
-      // - border;
       let computedWidth = elDims.width
 
       this.setState({
         scale: computedWidth / styleWidth
       })
 
-    }
-    else{
-      this.setState({
-        visible:false
-      })
     }
   }
 
@@ -63,6 +105,7 @@ class SelectionFrame extends React.Component {
       let style = { transform:`scale(${1/this.state.scale})` }
       let lineStyleH = { transform: `scale(1,${1/this.state.scale})`}
       let lineStyleV = { transform: `scale(${1/this.state.scale},1)`}
+
       return(
         ReactDOM.createPortal(
 
