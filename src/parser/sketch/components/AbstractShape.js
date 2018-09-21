@@ -2,9 +2,6 @@ import AbstractComponent, { initAbstractComponent } from './AbstractComponent';
 
 initAbstractComponent();
 
-console.log(AbstractComponent);
-
-
 export default class AbstractShape extends AbstractComponent {
     constructor(data){
         super(data);
