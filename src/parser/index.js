@@ -1,2 +1,3 @@
 import SketchParser from './sketch';
-export { SketchParser };
+import * as Helpers from './helpers';
+export { SketchParser, Helpers };

@@ -8,8 +8,6 @@ import uuidv1 from 'uuid/v1';
 
 import { translatePropData } from '../../parser/propTranslator';
 
-import { findComponentTree } from '../../parser/helpers';
-
 import { getState } from '../../redux/state';
 
 import SelectionFrame from '../selectionFrame';

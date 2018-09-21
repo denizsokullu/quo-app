@@ -21,7 +21,7 @@ import ReplyIcon from 'material-ui-icons/Reply';
 
 import { push } from 'react-router-redux'
 
-import { findComponentTree } from '../../parser/helpers';
+import { Helpers } from '../../parser';
 
 
 class MiniPreview extends React.Component{
@@ -93,7 +93,7 @@ class MiniPreview extends React.Component{
 function mapStateToProps(state){
 
     let component = state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
-    let componentTree = findComponentTree(component.id,state.present.newAssets[state.present.currentPage]);
+    let componentTree = Helpers.findComponentTree(component.id,state.present.newAssets[state.present.currentPage]);
 
     return ({
       selection:component,
