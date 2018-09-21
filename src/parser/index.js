@@ -1,3 +1,2 @@
-import { AbstractPage } from './sketchParser';
-
-export { AbstractPage };
+import SketchParser from './sketch';
+export { SketchParser };

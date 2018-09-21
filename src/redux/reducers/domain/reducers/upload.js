@@ -1,8 +1,8 @@
-import { Page, AbstractPage } from '../../../../parser';
+import { SketchParser } from '../../../../parser';
 
 const uploadSketch = (assets = {}, action) => {
 
-  let newPage = new AbstractPage(action.payload.data);
+  let newPage = new SketchParser.AbstractPage(action.payload.data);
   let filetype = action.payload.filetype
 
   if(!assets[filetype]){

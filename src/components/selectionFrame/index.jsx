@@ -23,44 +23,15 @@ class SelectionFrame extends React.Component {
   }
 
   componentWillReceiveProps(nextProps){
-    console.log(nextProps.selection)
-    // if(nextProps.selection){
-    //   let el = document.getElementById(nextProps.selection.id);
-    //   this.setState({
-    //     visible:true,
-    //     target:el,
-    //   })
-    // }
-    if(nextProps.selection){
+    if(nextProps.selection.data.length === 0){
+      this.hideSelectionFrame();
+    }
+    else{
       this.setTarget(nextProps)
       this.calculateScale(nextProps)
     }
-    else{
-      this.hideSelectionFrame()
-    }
-    // if(nextProps.scale && nextProps.selection){
-    //
-    //   let el = document.getElementById(nextProps.selection.id);
-    //   let elDims = el.getBoundingClientRect();
-    //   let style = window.getComputedStyle(el);
-    //
-    //   // let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale;
-    //
-    //   let styleWidth = style.width.slice(0,-2);
-    //   // - border;
-    //   let computedWidth = elDims.width
-    //
-    //   this.setState({
-    //     scale: computedWidth / styleWidth
-    //   })
-    //
-    // }
-    // else{
-    //   this.setState({
-    //     visible:false
-    //   })
-    // }
   }
+
   hideSelectionFrame(){
     this.setState({
       visible:false
@@ -82,8 +53,8 @@ class SelectionFrame extends React.Component {
   }
 
   calculateScale(nextProps){
+
     if(this.isSelectionSingle(nextProps.selection)){
-      console.log(nextProps.selection.data[0])
       let el = document.getElementById(nextProps.selection.data[0]);
       let elDims = el.getBoundingClientRect();
       let style = window.getComputedStyle(el);

@@ -11,8 +11,6 @@ export const updateSelection = (selection,action) => {
     newArray = action.payload
   }
 
-  console.log(newArray)
-
   // let newSelectionArray = selection.data.slice().push(action.payload);
   return { ...selection, data:newArray}
 }
