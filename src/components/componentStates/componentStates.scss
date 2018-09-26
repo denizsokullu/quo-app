@@ -3,14 +3,14 @@
   border-radius:8px;
   background-color:$color-button-bg;
   display:flex;
-  margin-bottom:0!important;
+  margin-bottom:.5rem!important;
 
   .component-state-box {
 
     font-size:$button-font-size;
     font-weight:300;
     display:inline-block;
-      letter-spacing: 0.4px;
+    letter-spacing: 0.4px;
     width:25%;
     box-sizing:border-box;
     text-align:center;

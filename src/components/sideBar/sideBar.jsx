@@ -4,34 +4,7 @@ import Resizable from '../../packages/resizable/resizable';
 
 import { connect } from 'react-redux';
 
-import _ from 'underscore';
-
-// Import all the cards
-
-import ComponentStates from '../componentStates/componentStates';
-
-import { ButtonCore } from '../buttons/buttons';
-
-import Fill from '../styleCard/fill/fill';
-
-import Border from '../styleCard/border/border';
-
-import Shadow from '../styleCard/shadow/shadow';
-
-import Blur from '../styleCard/blur/blur';
-
-import Scale from '../styleCard/scale/scale';
-
-import Position from '../styleCard/position/position';
-
-import Size from '../styleCard/size/size';
-
-import CopyState from '../styleCard/copyState/copyState';
-
-import Movement from '../styleCard/movement/movement';
-
-import MiniPreview from '../miniPreview/miniPreview';
-
+import _ from 'lodash';
 
 import { ContentPagesCard, LayersCard } from '../styleCard/styleCard';
 
@@ -53,95 +26,96 @@ import { getState } from '../../redux/state';
 import AssetsTab from './assets';
 import LayersTab from './layers';
 import LinksTab from './links';
+import PropsTab from './props';
 
-class StylesContent extends React.Component{
-  //the styles content should be aware of what component is selected
-  constructor(props){
-    super(props);
-  }
-  renderContent(){
-    switch(this.props.selection._class){
-      case 'artboard':
-        return(
-          <React.Fragment>
-            <Position/>
-            <Size/>
-            <Fill/>
-          </React.Fragment>
-        )
-        case 'group':
-          return(
-            <React.Fragment>
-              <Position/>
-            </React.Fragment>
-          )
-        case 'text':
-          return(
-            <React.Fragment>
-              <Position/>
-              <Size/>
-            </React.Fragment>
-          )
-        case 'shape':
-          return(
-            <React.Fragment>
-              <Position/>
-              <Size/>
-              <Fill/>
-            </React.Fragment>
-          )
-        default:
-          return(
-            <React.Fragment>
-              <Position/>
-              <Size/>
-              <Fill/>
-              <Border/>
-              <Shadow/>
-              <Blur/>
-              <Scale/>
-              <CopyState/>
-              <Movement/>
-            </React.Fragment>
-          )
-    }
-  }
-  render(){
-    return (
-      <div className='styles-content'>
-        {
-          this.renderContent()
-        }
-      </div>
-    )
-  }
-}
+// class StylesContent extends React.Component{
+//   //the styles content should be aware of what component is selected
+//   constructor(props){
+//     super(props);
+//   }
+//   renderContent(){
+//     switch(this.props.selection._class){
+//       case 'artboard':
+//         return(
+//           <React.Fragment>
+//             <Position/>
+//             <Size/>
+//             <Fill/>
+//           </React.Fragment>
+//         )
+//         case 'group':
+//           return(
+//             <React.Fragment>
+//               <Position/>
+//             </React.Fragment>
+//           )
+//         case 'text':
+//           return(
+//             <React.Fragment>
+//               <Position/>
+//               <Size/>
+//             </React.Fragment>
+//           )
+//         case 'shape':
+//           return(
+//             <React.Fragment>
+//               <Position/>
+//               <Size/>
+//               <Fill/>
+//             </React.Fragment>
+//           )
+//         default:
+//           return(
+//             <React.Fragment>
+//               <Position/>
+//               <Size/>
+//               <Fill/>
+//               <Border/>
+//               <Shadow/>
+//               <Blur/>
+//               <Scale/>
+//               <CopyState/>
+//               <Movement/>
+//             </React.Fragment>
+//           )
+//     }
+//   }
+//   render(){
+//     return (
+//       <div className='styles-content'>
+//         {
+//           this.renderContent()
+//         }
+//       </div>
+//     )
+//   }
+// }
 
-class ActionsContent extends React.Component{
-  render(){
-    return (
-      <div className='actions-content'>
-        <Shadow/>
-        <Blur/>
-        <Scale/>
-        <CopyState/>
-        <Movement/>
-      </div>
-    )
-  }
-}
+// class ActionsContent extends React.Component{
+//   render(){
+//     return (
+//       <div className='actions-content'>
+//         <Shadow/>
+//         <Blur/>
+//         <Scale/>
+//         <CopyState/>
+//         <Movement/>
+//       </div>
+//     )
+//   }
+// }
 
-class LinksContent extends React.Component{
-  render(){
-    return (
-      <div className='links-content'>
-
-        <Fill/>
-        <Border/>
-      </div>
-    )
-  }
-}
+// class LinksContent extends React.Component{
+//   render(){
+//     return (
+//       <div className='links-content'>
+//
+//         <Fill/>
+//         <Border/>
+//       </div>
+//     )
+//   }
+// // }
 
 class SideBarLeft extends Component {
 
@@ -207,7 +181,7 @@ class SideBarRight extends Component {
 
     this.state = {
       options : props.tabs,
-      components : {styles:LinksTab, links:LinksTab, interactions:LinksTab},
+      components : {styles:PropsTab, links:LinksTab, interactions:LinksTab},
       icons : {styles:ColorLensIcon, links:FlashOnIcon, interactions:GamesIcon},
       selectedComponent : props.selection
     }

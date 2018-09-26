@@ -30,7 +30,9 @@ export function initAbstractComponent(){
 
             //first traverses the tree to create children
             this.initChildren(data);
+            //styling
             this.initStates(data);
+            //linking
             this.initLinkingStructure();
 
             //class specific properties
@@ -46,10 +48,6 @@ export function initAbstractComponent(){
             else if(this.is('bitmap')){
                 this.initImageProps(data);
             }
-
-            //create all of the styling
-            this.createStyling(data);
-
         }
 
         //initially create a tree,

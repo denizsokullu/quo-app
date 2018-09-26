@@ -22,6 +22,8 @@ const traverseAndAdd = (component,components,collector) => {
 
 export const addComponent = (tabs,action) => {
 
+    var t0 = performance.now();
+
     //add a tab if there is none
     if(_.isEmpty(tabs.allTabs)){
         //this is the part where it tries to create a size for the tab
@@ -34,10 +36,11 @@ export const addComponent = (tabs,action) => {
     let payload = action.payload;
 
     //target tab to add
-    let target = tabs.allTabs[domain.tabs.activeTab];
+    let target = { ...tabs.allTabs[domain.tabs.activeTab] };
     let source = domain[payload.source][payload.filetype][payload.page]
 
     let component = source.components[payload.component.id];
+
     //add all the children components of the selected components if they exist
     let newComps = traverseAndAdd(component,source.components,{});
 
@@ -62,6 +65,7 @@ export const addComponent = (tabs,action) => {
         delete Object.assign(newComps, {[newID]: newComps[oldID] })[oldID]
     })
 
+    //Add the new mappings into newComps
     _.forEach(newComps,(o)=>{
         o.children = o.children.map(child=>{
             return oldIDMappings[child]
@@ -69,14 +73,17 @@ export const addComponent = (tabs,action) => {
     })
 
     //add the new components to the existing component obj.
-
     target.components = _.merge(target.components,newComps);
 
     //add the root component to the existing children array.
-
     target.children.push(rootComponentID);
 
-    return { ...tabs };
+    let newTabs =  _.cloneDeep(tabs);
+
+    var t1 = performance.now();
+    console.log("Call to addComponent took " + (t1 - t0) + " milliseconds.")
+
+    return newTabs;
 
 }
 

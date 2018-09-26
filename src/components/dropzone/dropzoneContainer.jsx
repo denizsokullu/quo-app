@@ -14,12 +14,6 @@ class DropzoneContainer extends React.Component {
         height: '100%',
         display: 'block',
         transition: 'all .4s'
-      },
-      active: {
-        border: '3px solid #33226f'
-      },
-      accept: {
-        border: '3px solid #27ff6f'
       }
     };
   }
@@ -58,6 +52,7 @@ class DropzoneContainer extends React.Component {
             disableClick={true}
             onDrop={this.onDrop.bind(this)}
             style={this.style.normal}
+            activeClassName='drag-active'
             activeStyle={this.style.active}
             acceptStyle={this.style.accept}>
             {this.props.children}

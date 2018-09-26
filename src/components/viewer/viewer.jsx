@@ -62,11 +62,6 @@ class Viewer extends React.Component {
 
   }
 
-  componentDidMount(){
-    const { dispatch } = this.props;
-    // dispatch(RETRIEVE_MAIN_PROJECT());
-  }
-
   mouseDown(){
     if(this.state.draggable){
       this.setState({draggableClick:true});
@@ -87,11 +82,6 @@ class Viewer extends React.Component {
       dispatch(COMPONENT_SELECT(""));
     }
   }
-
-  // onClick(e){
-  //   e.preventDefault();
-  //   this.viewer.click();
-  // }
 
   onWheel(e){
 
@@ -229,15 +219,24 @@ class Viewer extends React.Component {
     )
   }
 
-  renderViewer(){
-    let draggableClass = this.state.draggable ? 'draggable' : ''
-    const pos = this.state.viewerPos
+  renderViewerWrapper(){
     return (
       <div
         className='viewer-wrapper scroll-disabled'
         onWheel={this.onWheel.bind(this)}
         ref={ c => this.viewer = c}>
+        {
+          this.props.activeTab !== '' ? this.renderViewer() : null
+        }
+      </div>
+    )
+  }
 
+  renderViewer(){
+    let draggableClass = this.state.draggable ? 'draggable' : ''
+    const pos = this.state.viewerPos
+    return (
+      <React.Fragment>
         {/* Scrollbars */}
         <div className='viewer-scrollbar x-axis' style={{
           left:`${this.state.viewerPos.x / (this.state.threshold.x.max - this.state.threshold.x.min) * (viewerDimensions.w - 40)}px`
@@ -275,7 +274,7 @@ class Viewer extends React.Component {
             }
           </div>
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 
@@ -286,7 +285,7 @@ class Viewer extends React.Component {
       <React.Fragment>
       <SelectionFrame scale={this.state.scale}/>
       {
-        this.props.activeTab !== '' ? this.renderViewer() : null
+        this.renderViewerWrapper()
       }
       </React.Fragment>
 

@@ -27,28 +27,14 @@ import TextComponent from './components/TextComponent';
 //
 // svg, rect, text all receive new props from componentRenderers -> mainly data
 
-class ComponentRendererCore extends React.Component {
+class ComponentRendererCore extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    // let data = props.summary;
-
-    // this.id = data.id;
-
     this.state = {
-      // data: data,
       controller: props.controller,
       clicked:false,
-
-      // selection:props.selection,
-      // id: data.id,
-      // editState:props.editState,
-
-      //new properties
-      // layers:data,
-      // components:props.components,
       id:props.id,
-      // type:this.decideType(props.components),
       draggable:true,
       drag:{
         start:{
@@ -68,9 +54,10 @@ class ComponentRendererCore extends React.Component {
 
 
     this.getStyle();
-    // this.onClick = this.onClick.bind(this);
-    // this.onDoubleClick = this.onDoubleClick.bind(this);
 
+  }
+
+  componentWillReceiveProps(nextProps){
   }
 
   decideType(data){
@@ -84,21 +71,6 @@ class ComponentRendererCore extends React.Component {
       'rect' : 'rect'
     )
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   if(this.state.type === 'image'){
-  //     console.log(nextProps.imageData);
-  //   }
-  //   this.setState({
-  //     id:nextProps.summary.id,
-  //     components:nextProps.components,
-  //     layers:nextProps.summary,
-  //     selection:nextProps.selection,
-  //     editState:nextProps.editState,
-  //     currentPage:nextProps.currentPage,
-  //     imageData:nextProps.imageData
-  //   })
-  // }
 
   // TODO: Update this to check if component.interactions.clicked == true
   isSelected(id){
@@ -303,17 +275,17 @@ class ComponentRendererCore extends React.Component {
 
     //artboard can be selected with 1 click always
 
-    // else if(this.state.component.class === 'artboard'){
-    //   return (
-    //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
-    //       style={style}
-    //       onClick={this.onClick}
-    //       ref='handle'
-    //       onMouseDown={this.onMouseDownHandler.bind(this)}
-    //     >
-    //       { content }
-    //   </div>)
-    // }
+      // else if(this.state.component.class === 'artboard'){
+      //   return (
+      //     <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.state.components._class} ${selectedClass}`} id={this.state.id}
+      //       style={style}
+      //       onClick={this.onClick}
+      //       ref='handle'
+      //       onMouseDown={this.onMouseDownHandler.bind(this)}
+      //     >
+      //       { content }
+      //   </div>)
+      // }
 
     //group
 
@@ -388,7 +360,6 @@ class ComponentRendererCore extends React.Component {
 
   render(){
 
-    // let innerDOM = this.renderInnerDOM;
     let parentContent = this.props.component.children.map(id => {
       return (
         <ComponentRenderer
@@ -416,8 +387,6 @@ class ComponentRendererCore extends React.Component {
       )
     })
 
-    // }
-
     return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
 
   }
@@ -426,6 +395,7 @@ class ComponentRendererCore extends React.Component {
 function mapStateToProps(state,ownProps) {
 
   let domain = getState(state,'domain');
+  //tab root is the parent component
   let tabRoot = domain.tabs.allTabs[domain.tabs.activeTab]
 
   //return the tabRoot
@@ -436,36 +406,13 @@ function mapStateToProps(state,ownProps) {
   }
 
   //return the component
-  else if(ownProps.id){
+  else{
     let component = tabRoot.components[ownProps.id];
     return {
       component:component,
     }
   }
 
-  // let components = state.present.newAssets[state.present.currentPage].components
-  //
-  // if(!ownProps.isParent){
-  //   components = components[ownProps.summary.id];
-  // }
-  //
-  // let props = {};
-  //
-  // if(state.present.newAssets.images){
-  //   if(components._class === 'image'){
-  //     let url = components.imageURL;
-  //     props.imageData = state.present.newAssets.images[url];
-  //   }
-  // }
-  //
-  // return {
-  //           ...props,
-  //           controller:state.present.controller,
-  //           components:components,
-  //           selection:state.present.newSelection,
-  //           editState:state.present.editState,
-  //           currentPage:state.present.currentPage,
-  //        }
 }
 
 const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);
