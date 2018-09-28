@@ -1,0 +1,168 @@
+span[class*='MuiCheckbox']{
+  width:18px;
+  height:18px;
+}
+span[class*='MuiCheckbox'] > span[class*='Button']{
+  color:white;
+  width:18px;
+  height:18px;
+  svg {
+    width:18px;
+    height:18px;
+  }
+}
+span[class*='MuiCheckbox-checked'] > span{
+  color:white;
+}
+
+
+.prop-card, .layer-card {
+
+  border-radius:8px;
+  background-color:$color-bg-3;
+  display:inline-block;
+  width:100%;
+
+  &.half-width {
+
+    width:calc(50% - .25rem);
+
+    // This is bad - find a better fix for it...
+    &:nth-child(2n+1) {
+
+      margin-right:.5rem;
+
+    }
+
+  }
+
+  &.disabled-card {
+
+    .prop-card-body {
+
+      opacity:.3;
+      filter: grayscale(100%);
+      pointer-events: none;
+
+    }
+
+  }
+
+  .prop-card-header {
+
+    @include CardHeader;
+
+    .check-default {
+      width:24px!important;
+      height:24px!important;
+      transform:scale(.75);
+      position:relative;
+      left:2px;
+    }
+
+    @include Checkbox;
+
+  }
+
+  .prop-card-body {
+
+    display:flex;
+
+    padding:.75rem .75rem .5rem .75rem;
+
+  }
+
+}
+
+.layer-card {
+
+  margin-bottom:.5rem;
+  position:relative;
+  overflow:hidden;
+
+  .layer-card-body {
+
+    padding:0;
+    margin-bottom:0!important;
+    display:block;
+
+  }
+
+  .prop-card-header {
+
+    margin-bottom:0!important;
+
+  }
+
+}
+
+
+  .layer-card-body {
+    display:block;
+  }
+
+  .left-side-header {
+
+    display:flex;
+    justify-content: center;
+
+    span {
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+    .page-count {
+
+      margin-left:.5rem;
+
+      font-weight:300;
+      line-height:11.5px;
+
+      height:13.5px;
+      width:13.5px;
+      align-items: flex-start;
+
+      box-sizing:border-box;
+      border:2px solid white;
+      border-radius:2px;
+
+      &.small {
+
+        font-size:6px;
+        line-height:10px;
+
+      }
+
+      &.large {
+
+        font-size:8px;
+
+      }
+
+    }
+
+  }
+
+
+    .add-page {
+
+      width:18px;
+      height:18px;
+
+      svg {
+
+        width:18px;
+        height:18px;
+
+      }
+
+      &:hover {
+
+        cursor:pointer;
+
+      }
+
+    }

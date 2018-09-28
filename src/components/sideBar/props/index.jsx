@@ -28,43 +28,15 @@ import CopyState from '../../styleCard/copyState/copyState';
 
 import Movement from '../../styleCard/movement/movement';
 
-// import MiniPreview from '../miniPreview/miniPreview';
-
-//structure of the right sidebar
-//select source component
-//select action that will connect them
-//select target component
-//
+import PropCards from '../../propCards';
 
 class PropsTab extends Component {
   render(){
     return (
       <div className='props-tab-wrapper'>
         <ComponentStates/>
-        <Position/>
-        <Size/>
-        {/* <Card collapsed title='Primary Element'/>
-        <DropdownCard
-          title='Action'
-          defaultValue={actionValues[0]}
-          options={actionValues}
-          lineIndices={actionLineIndices}
-          onChange={(value)=>{
-            const { dispatch } = this.props;
-            dispatch(ADD_MESSAGE({type:status,text:`Selected '${value}' as the option`,duration:6000}))
-          }}
-        />
-        <Card collapsed title='Linked Element'/>
-        <DropdownCard
-          title='Action'
-          defaultValue={action2Values[0]}
-          options={action2Values}
-          lineIndices={action2LineIndices}
-          onChange={(value)=>{
-            const { dispatch } = this.props;
-            dispatch(ADD_MESSAGE({type:status,text:`Selected '${value}' as the option`,duration:1500}))
-          }}
-        /> */}
+        <PropCards.Position/>
+        <PropCards.Size/>
       </div>
     )
   }

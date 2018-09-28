@@ -1,0 +1,12 @@
+#card-position {
+  .text-input
+  {
+    &:first-child{
+      padding:0;
+      margin-left:-4px;
+    }
+    input {
+      width:48px;
+    }
+  }
+}

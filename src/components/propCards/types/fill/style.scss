@@ -1,0 +1,19 @@
+#card-fill{
+
+  .opacity-text {
+
+    font-size:$font-l;
+    display:inline-block;
+    margin-top:1px;
+
+  }
+
+  .text-input {
+    position:relative;
+    top:2px;
+    padding-left:0;
+    input {
+      width:36px;
+    }
+  }
+}
