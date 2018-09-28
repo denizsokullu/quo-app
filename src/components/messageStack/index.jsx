@@ -11,7 +11,7 @@ class MessageStack extends Component{
       <div className='message-stack-wrapper'>
         {
           this.props.messages.map( (messageData,i) => {
-            return <Message message={messageData} key={i}/>
+            return <Message message={messageData} key={messageData.id}/>
           })
         }
       </div>
@@ -51,7 +51,7 @@ class Message extends Component {
 }
 
 const mapState = (state) =>{
-  return { messages:getState(state,'ui').messages.slice() };
+  return { messages:getState(state,'ui').messages };
 }
 
 Message = connect()(Message)

@@ -10,7 +10,7 @@ import bplist from 'bplist'
 
 const pathElements = ['triangle','shapePath'];
 
-export class AbstractComponentSimple{
+export class AbstractComponent{
   constructor(data,siblings){
 
     this.pageName = data.name;
@@ -132,10 +132,7 @@ export class AbstractComponentSimple{
     //Text needs styling too, therefore call the styling in it.
     if(this.isText){
       let rawTextData = data.attributedString;
-      // this.textData = data.attributedString.archivedAttributedString._archive;
-      // bplist.parseBuffer(Buffer.from(this.textData, 'base64'), (err, result) => {
-        // if (!err){
-          // let data = result[0].$objects;
+
           this.textData = {}
           //These are constant array slots dedicated for text content & stlying information
           this.textData.text = rawTextData.string;
@@ -159,11 +156,8 @@ export class AbstractComponentSimple{
           //
           this.textData.color = {r:r,g:g,b:b,a:a};
 
-          console.log(this.editStates);
-
-        // }
       this.createCSS(data);
-      // });
+
     }
 
     else{

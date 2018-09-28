@@ -8,5 +8,9 @@
   .dropzone {
     height:100%;
     width:100%;
+    & > div.drag-active .viewer-wrapper{
+      border:1px solid green;
+    }
   }
+
 }

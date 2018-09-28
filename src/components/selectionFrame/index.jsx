@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux';
 import ReactDOM from 'react-dom';
+import { getState } from '../../redux/state';
 
 class SelectionFrame extends React.Component {
   constructor(props){
@@ -18,39 +19,52 @@ class SelectionFrame extends React.Component {
       },
       scale:1
     }
+
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.selection){
-      let el = document.getElementById(nextProps.selection.id);
+    if(nextProps.selection.data.length === 0){
+      this.hideSelectionFrame();
+    }
+    else{
+      this.setTarget(nextProps)
+      this.calculateScale(nextProps)
+    }
+  }
 
+  hideSelectionFrame(){
+    this.setState({
+      visible:false
+    })
+  }
+
+  isSelectionSingle(selection){
+    return selection.data.length === 1
+  }
+
+  setTarget(nextProps){
+    if(this.isSelectionSingle(nextProps.selection)){
+      let el = document.getElementById(nextProps.selection.data[0]);
       this.setState({
         visible:true,
         target:el,
       })
-
     }
-    if(nextProps.scale && nextProps.selection){
+  }
 
-      let el = document.getElementById(nextProps.selection.id);
+  calculateScale(nextProps){
+
+    if(this.isSelectionSingle(nextProps.selection)){
+      let el = document.getElementById(nextProps.selection.data[0]);
       let elDims = el.getBoundingClientRect();
       let style = window.getComputedStyle(el);
-
-      // let border = (parseInt(style.borderLeftWidth.slice(0,-2))+parseInt(style.borderRightWidth.slice(0,-2))) * this.state.scale;
-
       let styleWidth = style.width.slice(0,-2);
-      // - border;
       let computedWidth = elDims.width
 
       this.setState({
         scale: computedWidth / styleWidth
       })
 
-    }
-    else{
-      this.setState({
-        visible:false
-      })
     }
   }
 
@@ -62,6 +76,7 @@ class SelectionFrame extends React.Component {
       let style = { transform:`scale(${1/this.state.scale})` }
       let lineStyleH = { transform: `scale(1,${1/this.state.scale})`}
       let lineStyleV = { transform: `scale(${1/this.state.scale},1)`}
+
       return(
         ReactDOM.createPortal(
 
@@ -94,16 +109,25 @@ class SelectionFrame extends React.Component {
 
 
 function mapStateToProps(state) {
-  if(state.present.currentPage){
-    return {
-      selection: state.present.newAssets[state.present.currentPage].components[state.present.newSelection]
-    }
+
+  let app = getState(state,'app');
+
+  //TODO connect the data correctly here to display the selection
+
+  return {
+    selection:app.selection
   }
-  else{
-    return {
-      selection: state.present.newSelection
-    }
-  }
+
+  // if(state.present.currentPage){
+  //   return {
+  //     selection: state.app.selection
+  //   }
+  // }
+  // else{
+  //   return {
+  //     selection: state.present.newSelection
+  //   }
+  // }
 }
 
 export default connect(mapStateToProps)(SelectionFrame);

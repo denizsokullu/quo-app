@@ -119,6 +119,7 @@ class AssetsViewer extends Component {
         flattenedfirstDepthComponents.push(component);
       })
     })
+
     firstDepthComponents = flattenedfirstDepthComponents;
 
     return (
@@ -163,22 +164,9 @@ class AssetsViewer extends Component {
   }
 }
 
-// class Pages extends React.Component{
-//   render(){
-//     let id = this.title.toLowerCase().split(' ').join('-');
-//     return(
-//       <div className={`layer-card`} id={`card-${id}`}>
-//         <div className='style-card-header layer-card-header'>
-//           {this.props.title}
-//         </div>
-//         <div className='style-card-body layer-card-body'>
-//           {}
-//         </div>
-//       </div>
-//     )
-//   }
-// }
+
 AssetPreview = connect()(AssetPreview)
+
 const mapStateToProps = (state) => {
   return {
     assets:state.domain.assets,

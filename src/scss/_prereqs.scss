@@ -15,6 +15,7 @@ $color-bg-12:#F2F2F2;
 $color-text-1:#D8D8D8;
 $color-text-2:#FFFFFF;
 $color-text-3:#7E7E7E;
+$color-text-4:#949494;
 $color-icon-hover:#BCBCBC;
 $color-checkbox-fill:#FFFFFF;
 $color-blue:#0879FE;
@@ -27,6 +28,8 @@ $font-xs:8px;
 $font-s:10px;
 $font-m:11px;
 $font-l:14px;
+
+$color-text-disabled-card-header:$color-text-4;
 
 $card-body-main-text:$font-l;
 $card-header-font-size:$font-s;

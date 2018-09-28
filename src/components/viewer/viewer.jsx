@@ -2,8 +2,9 @@ import _ from 'underscore';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {connect} from 'react-redux';
-import ComponentRenderer from './componentRendererv2';
+import ComponentRenderer from './componentRenderer';
 import {COMPONENT_SELECT,RETRIEVE_MAIN_PROJECT} from '../../redux/actions';
+import { getState } from '../../redux/state';
 
 import { dimensions } from '../constants/constants'
 
@@ -17,14 +18,14 @@ const viewerDimensions = {
 }
 
 const viewerRatio = viewerDimensions.w / viewerDimensions.h
-const viewerHeight = 6000
+const viewerHeight = 3000
 
 const viewerSize = {
   w: parseInt(viewerHeight * viewerRatio,10),
   h: viewerHeight,
 }
 
-const mainArtboardSize = {w:3000,h:2100}
+const mainArtboardSize = {w:1500,h:1050}
 
 const zoomBorderThreshold = 100;
 
@@ -32,7 +33,6 @@ class Viewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.props.data,
       keyDown: false,
       draggable: this.props.controller[32],
       draggableClick: false,
@@ -62,22 +62,6 @@ class Viewer extends React.Component {
 
   }
 
-  componentDidMount(){
-    const { dispatch } = this.props;
-    // dispatch(RETRIEVE_MAIN_PROJECT());
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    //Old code
-    // this.setState({data:nextProps.data,selection:nextProps.selection});
-    // this.setState({draggable:nextProps.controller.key[32]});
-
-    //New code
-    // this.setState({newData:nextProps.newData, newSelection:nextProps.newSelection});
-
-  }
-
   mouseDown(){
     if(this.state.draggable){
       this.setState({draggableClick:true});
@@ -98,11 +82,6 @@ class Viewer extends React.Component {
       dispatch(COMPONENT_SELECT(""));
     }
   }
-
-  // onClick(e){
-  //   e.preventDefault();
-  //   this.viewer.click();
-  // }
 
   onWheel(e){
 
@@ -231,12 +210,25 @@ class Viewer extends React.Component {
     return (
       <ComponentRenderer
         style={{
-            height:'100%',
-            width: '100%'
+            left:'750px',
+            top:'525px',
         }}
-        isParent={true}
-        summary={this.state.newData.layers}
+        isParent
+        tab={this.props.activeTab}
       />
+    )
+  }
+
+  renderViewerWrapper(){
+    return (
+      <div
+        className='viewer-wrapper scroll-disabled'
+        onWheel={this.onWheel.bind(this)}
+        ref={ c => this.viewer = c}>
+        {
+          this.props.activeTab !== '' ? this.renderViewer() : null
+        }
+      </div>
     )
   }
 
@@ -244,11 +236,7 @@ class Viewer extends React.Component {
     let draggableClass = this.state.draggable ? 'draggable' : ''
     const pos = this.state.viewerPos
     return (
-      <div
-        className='viewer-wrapper scroll-disabled'
-        onWheel={this.onWheel.bind(this)}
-        ref={ c => this.viewer = c}>
-
+      <React.Fragment>
         {/* Scrollbars */}
         <div className='viewer-scrollbar x-axis' style={{
           left:`${this.state.viewerPos.x / (this.state.threshold.x.max - this.state.threshold.x.min) * (viewerDimensions.w - 40)}px`
@@ -281,23 +269,23 @@ class Viewer extends React.Component {
               width:`${mainArtboardSize.w}px`,
               height:`${mainArtboardSize.h}px`,
             }}>
-            {/* {
-              this.state.newData ? this.renderComponents() : null
-            } */}
+            {
+              this.renderComponents()
+            }
           </div>
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 
   render() {
-    let draggableClass = this.state.draggable ? 'draggable' : ''
+    // let draggableClass = this.state.draggable ? 'draggable' : ''
     const pos = this.state.viewerPos
     return (
       <React.Fragment>
-      {/* <SelectionFrame scale={this.state.scale}/> */}
+      <SelectionFrame scale={this.state.scale}/>
       {
-        (!this.props.tabs || _.isEmpty(this.props.tabs.allTabs)) ? null : this.renderViewer()
+        this.renderViewerWrapper()
       }
       </React.Fragment>
 
@@ -308,14 +296,27 @@ class Viewer extends React.Component {
 //The viewer views the current window
 
 function mapStateToProps(state) {
-  if(_.isEmpty(state.domain.tabs.allTabs)) {
+
+  let domain = getState(state,'domain');
+  let app = getState(state,'app');
+  let ui = getState(state,'ui')
+
+  //if there are no tabs created, don't display anything
+  let activeTab = domain.tabs.activeTab
+  if(_.isEmpty(domain.tabs.allTabs)) {
     return {
-      controller:state.ui.controller,
+      controller:ui.controller,
+      activeTab:activeTab,
     }
   }
+
+  //if there is an active tab, collect the data from the tab
+
+
+
   return {
-    tabs:state.domain.tabs,
-    selection:state.app.selection
+    controller:ui.controller,
+    activeTab:activeTab,
   }
 }
 

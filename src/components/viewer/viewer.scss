@@ -8,6 +8,7 @@
   transition:.05s ease-in-out transform;
   will-change: transform;
   overflow:auto;
+  box-sizing:border-box;
   // background-color:$color-bg-5;
   &.scroll-fixer{
     opacity:0;

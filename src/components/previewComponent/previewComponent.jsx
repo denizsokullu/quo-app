@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from "styled-components";
-import { findComponentTree } from '../../parser/helpers';
+import { Helpers } from '../../parser';
 
 function px2int(str){
   return parseInt(str.slice(0,-2));
@@ -580,7 +580,7 @@ class PreviewComponentCore extends React.Component {
           <div className='content'>
             { this.props.previewLink
               ?
-              _.keys(findComponentTree(this.props.component.id,this.props.componentTree)).map((id)=>{
+              _.keys(Helpers.findComponentTree(this.props.component.id,this.props.componentTree)).map((id)=>{
               return ( <PreviewComponentInnerConnected id={id} key={id} previewLink/>)})
               :
               _.keys(this.props.componentTree).map((id)=>{
@@ -604,11 +604,11 @@ function mapStateToProps(state,ownProps){
     let componentTree;
     if(ownProps.previewLink && state.present.previewLink.received){
       component =  state.present.previewLink.assets.components[ownProps.id];
-      componentTree = findComponentTree(component.id,state.present.previewLink.assets)
+      componentTree = Helpers.findComponentTree(component.id,state.present.previewLink.assets)
     }
     else{
       component =  state.present.newAssets[state.present.currentPage].components[ownProps.id];
-      componentTree = findComponentTree(component.id,state.present.newAssets[state.present.currentPage])
+      componentTree = Helpers.findComponentTree(component.id,state.present.newAssets[state.present.currentPage])
     }
 
     return {

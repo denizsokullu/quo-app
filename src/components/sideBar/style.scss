@@ -1,4 +1,8 @@
-@import './assets/assets';
+@import './assets/style';
+@import './props/style';
+@import './links/style';
+@import './layers/style';
+
 
 .resizeable-wrapper {
   height:calc(100vh - #{$top-bar-height});
