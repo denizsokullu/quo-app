@@ -1,25 +1,3 @@
-// const data = {
-//   newAssets:{
-//
-//   },
-//   linkPreview:{
-//     received:false,
-//     component:null
-//   },
-//   newSelection:'',
-//   selectionSiblings:[],
-//   currentProject:'-LGParuUInchgusujCer',
-//   currentPage:"",
-//   viewerZoom:1,
-//   //write a function to init the keys
-//   controller:controller,
-//   textEdit:'',
-//   selection:{
-//
-//   },
-//   editState:'none'
-// }
-
 const domain = {
   //Flat Files
   assets:{
