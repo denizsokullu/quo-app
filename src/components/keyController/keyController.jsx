@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import keydown from 'react-keydown';
 
-import {KEY_UP,KEY_DOWN,COMPONENT_SELECT} from '../../redux/actions';
+import actions from '../../redux/actions';
 
 class KeyController extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class KeyController extends React.Component {
     this.setState({keyDown:false});
     if(e.keyCode === 32){
       const { dispatch } = this.props
-      dispatch(KEY_UP(e));
+      dispatch(actions.KEY_UP(e));
     }
   }
 
@@ -58,20 +58,19 @@ class KeyController extends React.Component {
     if(!this.state.keyDown){
       const { dispatch } = this.props
       this.setState({keyDown:true},()=>{
-        dispatch(KEY_DOWN(e));
+        dispatch(actions.KEY_DOWN(e));
       })
     }
   }
 
   @keydown('esc')
   dispatchDeselectComponent(e){
-    console.log('asd')
     e.preventDefault();
     if(!this.state.keyDown){
       const { dispatch } = this.props
       this.setState({keyDown:true},()=>{
-        dispatch(KEY_DOWN(e));
-        dispatch(COMPONENT_SELECT(''));
+        dispatch(actions.KEY_DOWN(e));
+        dispatch(actions.COMPONENT_SELECT(''));
       })
     }
   }

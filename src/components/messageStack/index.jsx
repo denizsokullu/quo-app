@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { REMOVE_MESSAGE } from '../../redux/actions';
+import actions from '../../redux/actions';
 import { getState } from '../../redux/state';
 
 
@@ -32,7 +32,7 @@ class Message extends Component {
       this.setState({fade:'fade-out'});
       setTimeout(()=>{
         const { dispatch } = this.props
-        dispatch(REMOVE_MESSAGE({id:this.props.message.id}))
+        dispatch(actions.REMOVE_MESSAGE({id:this.props.message.id}))
       },400)
     },this.props.message.duration)
   }

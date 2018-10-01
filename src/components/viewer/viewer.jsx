@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import {connect} from 'react-redux';
 import ComponentRenderer from './componentRenderer';
-import {COMPONENT_SELECT,RETRIEVE_MAIN_PROJECT} from '../../redux/actions';
-import { getState } from '../../redux/state';
+import actions from 'quo-redux/actions';
+import { getState } from 'quo-redux/state';
 
 import { dimensions } from '../constants/constants'
 
@@ -71,7 +71,7 @@ class Viewer extends React.Component {
   mouseUp(){
     if(!this.state.draggable){
       const dispatch = this.props;
-      dispatch(COMPONENT_SELECT(""));
+      dispatch(actions.COMPONENT_SELECT(""));
     }
     // this.setState({draggableClick:false});
   }
@@ -79,7 +79,7 @@ class Viewer extends React.Component {
   onClick(){
     if(!this.state.draggable){
       const { dispatch } = this.props;
-      dispatch(COMPONENT_SELECT(""));
+      dispatch(actions.COMPONENT_SELECT(""));
     }
   }
 

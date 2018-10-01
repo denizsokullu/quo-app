@@ -20,7 +20,8 @@ import LayersIcon from 'material-ui-icons/Layers';
 import WebAssetIcon from 'material-ui-icons/WebAsset';
 import LinkIcon from 'material-ui-icons/Link';
 
-import { UPDATE_SIDEBAR_TAB, RESIZE_SIDEBAR } from '../../redux/actions';
+import actions from 'quo-redux/actions.js';
+console.log(actions)
 import { getState } from '../../redux/state';
 
 import AssetsTab from './assets';
@@ -137,13 +138,13 @@ class SideBarLeft extends Component {
   dispatchResize(width){
     width = parseInt(width.slice(0,-2));
     const { dispatch } = this.props;
-    dispatch(RESIZE_SIDEBAR({target:'left', width }));
+    dispatch(actions.RESIZE_SIDEBAR({target:'left', width }));
   }
 
   onClickNav(e) {
     if(e.currentTarget.id !== this.props.selected){
       const { dispatch } = this.props;
-      dispatch(UPDATE_SIDEBAR_TAB({target:'left',selected:e.currentTarget.id}));
+      dispatch(actions.UPDATE_SIDEBAR_TAB({target:'left',selected:e.currentTarget.id}));
     }
   }
 
@@ -193,7 +194,7 @@ class SideBarRight extends Component {
   onClickNav(e) {
     if(e.currentTarget.id !== this.props.selected){
       const { dispatch } = this.props;
-      dispatch(UPDATE_SIDEBAR_TAB({target:'right',selected:e.currentTarget.id}));
+      dispatch(actions.UPDATE_SIDEBAR_TAB({target:'right',selected:e.currentTarget.id}));
     }
   }
 

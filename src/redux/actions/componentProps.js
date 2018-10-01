@@ -1,9 +1,18 @@
-import { getSubState } from 'quo-redux/state';
-import { ADD_MESSAGE } from './messageStack';
-import { ADD_COMPONENT_ACTION } from './component';
+import { getState } from 'quo-redux/state';
+import messageActions from './messageStack';
 
-export const UPDATE_COMPONENT_PROP = (payload) => (dispatch,getState) => {
-  let domain = getSubState(getState(),'domain');
-  dispatch(ADD_COMPONENT_ACTION(payload,domain));
-  dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Updated component property'}));
+const UPDATE_COMPONENT_PROPS_ACTION = (payload,domain) => ({
+  type:'UPDATE_COMPONENT_PROPS',
+  payload:payload,
+  domain:domain,
+})
+
+const UPDATE_COMPONENT_PROPS = (payload) => (dispatch,getFullState) => {
+  let domain = getState(getFullState(),'domain');
+  dispatch(UPDATE_COMPONENT_PROPS_ACTION(payload,domain));
+  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Updated component property'}));
+}
+
+export default {
+  UPDATE_COMPONENT_PROPS
 }

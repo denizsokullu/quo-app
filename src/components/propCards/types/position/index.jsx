@@ -1,51 +1,52 @@
 import React from 'react';
+import {connect} from 'react-redux';
+
+import { getState } from 'quo-redux/state';
+import { getPropsOfSelection } from 'quo-redux/helpers';
+import actions from 'quo-redux/actions';
 
 import Base from '../base';
-import TextInput from '../../../inputElements/textInput/textInput';
-
-// import {COMPONENT_MOVE} from '../../../redux/actions';
-import { getState } from '../../../../redux/state';
-import { getPropsOfSelection } from '../../../../redux/helpers';
-import {connect} from 'react-redux';
+import TextInput from 'ui-components/inputElements/textInput/textInput';
 
 class Position extends React.Component{
   constructor(props){
     super(props);
-    // this.state = {
-    //   selection:props.selection,
-    //   editState:props.editState
-    // }
+    this.state = {
+      x:0,
+      y:0
+    }
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      x:nextProps.x,
+      y:nextProps.y
+    })
   }
 
+  updateX(val,title,isFinal){
+    //set the state and update
+    this.setState({x:parseInt(val)},()=>{
+      if (isFinal) this.dispatchUpdate()
+    });
+  }
 
-  // componentWillReceiveProps(nextProps){
-  //   this.setState({selection:nextProps.selection, editState:nextProps.editState});
-  // }
+  updateY(val,title,isFinal){
+    this.setState({y:parseInt(val)},()=>{
+      if (isFinal) this.dispatchUpdate()
+    });
+  }
 
-  logPositionChange(val,title,isFinal){
-    // if(isFinal){
-    //   const { dispatch } = this.props;
-    //   let msg = {id:this.state.selection.id};
-    //   //initialize the delta
-    //   msg = {...msg, x:0, y:0}
-    //   if(title === 'Y'){
-    //     msg = {...msg, y: parseInt(val) - parseInt(this.state.selection.editStates[this.state.editState].style.top.slice(0,-2))}
-    //   }
-    //   if(title === 'X'){
-    //     msg = {...msg, x: parseInt(val) - parseInt(this.state.selection.editStates[this.state.editState].style.left.slice(0,-2))};
-    //   }
-    //   if(msg.x !== 0 || msg.y !== 0){
-    //     dispatch(COMPONENT_MOVE(msg))
-    //   }
-    // }
+  dispatchUpdate(){
+    const { dispatch } = this.props;
+    dispatch(actions.UPDATE_COMPONENT_PROPS({ id: this.props.id, props: { x:this.state.x, y:this.state.y }}));
   }
 
   render(){
     return(
       this.props.x && this.props.y ?
       <Base title='Position'>
-        <TextInput title='X' text={this.props.x} type='number' after="" onChange={this.logPositionChange.bind(this)}/>
-        <TextInput title='Y' text={this.props.y} type='number' after="" onChange={this.logPositionChange.bind(this)}/>
+        <TextInput title='X' text={this.state.x} type='number' after="" onChange={this.updateX.bind(this)}/>
+        <TextInput title='Y' text={this.state.y} type='number' after="" onChange={this.updateY.bind(this)}/>
       </Base>
       :
       <Base title='Position'>

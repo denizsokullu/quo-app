@@ -2,7 +2,7 @@ import React from 'react';
 import Dropzone from 'react-dropzone';
 import JSZip from 'jszip';
 import { connect } from 'react-redux'
-import { UPLOAD_SKETCH, UPLOAD_IMAGE, NEW_TAB, DELETE_TAB } from '../../redux/actions';
+import actions from 'quo-redux/actions';
 
 class DropzoneContainer extends React.Component {
   constructor() {
@@ -26,12 +26,12 @@ class DropzoneContainer extends React.Component {
           let file = zip.files[filename]
           if (filename.includes('.png') && filename.includes('images/')){
             file.async('base64').then(imageData => {
-              dispatch(UPLOAD_IMAGE({filename,imageData}));
+              dispatch(actions.UPLOAD_IMAGE({filename,imageData}));
             });
           }
           if (filename.includes('.json') && filename.includes('pages/')) {
             file.async('string').then(fileData => {
-              dispatch(UPLOAD_SKETCH({data:JSON.parse(fileData),filetype:'sketch'}));
+              dispatch(actions.UPLOAD_SKETCH({data:JSON.parse(fileData),filetype:'sketch'}));
             });
           }
         });

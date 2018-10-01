@@ -4,7 +4,7 @@ import { LayerCard } from '../../styleCard/styleCard';
 import _ from 'lodash';
 
 import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
-import { ADD_COMPONENT } from '../../../redux/actions';
+import actions from '../../../redux/actions';
 
 class AssetsTab extends Component {
   constructor(props){
@@ -49,7 +49,7 @@ class AssetPreview extends Component {
   }
   addAssetToEditor(){
     const { dispatch } = this.props;
-    dispatch(ADD_COMPONENT({source:this.props.source,
+    dispatch(actions.ADD_COMPONENT({source:this.props.source,
                             filetype:this.props.filetype,
                             page:this.props.page,
                             component:this.props.component}));
