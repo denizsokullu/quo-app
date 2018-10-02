@@ -6,6 +6,7 @@ import AbstractText from './AbstractText';
 import AbstractViewport from './AbstractViewport';
 
 import { translatePropData } from '../../propTranslator';
+import { PropCompositor } from 'quo-redux/helpers';
 
 var AbstractComponent;
 
@@ -88,23 +89,26 @@ export function initAbstractComponent(){
 
         initStates(data){
 
-            let dynamicProps = {
-                active:false,
-                props:this.initStyleProps(data)
-            }
+            let diffProps = {}
+            let coreProps = this.initStyleProps(data);
             let states = {
-                'none':{...dynamicProps},
-                'hover':{...dynamicProps},
-                'pressed':{...dynamicProps},
-                'focused':{...dynamicProps},
+                'composite':{
+                  props:{},
+                  modifiers:['_base']
+                },
+                '_base':{...coreProps},
+                'none':{...diffProps},
+                'hover':{...diffProps},
+                'pressed':{...diffProps},
+                'focused':{...diffProps},
             }
+
+            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v]));
 
             this.state = {
-                current:'none',
+                current:'composite',
                 states
             }
-
-            this.state = AbstractComponent.swapState('none',this.state);
 
         }
 

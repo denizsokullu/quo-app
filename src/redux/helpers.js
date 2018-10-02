@@ -73,6 +73,14 @@ const getComponentFromCurrentTab = (tabs, id) => {
   return component ? component : undefined
 }
 
-// const getCurrent
+// PropCompositor
+// EXPLAIN THIS
+class PropCompositor {
+  static bakeProps(propArr){
+    if(propArr.length === 0) return {};
+    //combines the props in order from index 0 -> len - 1 and picks the higher index value.
+    return propArr.reduce((a,c) => { return _.mergeWith(a,c,(o,n) => n ? n : o)}, {});
+  }
+}
 
-export { mergeActions, combineReducersLoop, getPropsOfSelection, getComponentFromCurrentTab }
+export { mergeActions, combineReducersLoop, getPropsOfSelection, getComponentFromCurrentTab, PropCompositor }
