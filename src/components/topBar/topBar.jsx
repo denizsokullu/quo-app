@@ -2,7 +2,10 @@ import React from 'react'
 
 import { ButtonCore } from '../buttons/buttons';
 import { connect } from 'react-redux';
-import { DATABASE_ACTION, TEST_TIMEOUT } from '../../redux/actions';
+import { getState } from 'quo-redux/state';
+import { getSelectionFirstID, getComponentFromCurrentTab } from 'quo-redux/helpers';
+import { DATABASE_ACTION, TEST_TIMEOUT } from 'quo-redux/actions';
+import HorizontalOptionGroup from 'ui-components/inputElements/horizontalOptionGroup';
 
 class TopBar extends React.Component {
 
@@ -26,12 +29,27 @@ class TopBar extends React.Component {
   render(){
     return (
       <div className='top-bar'>
-        <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/>
-        <ButtonCore title='Push Project' onClick={this.pushProject}/>
+        {/* { this.props.stateModifiers ?
+          <div style={{width:'500px'}}>
+          <HorizontalOptionGroup
+            options={this.props.stateModifiers.map(e => { return { text:e} })}
+          />
+        </div> : null
+        } */}
+        {/* <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
+        {/* <ButtonCore title='Push Project' onClick={this.pushProject}/> */}
         {/* <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
       </div>
     )
   }
 }
-
-export default connect()(TopBar);
+const mapStateToProps = (state) => {
+  // let domain = getState(state,'domain');
+  // let component = getComponentFromCurrentTab(domain.tabs,getSelectionFirstID(state));
+  // if(!component) return {};
+  // return {
+  //   stateModifiers:component.state.states.composite.modifiers
+  // }
+  return {};
+}
+export default connect(mapStateToProps)(TopBar);

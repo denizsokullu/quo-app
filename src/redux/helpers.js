@@ -38,6 +38,15 @@ const combineReducersLoop = (actions) => {
   }
 }
 
+const getSelectionFirstID = (state) => {
+  let app = getState(state,'app');
+
+  let selection = app.selection
+  if(selection.data.length > 0) return selection.data[0];
+  return undefined
+
+}
+
 // getPropsOfSelection
 // get the state current state props of the selected component on the editor.
 const getPropsOfSelection = (state, props) => {
@@ -83,4 +92,4 @@ class PropCompositor {
   }
 }
 
-export { mergeActions, combineReducersLoop, getPropsOfSelection, getComponentFromCurrentTab, PropCompositor }
+export { mergeActions, combineReducersLoop, getPropsOfSelection, getComponentFromCurrentTab, PropCompositor, getSelectionFirstID }
