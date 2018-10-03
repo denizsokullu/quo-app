@@ -53,7 +53,7 @@ const ui = {
   messages,
 }
 
-const store_initial = {
+const storeInitial = {
   domain,
   app,
   ui,
@@ -71,4 +71,4 @@ const constants = {
 
 }
 
-export { store_initial, constants, getState }
+export { storeInitial, constants, getState }

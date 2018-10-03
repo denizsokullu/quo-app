@@ -28,14 +28,14 @@ import Movement from '../../styleCard/movement/movement';
 import PropCards from '../../propCards';
 
 class PropsTab extends Component {
+
   render(){
-    const options = this.props.states.map(e => { return { text:e} });
+    console.log(this.props.stateOptions)
     return (
       <div className='props-tab-wrapper'>
         {/* <ComponentStates/> */}
           <HorizontalOptionGroup
-            options={options}
-            selectedOptions={this.props.stateModifiers}
+            options={this.props.stateOptions}
           />
         <PropCards.Position/>
         <PropCards.Size/>
@@ -45,12 +45,19 @@ class PropsTab extends Component {
 }
 
 const mapStateToProps = (state) => {
+  // stateOptions is the array of states that are being 
+  // composited to create the props of the component that is selected
   let domain = getState(state,'domain');
   let component = getComponentFromCurrentTab(domain.tabs,getSelectionFirstID(state));
-  if(!component) return {states:[]};
+  if(!component) return {stateOptions:[]};
+  let stateModifiers = component.state.states.composite.modifiers
+  let stateOptions = _.remove(_.keys(component.state.states),(e)=> e !== 'composite')
+  stateOptions = stateOptions.map(e => { return {
+    text:e,
+    selected:!!(stateModifiers.includes(e))
+  }})
   return {
-    states:_.remove(_.keys(component.state.states),(e)=> e !== 'composite'),
-    stateModifiers:component.state.states.composite.modifiers
+    stateOptions
   }
 }
 

@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-import { Component } from 'react';
-
 import { Provider } from 'react-redux';
-import { store } from './redux/index.js';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router';
 
 import { syncHistoryWithStore, routerReducer, ConnectedRouter } from 'react-router-redux';
+
+import store from 'quo-redux';
+
+import KeyController from 'ui-components/keyController/keyController';
 
 import { SideBarRight, SideBarLeft } from './components/sideBar/sideBar';
 
@@ -21,12 +22,9 @@ import Viewer from './components/viewer/viewer';
 import PreviewLink from './components/previewLink';
 import MessageStack from './components/messageStack';
 
-import KeyController from './components/keyController/keyController';
-
 import './scss/main.scss';
 
-import { firebase } from "./firebase";
-
+import { firebase } from './firebase';
 
 // const config = {
 //   apiKey: "AIzaSyCOJCrAjbXhyjVF94rUH6GEqoxI0jEuutM",
@@ -35,43 +33,44 @@ import { firebase } from "./firebase";
 //   storageBucket: "quo-app-data.appspot.com",
 // };
 
-class App extends Component {
-  render() {
-    return (
-       <Provider store={ store }>
-         <Router forceRefresh={true}>
-             <main className="quo-content">
-               <Switch>
-                 <Route exact={ true } path="/" render={ () => {
-                   return (
-                     <KeyController>
-                        <DropzoneContainer>
-                          <Viewer/>
-                        </DropzoneContainer>
-                     //    <TopBar/>
-                     //    <SideBarLeft/>
-                     //    <SideBarRight/>
-                        <MessageStack/>
-                     </KeyController>
-                    )
-                  } } />
-                  <Route path="/p/:pageId/:componentId" render={ ({ match }) => {
-                    return (
-                      <PreviewLink
-                        pageId={match.params.pageId}
-                        id={match.params.componentId}
-                      ></PreviewLink>
-                    )
-                  } } />
-                </Switch>
-              </main>
-          </Router>
-       </Provider>
-    );
-  }
+function App() {
+  return (
+    <Provider store={store}>
+      <Router forceRefresh>
+        <main className="quo-content">
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={() => (
+                <KeyController>
+                  <DropzoneContainer>
+                    <Viewer />
+                  </DropzoneContainer>
+                  <TopBar />
+                  <SideBarLeft />
+                  <SideBarRight />
+                  <MessageStack />
+                </KeyController>
+              )}
+            />
+            <Route
+              path="/p/:pageId/:componentId"
+              render={({ match }) => (
+                <PreviewLink
+                  pageId={match.params.pageId}
+                  id={match.params.componentId}
+                />
+              )}
+            />
+          </Switch>
+        </main>
+      </Router>
+    </Provider>
+  );
 }
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
