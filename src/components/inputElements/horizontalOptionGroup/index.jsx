@@ -12,7 +12,7 @@ export default class HorizontalOptionGroup extends Component {
   }
   render(){
     return (
-      <div className='horizontal-option-group-wrapper'>
+      this.props.options.length > 0 ? <div className='horizontal-option-group-wrapper'>
         {
           this.props.options.map((option,i)=>{
             return (
@@ -25,7 +25,7 @@ export default class HorizontalOptionGroup extends Component {
             )
           })
         }
-      </div>
+      </div> : null
     )
   }
 }
