@@ -36,14 +36,10 @@ export function initAbstractComponent(){
             //linking
             this.initLinkingStructure();
 
-            //class specific properties
+            //move these into the subclasses
 
             if(this.is('shapeGroup')){
                 this.initShapeProps(data);
-            }
-
-            else if(this.is('text')){
-                this.initTextProps(data);
             }
 
             else if(this.is('bitmap')){
@@ -72,15 +68,24 @@ export function initAbstractComponent(){
                 else{
                     switch(component._class){
                         case 'shapeGroup':
-                        abstractChild = new AbstractShape(component);
-                        this.children.push(abstractChild);
+                          abstractChild = new AbstractShape(component);
+                          this.children.push(abstractChild);
+                        break;
+
+                        case 'text':
+                          abstractChild = new AbstractText(component);
+                          this.children.push(abstractChild);
+                        break;
+
                         case 'artboard':
-                        break
+                        break;
+
                         case 'shapePath':
                         break;
+
                         default:
-                        abstractChild = new AbstractComponent(component);
-                        this.children.push(abstractChild);
+                          abstractChild = new AbstractComponent(component);
+                          this.children.push(abstractChild);
 
                     }
                 }
@@ -151,7 +156,7 @@ export function initAbstractComponent(){
             //add the code here
             this.layers = data.layers;
         }
-        initTextProps(data){}
+
         initImageProps(data){
             this.changeClassTo('image');
             this.imageURL = data.image._ref;

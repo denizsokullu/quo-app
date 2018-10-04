@@ -131,7 +131,8 @@
     "rules": {
       "array-callback-return": "off",
       "radix": "off",
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      "no-undef": "off"
     }
   }
 }
