@@ -38,9 +38,8 @@ const combineReducersLoop = (actions) => {
   }
 }
 
-const getSelectionFirstID = (state) => {
-  let app = getState(state,'app');
-
+const getSelectionFirstID = (state,app) => {
+  if(!app && state) app = getState(state,'app');
   let selection = app.selection
   if(selection.data.length > 0) return selection.data[0];
   return undefined
@@ -92,4 +91,14 @@ class PropCompositor {
   }
 }
 
-export { mergeActions, combineReducersLoop, getPropsOfSelection, getComponentFromCurrentTab, PropCompositor, getSelectionFirstID }
+const getCurrentLinkBuilderMode = (app) => {
+  return app.linkBuilder.mode
+}
+
+export { mergeActions,
+         combineReducersLoop,
+         getPropsOfSelection,
+         getComponentFromCurrentTab,
+         PropCompositor, 
+         getSelectionFirstID,
+         getCurrentLinkBuilderMode }

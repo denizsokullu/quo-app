@@ -4,7 +4,7 @@ import { ButtonCore } from '../buttons/buttons';
 import { connect } from 'react-redux';
 import { getState } from 'quo-redux/state';
 import { getSelectionFirstID, getComponentFromCurrentTab } from 'quo-redux/helpers';
-import { DATABASE_ACTION, TEST_TIMEOUT } from 'quo-redux/actions';
+import actions from 'quo-redux/actions';
 import HorizontalOptionGroup from 'ui-components/inputElements/horizontalOptionGroup';
 
 class TopBar extends React.Component {
@@ -14,16 +14,20 @@ class TopBar extends React.Component {
     this.state = {
       windowName : this.props.windowName
     }
-    this.clearViewer = this.clearViewer.bind(this);
-    this.pushProject = this.pushProject.bind(this);
+    // this.clearViewer = this.clearViewer.bind(this);
+    // this.pushProject = this.pushProject.bind(this);
   }
-  clearViewer(){
+  // clearViewer(){
+  //   const { dispatch } = this.props;
+  //   dispatch(DATABASE_ACTION('CLEAR_VIEWER',{}))
+  // }
+  // pushProject(){
+  //   const { dispatch } = this.props;
+  //   dispatch(DATABASE_ACTION('PUSH_PROJECT',{}))
+  // }
+  createLink(){
     const { dispatch } = this.props;
-    dispatch(DATABASE_ACTION('CLEAR_VIEWER',{}))
-  }
-  pushProject(){
-    const { dispatch } = this.props;
-    dispatch(DATABASE_ACTION('PUSH_PROJECT',{}))
+    dispatch(actions.CREATE_LINK());
   }
 
   render(){
@@ -36,7 +40,7 @@ class TopBar extends React.Component {
           />
         </div> : null
         } */}
-        {/* <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
+        <ButtonCore title='Create Link' onClick={this.createLink.bind(this)}/>
         {/* <ButtonCore title='Push Project' onClick={this.pushProject}/> */}
         {/* <ButtonCore title='Clear Artboard' onClick={this.clearViewer}/> */}
       </div>

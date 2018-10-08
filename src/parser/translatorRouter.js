@@ -96,15 +96,15 @@ export const router = {
         },
       },
       fontSize:{
-        prop:'font size',
+        prop:'font-size',
         translate:commonTranslators.id,
       },
       fontFamily:{
-        prop:'font family',
+        prop:'font-family',
         translate:commonTranslators.id,
       },
       color:{
-        prop:'font color',
+        prop:'font-color',
         translate:commonTranslators.sketch.abstract.color,
       },
       backgroundColor:{
@@ -115,6 +115,11 @@ export const router = {
         prop:'fill',
         translate:commonTranslators.sketch.abstract.color,
       },
+      textString:{
+        prop:'textString',
+        translate:commonTranslators.id,
+      },
+      //
     }
   },
   abstract:{
@@ -138,6 +143,9 @@ export const router = {
       fill:{
         prop:'fill',
         translate:commonTranslators.abstract.css.color
+      },
+      textString:{
+        disallow:true
       },
       border:{
         prop:'border',
@@ -173,6 +181,12 @@ export const router = {
       //     return str;
       //   }
       // },
+    },
+    textProps:{
+      textString:{
+        prop:'textString',
+        translate:commonTranslators.id
+      }
     }
   }
 }

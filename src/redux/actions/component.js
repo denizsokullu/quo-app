@@ -19,7 +19,6 @@ const COMPONENT_SELECT = (component) => ({
 })
 
 export default {
-  ADD_COMPONENT_ACTION,
   ADD_COMPONENT,
   COMPONENT_SELECT,
 }

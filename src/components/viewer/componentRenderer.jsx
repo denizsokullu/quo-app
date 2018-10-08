@@ -366,6 +366,10 @@ class ComponentRendererCore extends React.PureComponent {
     switch(this.props.component.class){
       case 'shapeGroup':
         return this.renderWrapper(<ShapeComponent component={this.props.component}></ShapeComponent>);
+        break;
+      case 'text':
+        return this.renderWrapper(<TextComponent component={this.props.component}></TextComponent>);
+        break;
       default:
 
     }

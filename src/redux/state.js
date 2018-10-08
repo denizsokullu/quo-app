@@ -5,6 +5,7 @@ const domain = {
   },
   //Edited Components
   components:{},
+  links:{},
   projects:{},
   tabs:{
     activeTab:'',
@@ -20,9 +21,21 @@ const selection = {
   details:{},
 }
 
+const linkBuilder = {
+  mode:'INIT', // possible modes INIT, SOURCE_SELECTED, TARGET_SELECTED
+  currentLinkId:'',
+  data:{
+    //source
+    //target
+    //link-id
+    //
+  }
+}
+
 const app = {
   user:{},
   appMode: 'EDIT',
+  linkBuilder,
   selection,
 }
 

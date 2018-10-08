@@ -36,6 +36,7 @@ class Translator {
   static abstract = (to,data) => {
     let allProps = {};
     _.forEach(data,(val,prop)=>{
+      if(router['abstract'][to][prop].disallow) return;
       //if there are inner values corresponding
       let res = router['abstract'][to][prop].translate(val)
       //if it's a single css rule add it alone
@@ -50,20 +51,12 @@ class Translator {
     return allProps;
   }
 
-  static scanTextProps = (data) => {
-    console.log('parsing text items');
-    console.log(data.attributedString.string);
-    console.log('printing finished')
-  }
-
   static sketch = (to,data) => {
-
-    if(data._class === 'text') Translator.scanTextProps(data);
-
     let allProps = {};
     const addProp = (prop,val) => {
       _.merge(allProps,convertProps('sketch',to,prop,val));
     }
+
     if(data.frame){
       let f = data.frame;
       addProp('height',f.height);
@@ -88,6 +81,10 @@ class Translator {
         }
       }
       //continue this
+    }
+
+    if(data._class === 'text'){
+      addProp('textString',data.attributedString.string);
     }
 
     //add border radius for rectangular shapes
