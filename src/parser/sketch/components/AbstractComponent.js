@@ -6,6 +6,7 @@ import AbstractText from './AbstractText';
 import AbstractViewport from './AbstractViewport';
 
 import { translatePropData } from '../../propTranslator';
+import { PropCompositor } from 'quo-redux/helpers';
 
 var AbstractComponent;
 
@@ -35,14 +36,10 @@ export function initAbstractComponent(){
             //linking
             this.initLinkingStructure();
 
-            //class specific properties
+            //move these into the subclasses
 
             if(this.is('shapeGroup')){
                 this.initShapeProps(data);
-            }
-
-            else if(this.is('text')){
-                this.initTextProps(data);
             }
 
             else if(this.is('bitmap')){
@@ -71,15 +68,24 @@ export function initAbstractComponent(){
                 else{
                     switch(component._class){
                         case 'shapeGroup':
-                        abstractChild = new AbstractShape(component);
-                        this.children.push(abstractChild);
+                          abstractChild = new AbstractShape(component);
+                          this.children.push(abstractChild);
+                        break;
+
+                        case 'text':
+                          abstractChild = new AbstractText(component);
+                          this.children.push(abstractChild);
+                        break;
+
                         case 'artboard':
-                        break
+                        break;
+
                         case 'shapePath':
                         break;
+
                         default:
-                        abstractChild = new AbstractComponent(component);
-                        this.children.push(abstractChild);
+                          abstractChild = new AbstractComponent(component);
+                          this.children.push(abstractChild);
 
                     }
                 }
@@ -88,23 +94,26 @@ export function initAbstractComponent(){
 
         initStates(data){
 
-            let dynamicProps = {
-                active:false,
-                props:this.initStyleProps(data)
-            }
+            let diffProps = {}
+            let coreProps = this.initStyleProps(data);
             let states = {
-                'none':{...dynamicProps},
-                'hover':{...dynamicProps},
-                'pressed':{...dynamicProps},
-                'focused':{...dynamicProps},
+                'composite':{
+                  props:{},
+                  modifiers:['_base']
+                },
+                '_base':{...coreProps},
+                'none':{...diffProps},
+                'hover':{...diffProps},
+                'pressed':{...diffProps},
+                'focused':{...diffProps},
             }
+
+            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v]));
 
             this.state = {
-                current:'none',
+                current:'composite',
                 states
             }
-
-            this.state = AbstractComponent.swapState('none',this.state);
 
         }
 
@@ -147,7 +156,7 @@ export function initAbstractComponent(){
             //add the code here
             this.layers = data.layers;
         }
-        initTextProps(data){}
+
         initImageProps(data){
             this.changeClassTo('image');
             this.imageURL = data.image._ref;

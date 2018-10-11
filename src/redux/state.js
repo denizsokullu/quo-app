@@ -1,25 +1,3 @@
-// const data = {
-//   newAssets:{
-//
-//   },
-//   linkPreview:{
-//     received:false,
-//     component:null
-//   },
-//   newSelection:'',
-//   selectionSiblings:[],
-//   currentProject:'-LGParuUInchgusujCer',
-//   currentPage:"",
-//   viewerZoom:1,
-//   //write a function to init the keys
-//   controller:controller,
-//   textEdit:'',
-//   selection:{
-//
-//   },
-//   editState:'none'
-// }
-
 const domain = {
   //Flat Files
   assets:{
@@ -27,6 +5,7 @@ const domain = {
   },
   //Edited Components
   components:{},
+  links:{},
   projects:{},
   tabs:{
     activeTab:'',
@@ -42,9 +21,21 @@ const selection = {
   details:{},
 }
 
+const linkBuilder = {
+  mode:'INIT', // possible modes INIT, SOURCE_SELECTED, TARGET_SELECTED
+  currentLinkId:'',
+  data:{
+    //source
+    //target
+    //link-id
+    //
+  }
+}
+
 const app = {
   user:{},
   appMode: 'EDIT',
+  linkBuilder,
   selection,
 }
 
@@ -75,7 +66,7 @@ const ui = {
   messages,
 }
 
-const store_initial = {
+const storeInitial = {
   domain,
   app,
   ui,
@@ -93,4 +84,4 @@ const constants = {
 
 }
 
-export { store_initial, constants, getState }
+export { storeInitial, constants, getState }

@@ -1,16 +1,21 @@
-import { ADD_MESSAGE } from './messageStack';
+import messageActions from './messageStack';
 
-export const UPLOAD_SKETCH_ACTION = (uploadData) => ({
+const UPLOAD_SKETCH_ACTION = (uploadData) => ({
   type: 'UPLOAD_SKETCH',
   payload: uploadData
 });
 
 const UPLOAD_SKETCH  = (uploadData) => (dispatch) => {
   dispatch(UPLOAD_SKETCH_ACTION(uploadData));
-  dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Sketch page uploaded'}));
+  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Sketch page uploaded'}));
 }
 
-export const UPLOAD_IMAGE = uploadData => ({
+const UPLOAD_IMAGE = uploadData => ({
   type: 'UPLOAD_IMAGE',
   payload: uploadData
 });
+
+export default {
+  UPLOAD_SKETCH,
+  UPLOAD_IMAGE
+}

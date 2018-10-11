@@ -1,19 +1,24 @@
-import { getSubState } from 'quo-redux/state';
-import { ADD_MESSAGE } from './messageStack';
+import { getState } from 'quo-redux/state';
+import messageActions from './messageStack';
 
-export const ADD_COMPONENT_ACTION = (payload,domain) => ({
+const ADD_COMPONENT_ACTION = (payload,domain) => ({
   type:'ADD_COMPONENT_TO_TAB',
   payload:payload,
   domain:domain,
 })
 
-const ADD_COMPONENT = (payload) => (dispatch,getState) => {
-  let domain = getSubState(getState(),'domain');
+const ADD_COMPONENT = (payload) => (dispatch,getFullState) => {
+  let domain = getState(getFullState(),'domain');
   dispatch(ADD_COMPONENT_ACTION(payload,domain));
-  dispatch(ADD_MESSAGE({type:'status',duration:1500,text:'Added component'}));
+  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Added component'}));
 }
 
-export const COMPONENT_SELECT = (component) => ({
+const COMPONENT_SELECT = (component) => ({
   type:'COMPONENT_SELECT',
   payload: component
 })
+
+export default {
+  ADD_COMPONENT,
+  COMPONENT_SELECT,
+}

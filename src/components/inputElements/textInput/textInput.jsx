@@ -18,25 +18,34 @@ export default class TextInput extends React.Component{
 
     handleChange(event) {
       this.setState({value: event.target.value});
-      if(this.props.onChange){
+      if(this.onChangeSet()){
         this.props.onChange(event.target.value,this.props.title,false);
       }
+    }
+
+    handleBlur(){
+      if(this.props.type === 'percentage'){
+        this.setState({value:this.state.value + '%'});
+      }
+      if(this.onChangeSet()){
+        this.props.onChange(this.state.value,this.props.title,true);
+      }
+    }
+
+    onChangeSet(){
+      return this.props.onChange && typeof this.props.onChange === 'function'
     }
 
     keyPress(e){
       if(e.key === 'Enter'){
         e.currentTarget.blur();
-        if(this.props.type === 'percentage'){
-          this.setState({value:this.state.value + '%'});
-        }
-        this.props.onChange(this.state.value,this.props.title,true);
       }
     }
 
     render() {
       return (
         <div className='text-input' >
-          <input type={this.props.type} value={this.state.value} onChange={this.handleChange} tabIndex='0' onKeyPress={this.keyPress}/>
+          <input type={this.props.type} onBlur={this.handleBlur.bind(this)} value={this.state.value} onChange={this.handleChange} tabIndex='0' onKeyPress={this.keyPress}/>
           {this.props.noTitle ? null :   <div className='text-input-title'>{this.props.title}</div>}
         </div>
       );

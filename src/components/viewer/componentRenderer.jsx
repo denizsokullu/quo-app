@@ -2,13 +2,13 @@ import _ from 'underscore';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { COMPONENT_MOVE,COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from '../../redux/actions';
+import actions from 'quo-redux/actions';
 
 import uuidv1 from 'uuid/v1';
 
 import { translatePropData } from '../../parser/propTranslator';
 
-import { getState } from '../../redux/state';
+import { getState } from 'quo-redux/state';
 
 import SelectionFrame from '../selectionFrame';
 
@@ -18,14 +18,6 @@ import CoreComponent from './components/CoreComponent';
 import ImageComponent from './components/ImageComponent';
 import ShapeComponent from './components/ShapeComponent';
 import TextComponent from './components/TextComponent';
-
-//every core-component needs to be aware of the data passed in as props
-//every core-component has their own syling methods.
-//every core-component has no interaction with the store,
-//                     instead data gets passed down from the renderer.
-// Types of objects svg, rect, text, group(componentRenderer).
-//
-// svg, rect, text all receive new props from componentRenderers -> mainly data
 
 class ComponentRendererCore extends React.PureComponent {
   constructor(props) {
@@ -144,7 +136,7 @@ class ComponentRendererCore extends React.PureComponent {
 
   selectComponent(){
     const { dispatch } = this.props;
-    dispatch(COMPONENT_SELECT(this.props.component.id));
+    dispatch(actions.COMPONENT_SELECT(this.props.component.id));
   }
 
   onMouseDownHandler(e){
@@ -177,7 +169,7 @@ class ComponentRendererCore extends React.PureComponent {
 
     if(this.state.drag.offset.x !== 0 || this.state.drag.offset.y !== 0){
       const { dispatch } = this.props;
-      dispatch(COMPONENT_MOVE({...this.state.drag.offset,id:this.state.id}));
+      dispatch(actions.COMPONENT_MOVE({...this.state.drag.offset,id:this.state.id}));
     }
 
     this.setState({
@@ -374,6 +366,10 @@ class ComponentRendererCore extends React.PureComponent {
     switch(this.props.component.class){
       case 'shapeGroup':
         return this.renderWrapper(<ShapeComponent component={this.props.component}></ShapeComponent>);
+        break;
+      case 'text':
+        return this.renderWrapper(<TextComponent component={this.props.component}></TextComponent>);
+        break;
       default:
 
     }

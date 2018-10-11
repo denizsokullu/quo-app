@@ -1,8 +1,8 @@
 import React from 'react';
 import CoreComponent from './CoreComponent';
-import TextArea from '../../inputElements/dynamicTextArea';
+import TextArea from 'ui-components/inputElements/dynamicTextArea';
 import { connect } from 'react-redux';
-import { COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from '../../../redux/actions';
+import { COMPONENT_SELECT, TEXT_EDIT_TRIGGER, TEXT_STRING_UPDATE } from 'quo-redux/actions';
 
 
 class TextComponent extends CoreComponent{
@@ -11,7 +11,6 @@ class TextComponent extends CoreComponent{
         // let that = this;
         this.state.editMode = false;
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
-        this.newText = this.getText();
     }
 
     getColor(){
@@ -45,8 +44,8 @@ class TextComponent extends CoreComponent{
     }
 
     getText(){
-        let editStates = this.state.data.editStates;
-        return editStates[this.props.editState].textString
+      console.log(this.props.component.state.states.composite.props)
+        return 'asdasdasdasdasd'
     }
 
     textUpdate(str){
@@ -59,14 +58,14 @@ class TextComponent extends CoreComponent{
     }
 
     componentWillReceiveProps(nextProps){
-        if(nextProps.selection !== this.state.data.id && this.state.editMode){
-            this.setState({editMode:false},()=>{
-                this.dispatchTextStringUpdate(this.newText)
-                this.props.changeDrag(true);
-                this.selectThis();
-            })
-        }
-        if(!this.state.editMode) this.setState({data:nextProps.data});
+        // if(nextProps.selection !== this.state.data.id && this.state.editMode){
+        //     this.setState({editMode:false},()=>{
+        //         this.dispatchTextStringUpdate(this.newText)
+        //         this.props.changeDrag(true);
+        //         this.selectThis();
+        //     })
+        // }
+        // if(!this.state.editMode) this.setState({data:nextProps.data});
 
     }
 
@@ -94,34 +93,28 @@ class TextComponent extends CoreComponent{
             }
             />
             </span>
-        )
+            )
+        }
+        else{
+            return(
+                <span className='text-outer'
+                onDoubleClick={this.handleDoubleClick}
+                >
+                <p className='text-inner'>
+                {this.getText()}
+                </p>
+                </span>
+            )
+        }
     }
-    else{
-        return(
-            <span className='text-outer'
-            onDoubleClick={this.handleDoubleClick}
-            >
-            <p className='text-inner'>
-            {this.getText()}
-            </p>
-            </span>
-        )
-    }
-}
-
-
-render(){
-    return ( this.renderTextElement() )
-}
-}
-
-function mapStateToProps(state){
-    return {
-        selection:state.present.selection,
-        editState:state.present.editState,
+    render(){
+      // return ( this.renderTextElement() )
+      return (
+        <p className='text-inner'>
+        { this.getText() }
+        </p>
+      )
     }
 }
-
-TextComponent = connect(mapStateToProps)(TextComponent);
 
 export default TextComponent
