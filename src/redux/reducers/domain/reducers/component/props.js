@@ -33,7 +33,7 @@ export const updateComponentProps = (tabs,action) => {
   }
   else {
     //update the props to reflect the new
-    console.log(composite.modifiers.map(v => states[v]));
+    // console.log(composite.modifiers.map(v => states[v]));
     composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v]))
   }
   return _.cloneDeep(tabs);
