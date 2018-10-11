@@ -99,6 +99,6 @@ export { mergeActions,
          combineReducersLoop,
          getPropsOfSelection,
          getComponentFromCurrentTab,
-         PropCompositor, 
+         PropCompositor,
          getSelectionFirstID,
          getCurrentLinkBuilderMode }

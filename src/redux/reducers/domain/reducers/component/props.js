@@ -14,12 +14,15 @@ export const updateComponentProps = (tabs,action) => {
   let id = action.payload.id;
   let propsToUpdate = action.payload.props;
 
+  console.log('got here somehow')
+
   let component = getComponentFromCurrentTab(tabs,id);
 
-  let selectedState = 'none';
   let states = component.state.states;
-  let sourceProps = states[selectedState];
-  states[selectedState] = _.mergeWith(sourceProps,propsToUpdate, (s,n) => n);
+  //CHANGE THIS LMAO
+  let selectedState = _.keys(states)[2];
+  let sourceProps = states[selectedState].props;
+  states[selectedState].props = _.mergeWith(sourceProps,propsToUpdate, (s,n) => n);
   let composite = states.composite;
   let index = composite.modifiers.indexOf(selectedState)
   if(index === -1){
@@ -34,7 +37,7 @@ export const updateComponentProps = (tabs,action) => {
   else {
     //update the props to reflect the new
     // console.log(composite.modifiers.map(v => states[v]));
-    composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v]))
+    composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
   }
   return _.cloneDeep(tabs);
 

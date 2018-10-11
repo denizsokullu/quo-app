@@ -103,6 +103,7 @@ class ComponentRendererCore extends React.PureComponent {
     //   return this.state.components.editStates['none'].style;
     // }
     let props = this.props.component.state.states[this.props.component.state.current].props
+    console.log('states', this.props.component.state);
     let style = translatePropData('abstract','css',props)
 
     return style

@@ -5,6 +5,8 @@ import AbstractShape from './AbstractShape';
 import AbstractText from './AbstractText';
 import AbstractViewport from './AbstractViewport';
 
+import ComponentState from './ComponentState';
+
 import { translatePropData } from '../../propTranslator';
 import { PropCompositor } from 'quo-redux/helpers';
 
@@ -94,21 +96,25 @@ export function initAbstractComponent(){
 
         initStates(data){
 
-            let diffProps = {}
-            let coreProps = this.initStyleProps(data);
+            let base = new ComponentState('base',[],[],this.initStyleProps(data));
+            let none = new ComponentState('none',[],[],{});
+            let hover = new ComponentState('hover',['onMouseOver'],['onMouseOut'],{});
+            let pressed = new ComponentState('pressed',['onMouseDown'],['onMouseUp'],{});
+            let focused = new ComponentState('focused',['onFocus'],['onBlur'],{});
+
             let states = {
                 'composite':{
                   props:{},
-                  modifiers:['_base']
+                  modifiers:[base.id]
                 },
-                '_base':{...coreProps},
-                'none':{...diffProps},
-                'hover':{...diffProps},
-                'pressed':{...diffProps},
-                'focused':{...diffProps},
+                [base.id]:base,
+                [none.id]:none,
+                [hover.id]:hover,
+                [pressed.id]:pressed,
+                [focused.id]:focused,
             }
 
-            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v]));
+            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v].props));
 
             this.state = {
                 current:'composite',
