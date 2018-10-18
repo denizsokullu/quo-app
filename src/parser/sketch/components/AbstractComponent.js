@@ -125,18 +125,18 @@ export function initAbstractComponent(){
             return translatePropData('sketch','abstract',data);
         }
 
-        initLinkingStructure(){
+        initLinkingStructure () {
             this.links = {
-              triggers:{
-                onMouseEnter:[],
-                onMouseDown:[],
-                onClick:[],
-              },
-              disables:{
-                onMouseLeave:[],
-                onMouseUp:[],
-                onClick:[],
-              }
+                triggers: {
+                    onMouseEnter: [],
+                    onMouseDown: [],
+                    onFocus: [],
+                },
+                disables: {
+                    onMouseLeave: [],
+                    onMouseUp: [],
+                    onBlur: [],
+                }
             }
         }
 

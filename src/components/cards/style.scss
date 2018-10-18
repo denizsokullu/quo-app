@@ -87,8 +87,12 @@
             background-color:$color-blue;
           }
 
-          .option-icon.hidden {
+          .option-icon {
             opacity:0;
+
+            &.icon-visible {
+              opacity:1;
+            }
           }
 
           .option-icon {
@@ -107,16 +111,16 @@
 }
 
 .dropdown-card {
-  .dropdown-card-body{
-    padding:.45rem;
-    padding-left:.45rem;
+  .card-body{
+    padding: .45rem;
+    padding-left: .45rem;
     .dropdown-selected {
-      font-size:$font-m;
-      padding:.3rem;
-      border-radius:.25rem;
-      &:hover{
-        background-color:$color-blue;
-        cursor:pointer;
+      font-size: $font-m;
+      padding: .3rem;
+      border-radius: .25rem;
+      &:hover {
+        background-color: $color-blue;
+        cursor: pointer;
       }
     }
   }

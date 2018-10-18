@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, DropdownCard } from '../../card';
+import { Card, DropdownCard } from 'ui-components/cards';
 
 import { ADD_MESSAGE } from 'quo-redux/actions';
 

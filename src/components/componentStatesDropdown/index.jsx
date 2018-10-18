@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { getState } from 'quo-redux/state';
 import actions from 'quo-redux/actions';
 import { getComponentFromCurrentTab, getSelectionFirstID } from 'quo-redux/helpers';
-import { VerticalListCard } from 'ui-components/card';
+import { VerticalListCard } from 'ui-components/cards';
 
 import BackIcon from 'material-ui-icons/ArrowBack';
 import CheckIcon from 'material-ui-icons/Check';
@@ -18,9 +18,9 @@ class ComponentStatesDropdown extends React.Component {
       dropdown:true,
       selected:{},
       values:[
-        {text:'Hover',id:'1', showIcon:true},
-        {text:'Pressed',id:'2', showIcon:true},
-        {text:'Focus',id:'3', showIcon:true},
+        {text:'Hover',id:'1', icon:true},
+        {text:'Pressed',id:'2', icon:true},
+        {text:'Focus',id:'3', icon:true},
         {text:'Double Click',id:'4'}]
     }
   }
