@@ -1,0 +1,22 @@
+.selected-state-wrapper {
+  background-color: $color-bg-3;
+  align-items: center;
+  border-radius: 8px;
+  padding: .5rem .25rem;
+  position: relative;
+  .back-icon {
+    position:absolute;
+    left: .5rem;
+    &:hover {
+      cursor: pointer;
+    }
+    svg {
+      height: 18px;
+      width: 18px;
+    }
+  }
+  .state-text {
+    text-align:center;
+    font-size: $font-l;
+  }
+}

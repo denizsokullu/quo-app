@@ -23,13 +23,11 @@ const selection = {
 
 const linkBuilder = {
   mode:'INIT', // possible modes INIT, SOURCE_SELECTED, TARGET_SELECTED
-  currentLinkId:'',
-  data:{
-    //source
-    //target
-    //link-id
-    //
-  }
+  linkId:'',
+  source:'',
+  target:'',
+  triggers:[],
+  disables:[],
 }
 
 const app = {
@@ -60,10 +58,15 @@ const sidebars = {
 
 const messages = [];
 
+const stateManager = {
+  selectedState:'',
+}
+
 const ui = {
   controller,
   sidebars,
   messages,
+  stateManager,
 }
 
 const storeInitial = {

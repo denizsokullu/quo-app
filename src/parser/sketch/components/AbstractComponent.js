@@ -97,7 +97,6 @@ export function initAbstractComponent(){
         initStates(data){
 
             let base = new ComponentState('base',[],[],this.initStyleProps(data));
-            let none = new ComponentState('none',[],[],{});
             let hover = new ComponentState('hover',['onMouseOver'],['onMouseOut'],{});
             let pressed = new ComponentState('pressed',['onMouseDown'],['onMouseUp'],{});
             let focused = new ComponentState('focused',['onFocus'],['onBlur'],{});
@@ -108,7 +107,6 @@ export function initAbstractComponent(){
                   modifiers:[base.id]
                 },
                 [base.id]:base,
-                [none.id]:none,
                 [hover.id]:hover,
                 [pressed.id]:pressed,
                 [focused.id]:focused,
@@ -129,32 +127,17 @@ export function initAbstractComponent(){
 
         initLinkingStructure(){
             this.links = {
-
+              triggers:{
+                onMouseEnter:[],
+                onMouseDown:[],
+                onClick:[],
+              },
+              disables:{
+                onMouseLeave:[],
+                onMouseUp:[],
+                onClick:[],
+              }
             }
-            // links = {
-            //   linkId:{
-            //     trigger:{
-            //       id:'id of the trigger component'
-            //       method:'click'
-            //     },
-            //     targets:[
-            //       {
-            //         id:'id of the target component',
-            //         change:[
-            //           {
-            //             type:'position,style-bg-color',
-            //             value:'value of the property change'
-            //             timing:{
-            //               'props for timing go here'
-            //             }
-            //           },
-            //         ]
-            //       }
-            //     ]
-            //   },
-            //   linkId...,
-            //   linkId...,
-            // }
         }
 
         //WRITE THESE

@@ -86,23 +86,17 @@ class VerticalListCard extends Component {
           <div className='card-vertical-list-wrapper'>
             <ul>
               {
-                this.props.values.map((v,i)=>{
-                  let selected = '';
-                  if(v.id === this.props.selected){
-                    selected = 'selected'
-                  }
+                this.props.values.map((v)=>{
+                  let selected = v.selected ? 'selected' : '';
+                  let iconOrientation = `icon-${this.props.optionIconOrientation}`;
+                  let iconVisible = v.showIcon ? '' : 'hidden';
                   return (
-                    <li className={`vertical-list-option ${selected}`}
+                    <li className={`vertical-list-option ${selected} ${iconOrientation}`}
                         onClick={()=>{this.props.onOptionClick(v)}} key={v.id}>
-                      {v.name}
-                      {this.props.optionIcon
-                        ?
-                        <div onClick={()=>{ this.onOptionIconClick(v)}}>
-                          {this.props.optionIcon}
-                        </div>
-                        :
-                        null
-                      }
+                      <div className='text'>{v.text}</div>
+                      <div onClick={()=>{ this.onOptionIconClick(v)}} className={`option-icon ${iconVisible}`}>
+                        {this.props.optionIcon}
+                      </div>
                     </li>
                   )
                 })
@@ -202,20 +196,31 @@ Card.propTypes = {
   icon:PropTypes.element,
 }
 
+VerticalListCard.defaultProps = {
+  disabled: false,
+  collapsed: false,
+  optionOrientationOrientation: 'right',
+};
+
 VerticalListCard.propTypes = {
   //core props
-  title:PropTypes.string.isRequired,
-  disabled:PropTypes.bool,
-  collapsed:PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  collapsed: PropTypes.bool,
   //data
-  headerIcon:PropTypes.node,
-  optionIcon:PropTypes.node,
-  values:PropTypes.arrayOf(PropTypes.object).isRequired,
-  selected:PropTypes.string.isRequired,
+  headerIcon: PropTypes.node,
+  optionIcon: PropTypes.node,
+  values: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string,
+    id: PropTypes.string,
+    selected: PropTypes.bool,
+    showIcon: PropTypes.bool,
+  })).isRequired,
+  optionIconOrientation: PropTypes.oneOf(['left', 'right']),
   //funcs
-  onHeaderIconClick:PropTypes.func,
-  onOptionClick:PropTypes.func.isRequired,
-  onOptionIconClick:PropTypes.func,
+  onHeaderIconClick: PropTypes.func,
+  onOptionClick: PropTypes.func.isRequired,
+  onOptionIconClick: PropTypes.func,
 }
 
 DropdownCard.propTypes = {

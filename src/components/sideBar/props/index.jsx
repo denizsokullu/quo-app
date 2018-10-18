@@ -6,22 +6,17 @@ import { ADD_MESSAGE } from 'quo-redux/actions';
 
 // Import all the cards
 
-import ComponentStatesTab from 'ui-components/componentStatesTab';
+import ComponentStatesDropdown from 'ui-components/componentStatesDropdown';
 import PropCards from 'ui-components/propCards';
 
-class PropsTab extends Component {
-
+export default class PropsTab extends Component {
   render(){
     return (
       <div className='props-tab-wrapper'>
-        <ComponentStatesTab/>
+        <ComponentStatesDropdown/>
         <PropCards.Position/>
         <PropCards.Size/>
       </div>
     )
   }
 }
-
-PropsTab = connect()(PropsTab);
-
-export default PropsTab

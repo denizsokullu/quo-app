@@ -20,7 +20,6 @@ const projects = combineReducersLoop({
 })
 
 const links = combineReducersLoop({
-  'SET_LINK_SOURCE': setLinkSource,
   'SET_LINK_TARGET': setLinkTarget,
 });
 
@@ -32,6 +31,7 @@ const tabs = combineReducersLoop({
   'ADD_COMPONENT_TO_TAB': addComponent,
   'REMOVE_COMPONENT': removeComponent,
   'UPDATE_COMPONENT_PROPS': updateComponentProps,
+  'SET_LINK_SOURCE': setLinkSource,
 })
 
 const domain = combineReducers({

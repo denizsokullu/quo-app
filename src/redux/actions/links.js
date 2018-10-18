@@ -1,28 +1,29 @@
 import { getState } from 'quo-redux/state';
-import { getCurrentLinkBuilderMode } from 'quo-redux/helpers';
+import { getSelectionFirstID,
+         getCurrentLinkBuilderMode,
+         getLinkBuilder } from 'quo-redux/helpers';
 import uuidv1 from 'uuid/v1';
 
-const SET_LINK_SOURCE = (payload,domain,app) => ({
-  type:'SET_LINK_SOURCE',
-  payload:payload,
-  domain:domain,
-  app:app,
-})
+const SET_LINK_SOURCE = () => (dispatch,getFullState) => {
+  let app = getState(getFullState(), 'app');
 
+  window.alert('set link source fired')
+
+  let action = (payload) => ({
+      type:'SET_LINK_SOURCE',
+      payload: payload,
+  })
+
+  dispatch(action(getLinkBuilder(app)))
+}
+// update this
 const SET_LINK_TARGET = (payload,domain,app) => ({
   type:'SET_LINK_TARGET',
   payload:payload,
-  domain:domain,
-  app:app,
 })
 
-const UPDATE_LINK_BUILDER_MODE = (payload) => ({
-  type:'UPDATE_LINK_BUILDER_MODE',
-  payload:payload
-})
-
-const SET_CURRENT_LINK_ID = (payload) => ({
-  type:'SET_CURRENT_LINK_ID',
+const UPDATE_LINK_BUILDER_DATA = (payload) => ({
+  type:'UPDATE_LINK_BUILDER_DATA',
   payload:payload
 })
 
@@ -33,30 +34,29 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
 
   switch(currentMode){
     case 'INIT':
-    //nothing is selected, selecting first component
-    //create the the shared link id here:
-    let id = uuidv1();
-    payload = { linkId: id }
-    dispatch(SET_CURRENT_LINK_ID(id));
-    dispatch(SET_LINK_SOURCE(payload,domain,app));
-    dispatch(UPDATE_LINK_BUILDER_MODE('SOURCE_SELECTED'));
+    let linkId = uuidv1();
+    let source = getSelectionFirstID(getFullState(),app);
+    if(!source) return;
+    dispatch(UPDATE_LINK_BUILDER_DATA({ source, linkId, mode: 'SOURCE_SELECTED' }));
     break
     case 'SOURCE_SELECTED':
-    //first component selected, selecting 2nd component
-    dispatch(SET_LINK_TARGET(payload,domain,app));
-    dispatch(UPDATE_LINK_BUILDER_MODE('TARGET_SELECTED'));
+    let target = getSelectionFirstID(getFullState(),app);
+    if(!target) return;
+    dispatch(UPDATE_LINK_BUILDER_DATA({ target, mode: 'TARGET_SELECTED' }));
     break
     case 'TARGET_SELECTED':
-    //second component is selected, finalize linking
-    dispatch(UPDATE_LINK_BUILDER_MODE('INIT'));
+    let data = {
+      triggers:['onMouseEnter'],
+      disables:['onMouseLeave'],
+      //props will be used later.
+      props:{},
+    }
+    dispatch(UPDATE_LINK_BUILDER_DATA({ ...data, mode: 'INIT' }));
+    dispatch(SET_LINK_SOURCE());
     break
     default:
     break
   }
-  //order of actions
-  // check the state of the link builder
-  // case on that and call according reducer actions
-  // update the state of the link builder
 }
 
 //selecting a component triggers a change.
@@ -66,6 +66,7 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
 //  only update the source when re-selecting.
 
 export default {
+  SET_LINK_SOURCE,
   CREATE_LINK,
-  UPDATE_LINK_BUILDER_MODE
+  UPDATE_LINK_BUILDER_DATA
 }
