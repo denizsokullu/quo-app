@@ -81,6 +81,7 @@ module.exports = {
       'quo-redux': path.resolve('./src/redux'),
       'ui-components': path.resolve('./src/components'),
       'parser': path.resolve('./src/parser'),
+      'utils': path.resolve('./src/utils'),
     }
   },
 

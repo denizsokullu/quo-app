@@ -103,6 +103,7 @@ class ComponentRendererCore extends React.PureComponent {
     //   return this.state.components.editStates['none'].style;
     // }
     let props = this.props.component.state.states[this.props.component.state.current].props
+    console.log('states', this.props.component.state);
     let style = translatePropData('abstract','css',props)
 
     return style
@@ -352,6 +353,17 @@ class ComponentRendererCore extends React.PureComponent {
 
   render(){
 
+    switch(this.props.component.class){
+      case 'shapeGroup':
+        return this.renderWrapper(<ShapeComponent component={ this.props.component }></ShapeComponent>);
+        break;
+      case 'text':
+        return this.renderWrapper(<TextComponent component={this.props.component}></TextComponent>);
+        break;
+      default:
+
+    }
+
     let parentContent = this.props.component.children.map(id => {
       return (
         <ComponentRenderer
@@ -362,17 +374,6 @@ class ComponentRendererCore extends React.PureComponent {
     });
 
     let nonParentContent;
-
-    switch(this.props.component.class){
-      case 'shapeGroup':
-        return this.renderWrapper(<ShapeComponent component={this.props.component}></ShapeComponent>);
-        break;
-      case 'text':
-        return this.renderWrapper(<TextComponent component={this.props.component}></TextComponent>);
-        break;
-      default:
-
-    }
 
     nonParentContent = this.props.component.children.map(id => {
       return (

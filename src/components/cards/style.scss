@@ -1,9 +1,9 @@
 .card {
 
-  border-radius:8px;
-  background-color:$color-bg-3;
-  display:inline-block;
-  width:100%;
+  border-radius: 8px;
+  background-color: $color-bg-3;
+  display: inline-block;
+  width: 100%;
 
   .card-header {
     @include CardHeader;
@@ -54,23 +54,55 @@
   .card-body {
     padding:0;
 
-    .card-vertical-list-wrapper{
+    .card-vertical-list-wrapper {
       width:100%;
-      ul{
-        margin:0;
-        padding:0;
-        li{
-          padding:.5rem .5rem .5rem .75rem;
-          color:$color-text-2;
-          font-size:$font-m;
-          border-bottom:1px solid $color-bg-10;
-          &:hover{
-            cursor:pointer;
-            background-color:$color-bg-5;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        li.vertical-list-option {
+
+          display: flex;
+          justify-content: space-between;
+          padding: .5rem .5rem .5rem .75rem;
+          color: $color-text-2;
+          font-size: $font-m;
+          border-bottom: 1px solid $color-bg-10;
+
+          &.icon-left {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
           }
-          &.selected{
+
+          &:hover {
+            cursor: pointer;
+            background-color: $color-bg-5;
+          }
+
+          &:active {
+            background-color: $color-blue;
+          }
+
+          &.selected {
             background-color:$color-blue;
           }
+
+          .option-icon {
+            opacity:0;
+
+            &.icon-visible {
+              opacity:1;
+            }
+          }
+
+          .option-icon {
+            padding-right: .5rem;
+            svg {
+              height: 12px;
+              width: 12px;
+            }
+          }
+
         }
       }
     }
@@ -79,16 +111,16 @@
 }
 
 .dropdown-card {
-  .dropdown-card-body{
-    padding:.45rem;
-    padding-left:.45rem;
+  .card-body{
+    padding: .45rem;
+    padding-left: .45rem;
     .dropdown-selected {
-      font-size:$font-m;
-      padding:.3rem;
-      border-radius:.25rem;
-      &:hover{
-        background-color:$color-blue;
-        cursor:pointer;
+      font-size: $font-m;
+      padding: .3rem;
+      border-radius: .25rem;
+      &:hover {
+        background-color: $color-blue;
+        cursor: pointer;
       }
     }
   }

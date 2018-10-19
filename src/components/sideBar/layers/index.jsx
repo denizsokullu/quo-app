@@ -4,7 +4,7 @@ import { getState } from '../../../redux/state';
 import { CHANGE_ACTIVE_TAB, NEW_TAB } from '../../../redux/actions';
 import _ from 'lodash';
 
-import { VerticalListCard } from '../../card';
+import { VerticalListCard } from 'ui-components/cards';
 
 
 class LayersTab extends Component {
@@ -115,15 +115,15 @@ class PagesViewer extends Component {
         <VerticalListCard
           collapsed={isCollapsed}
           title='Project Pages'
-          headerIcon={
+          icon={
             <div>
             +
             </div>
           }
+          onIconClick={this.createNewTab}
           values={_.values(this.props.pages)}
           selected={this.props.selected}
           onOptionClick={this.changeActiveTab}
-          onHeaderIconClick={this.createNewTab}
         />
         {/* <div className='card-body'>
           {
