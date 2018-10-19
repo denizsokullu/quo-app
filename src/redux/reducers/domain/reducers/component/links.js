@@ -1,6 +1,7 @@
 import { getSelectionFirstID, getComponentFromCurrentTab } from 'quo-redux/helpers';
 import uuidv1 from 'uuid/v1';
 import _ from 'lodash';
+import { addComponentState } from './states';
 
 // INIT
 // set current link id in link builder
@@ -38,6 +39,8 @@ export const setLinkSource = (tabs, action) => {
     sourceComponent.links.disables[event].push(target);
   })
 
+  sourceComponent.links.targetStateIds[target] = linkId;
+
   console.log(sourceComponent)
 
   return _.cloneDeep(tabs);
@@ -59,17 +62,18 @@ export const setLinkSource = (tabs, action) => {
 //   return _.cloneDeep(links);
 // }
 
-export const setLinkTarget = (links,action) => {
-  const { domain, app } = action;
+export const setLinkTarget = (tabs,action) => {
 
-  let selectionID = getSelectionFirstID(undefined,action.app);
+  if(!action.payload) return { ...tabs }
 
-  if(!selectionID || !action.payload || !action.payload.linkID ) return { ...links };
-
-  let link = links[action.payload.linkID];
-  link.target = selectionID;
+  let { linkId, source, target, triggers, disables, linkState } = action.payload
 
 
-  //lazy way to return new object
-  return _.cloneDeep(links);
+  let targetComponent = getComponentFromCurrentTab(tabs, target);
+
+  targetComponent.state.states[linkState.id] = linkState;
+
+  console.log(targetComponent.state.states);
+
+  return _.cloneDeep(tabs);
 }

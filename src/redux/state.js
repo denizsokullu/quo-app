@@ -5,7 +5,6 @@ const domain = {
   },
   //Edited Components
   components:{},
-  links:{},
   projects:{},
   tabs:{
     activeTab:'',
@@ -23,11 +22,12 @@ const selection = {
 
 const linkBuilder = {
   mode:'INIT', // possible modes INIT, SOURCE_SELECTED, TARGET_SELECTED
-  linkId:'',
-  source:'',
-  target:'',
-  triggers:[],
-  disables:[],
+  linkId: '',
+  source: '',
+  target: '',
+  triggers: [],
+  disables: [],
+  linkState: undefined,
 }
 
 const app = {

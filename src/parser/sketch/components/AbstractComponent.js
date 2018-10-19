@@ -5,7 +5,7 @@ import AbstractShape from './AbstractShape';
 import AbstractText from './AbstractText';
 import AbstractViewport from './AbstractViewport';
 
-import ComponentState from './ComponentState';
+import ComponentState from 'parser/ComponentState';
 
 import { translatePropData } from '../../propTranslator';
 import { PropCompositor } from 'quo-redux/helpers';
@@ -136,7 +136,8 @@ export function initAbstractComponent(){
                     onMouseLeave: [],
                     onMouseUp: [],
                     onBlur: [],
-                }
+                },
+                targetStateIds: {}
             }
         }
 

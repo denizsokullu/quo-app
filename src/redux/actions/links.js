@@ -2,21 +2,15 @@ import { getState } from 'quo-redux/state';
 import { getSelectionFirstID,
          getCurrentLinkBuilderMode,
          getLinkBuilder } from 'quo-redux/helpers';
+import ComponenState from 'parser/ComponentState';
 import uuidv1 from 'uuid/v1';
+import ComponentState from '../../parser/ComponentState';
 
-const SET_LINK_SOURCE = () => (dispatch,getFullState) => {
-  let app = getState(getFullState(), 'app');
+const SET_LINK_SOURCE = (payload) => ({
+  type:'SET_LINK_SOURCE',
+  payload: payload,
+})
 
-  window.alert('set link source fired')
-
-  let action = (payload) => ({
-      type:'SET_LINK_SOURCE',
-      payload: payload,
-  })
-
-  dispatch(action(getLinkBuilder(app)))
-}
-// update this
 const SET_LINK_TARGET = (payload,domain,app) => ({
   type:'SET_LINK_TARGET',
   payload:payload,
@@ -28,42 +22,52 @@ const UPDATE_LINK_BUILDER_DATA = (payload) => ({
 })
 
 const CREATE_LINK = (payload) => (dispatch,getFullState) => {
+
   let domain = getState(getFullState(), 'domain');
   let app = getState(getFullState(), 'app');
   let currentMode = getCurrentLinkBuilderMode(app);
 
   switch(currentMode){
+
     case 'INIT':
     let linkId = uuidv1();
+    let linkName = 'link1'
     let source = getSelectionFirstID(getFullState(),app);
     if(!source) return;
     dispatch(UPDATE_LINK_BUILDER_DATA({ source, linkId, mode: 'SOURCE_SELECTED' }));
     break
+
     case 'SOURCE_SELECTED':
     let target = getSelectionFirstID(getFullState(),app);
     if(!target) return;
     dispatch(UPDATE_LINK_BUILDER_DATA({ target, mode: 'TARGET_SELECTED' }));
     break
+
     case 'TARGET_SELECTED':
+    // set the fake data for the time being
     let data = {
       triggers:['onMouseEnter'],
       disables:['onMouseLeave'],
-      //props will be used later.
-      props:{},
+      linkState: new ComponentState('link1'),
     }
-    dispatch(UPDATE_LINK_BUILDER_DATA({ ...data, mode: 'INIT' }));
-    dispatch(SET_LINK_SOURCE());
+    // add in the data
+    dispatch(UPDATE_LINK_BUILDER_DATA({ ...data }));
+    // get the data
+    let linkBuilderData = { ...getLinkBuilder(app), ...data};
+
+    console.log(linkBuilderData)
+    // pass the data to the components(source & target)
+    dispatch(SET_LINK_SOURCE(linkBuilderData));
+    dispatch(SET_LINK_TARGET(linkBuilderData));
+    // change this, but for now, this sets 
+    // the link builder back to init
+    dispatch(UPDATE_LINK_BUILDER_DATA({mode: 'INIT'}))
     break
+
     default:
     break
   }
 }
-
-//selecting a component triggers a change.
-// if tab is active set according to the mode of the link builder
-// this includes selections that are in order.
-// if tab is not active:
-//  only update the source when re-selecting.
 
 export default {
   SET_LINK_SOURCE,

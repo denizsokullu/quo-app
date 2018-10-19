@@ -3,28 +3,38 @@ import _ from 'lodash';
 
 export const updateComponentProps = (tabs,action) => {
 
-  //no component specified
+  // no component specified
   if(!action.payload.id) return tabs;
 
-  //no prop update specified
+  // no prop update specified
   if(!action.payload.props) return tabs;
 
-  //MOVE THE SELECTED STATE TO UI, and have a parameter for the component.state.current
+  // MOVE THE SELECTED STATE TO UI, and have a parameter for the component.state.current
 
   let id = action.payload.id;
   let propsToUpdate = action.payload.props;
 
-  console.log('got here somehow')
-
   let component = getComponentFromCurrentTab(tabs,id);
 
   let states = component.state.states;
-  //CHANGE THIS LMAO
+  // CHANGE THIS LMAO
   let selectedState = _.keys(states)[2];
+  // ABOVE
+
+  // merge the new properties with the existing properties
   let sourceProps = states[selectedState].props;
   states[selectedState].props = _.mergeWith(sourceProps,propsToUpdate, (s,n) => n);
+
+  // add the property to the composite
+  // states.composite = addStateToComposite(states, selectedState);
+
+  return _.cloneDeep(tabs);
+
+}
+
+const addStateToComposite = (states, selectedState) => {
   let composite = states.composite;
-  let index = composite.modifiers.indexOf(selectedState)
+  let index = composite.modifiers.indexOf(selectedState);
   if(index === -1){
     composite.modifiers.push(selectedState);
   }
@@ -39,10 +49,5 @@ export const updateComponentProps = (tabs,action) => {
     // console.log(composite.modifiers.map(v => states[v]));
     composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
   }
-  return _.cloneDeep(tabs);
-
+  return composite;
 }
-// state
-// main state
-// current state is a merge of
-//
