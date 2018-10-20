@@ -93,7 +93,8 @@ export function initAbstractComponent(){
                 }
             })
         }
-
+  
+        
         initStates(data){
 
             let base = new ComponentState('base',[],[],this.initStyleProps(data));
