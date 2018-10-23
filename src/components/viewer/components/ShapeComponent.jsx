@@ -13,7 +13,7 @@ class ShapeComponent extends CoreComponent{
   }
 
   getStyleCSS(props){
-    return translatePropData('abstract','css',{fill:props.fill});
+    return translatePropData('abstract','css',{fill: props.fill});
   }
 
   render(){

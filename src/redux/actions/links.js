@@ -55,7 +55,6 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
     // get the data
     let linkBuilderData = { ...getLinkBuilder(app), ...data};
 
-    console.log(linkBuilderData)
     // pass the data to the components(source & target)
     dispatch(SET_LINK_SOURCE(linkBuilderData));
     dispatch(SET_LINK_TARGET(linkBuilderData));

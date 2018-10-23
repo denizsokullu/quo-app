@@ -2,7 +2,6 @@ import { getComponentFromCurrentTab, getCurrentState, PropCompositor } from 'quo
 import _ from 'lodash';
 
 export const updateComponentProps = (tabs,action) => {
-
   // no component specified
   if(!action.payload.id) return tabs;
 
@@ -26,8 +25,8 @@ export const updateComponentProps = (tabs,action) => {
   states[selectedState].props = _.mergeWith(sourceProps,propsToUpdate, (s,n) => n);
 
   // add the property to the composite
-  // states.composite = addStateToComposite(states, selectedState);
-
+  states.composite = addStateToComposite(states, selectedState);
+  var t1 = performance.now();
   return _.cloneDeep(tabs);
 
 }
@@ -38,7 +37,7 @@ const addStateToComposite = (states, selectedState) => {
   if(index === -1){
     composite.modifiers.push(selectedState);
   }
-  if(_.isEmpty(sourceProps)){
+  if(_.isEmpty(states[selectedState].props)){
     //if its a composite modifier but empty, remove it
     if(index !== -1){
       composite.modifiers.splice(index, 1);

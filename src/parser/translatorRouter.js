@@ -142,7 +142,12 @@ export const router = {
       },
       fill:{
         prop:'fill',
-        translate:commonTranslators.abstract.css.color
+        translate:(v)=>{
+          return {
+            'fill': `rgb(${v.r},${v.g},${v.b})`,
+            'fillOpacity': `${v.a}`
+          }
+        }
       },
       textString:{
         disallow:true

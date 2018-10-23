@@ -1,11 +1,14 @@
 import React from 'react';
+import { fSafe } from 'utils';
 
 export default class TextInput extends React.Component{
   constructor(props) {
       super(props);
       this.state = {value: this.props.text};
+
+      this.suffix = '';
       if(props.type === 'percentage'){
-        this.state = {value: this.props.text + '%'};
+        this.suffix = '%';
       }
 
       this.handleChange = this.handleChange.bind(this);
@@ -17,35 +20,28 @@ export default class TextInput extends React.Component{
     }
 
     handleChange(event) {
-      this.setState({value: event.target.value});
-      if(this.onChangeSet()){
-        this.props.onChange(event.target.value,this.props.title,false);
-      }
+      fSafe(this.props.onChange, event.target.value, this.props.title, false);
     }
 
-    handleBlur(){
-      if(this.props.type === 'percentage'){
-        this.setState({value:this.state.value + '%'});
-      }
-      if(this.onChangeSet()){
-        this.props.onChange(this.state.value,this.props.title,true);
-      }
-    }
-
-    onChangeSet(){
-      return this.props.onChange && typeof this.props.onChange === 'function'
+    handleBlur(event){
+      fSafe(this.props.onChange, event.target.value, this.props.title, true);
     }
 
     keyPress(e){
       if(e.key === 'Enter'){
-        e.currentTarget.blur();
+        e.currentTarget.blur(e);
       }
     }
 
     render() {
       return (
         <div className='text-input' >
-          <input type={this.props.type} onBlur={this.handleBlur.bind(this)} value={this.state.value} onChange={this.handleChange} tabIndex='0' onKeyPress={this.keyPress}/>
+          <input type={this.props.type} 
+                 onBlur={this.handleBlur.bind(this)} 
+                 value={this.state.value} 
+                 onChange={this.handleChange} 
+                 tabIndex='0' 
+                 onKeyPress={this.keyPress}/>
           {this.props.noTitle ? null :   <div className='text-input-title'>{this.props.title}</div>}
         </div>
       );

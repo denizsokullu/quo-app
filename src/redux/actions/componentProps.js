@@ -9,8 +9,9 @@ const UPDATE_COMPONENT_PROPS_ACTION = (payload,domain) => ({
 
 const UPDATE_COMPONENT_PROPS = (payload) => (dispatch,getFullState) => {
   let domain = getState(getFullState(),'domain');
+  // alert(JSON.stringify(payload));
   dispatch(UPDATE_COMPONENT_PROPS_ACTION(payload,domain));
-  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Updated component property'}));
+  // dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Updated component property'}));
 }
 
 export default {

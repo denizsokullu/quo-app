@@ -1,5 +1,6 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import React from 'react';
+import { compose } from 'redux';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from 'quo-redux/actions';
@@ -22,7 +23,7 @@ import TextComponent from './components/TextComponent';
 class ComponentRendererCore extends React.PureComponent {
   constructor(props) {
     super(props);
-
+    console.log(this.props);
     this.state = {
       controller: props.controller,
       clicked:false,
@@ -47,21 +48,6 @@ class ComponentRendererCore extends React.PureComponent {
 
     this.getStyle();
 
-  }
-
-  componentWillReceiveProps(nextProps){
-  }
-
-  decideType(data){
-    return (
-      data.path ? 'svg' :
-      data._class === 'text' ? 'text' :
-      data._class === 'image' ? 'image' :
-      data._class === 'page' || (data.shapeType && data.layers) || data._class === 'group' ?
-      this.props.isParent ? 'parent' :
-      data._class === 'group' ? 'group' :
-      'rect' : 'rect'
-    )
   }
 
   // TODO: Update this to check if component.interactions.clicked == true
@@ -91,19 +77,9 @@ class ComponentRendererCore extends React.PureComponent {
 
   getStyle() {
 
-    if(this.props.isParent)return;
-
-
-
-    // if(this.isSelected()){
-    //   return this.state.components.editStates[this.state.editState].style;
-    // }
-    //
-    // else{
-    //   return this.state.components.editStates['none'].style;
-    // }
+    if(this.props.isParent) return;
+    console.log(this.props)
     let props = this.props.component.state.states[this.props.component.state.current].props
-    console.log('states', this.props.component.state);
     let style = translatePropData('abstract','css',props)
 
     return style
@@ -235,14 +211,10 @@ class ComponentRendererCore extends React.PureComponent {
   }
 
   renderWrapper(content){
-
-    let style = this.getStyle();
-
+    let style =  this.getStyle();
     //Add in drag offset
-
     if(!this.props.isParent){
-
-      style = {...style,...this.calcDragOffset(style)}
+      style = {...style, ...this.calcDragOffset(style)}
 
     }
 
@@ -389,12 +361,11 @@ class ComponentRendererCore extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state,ownProps) {
+const mapStateToProps = (state,ownProps) => {
 
   let domain = getState(state,'domain');
   //tab root is the parent component
   let tabRoot = domain.tabs.allTabs[domain.tabs.activeTab]
-
   //return the tabRoot
   if(ownProps.isParent){
     return {
@@ -412,6 +383,62 @@ function mapStateToProps(state,ownProps) {
 
 }
 
-const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);
+const makePreviewComponent = (WrappedComponent,options) => {
+  return class PreviewComponent extends React.Component {
+    constructor(props){
+      super(props);
+      this.state = {
+        focused: false,
+      }
+    }
+    stopPropagation = f => e => {
+      e.stopPropagation();
+      return f(e)
+    }
+    onMouseDown(e){
+      console.log('down')
+    }
+    onMouseUp(e){
+      console.log('up')
+    }
+    onMouseEnter(e){
+      console.log('enter')
+    }
+    onMouseLeave(e){
+      console.log('leave')
+    }
+    onBlur(e){
+      this.setState({focused:false});
+      console.log('blurred')
+    }
+    onFocus(e){
+      this.setState({focused:true});
+      console.log('focused')
+    }
+    render(){
+      let events = _.mapValues({
+        onMouseDown: this.onMouseDown,
+        onMouseUp: this.onMouseUp,
+        onMouseEnter: this.onMouseEnter,
+        onMouseLeave: this.onMouseLeave,
+        onFocus: this.onFocus,
+        onBlur: this.onBlur,
+      }, f => this.stopPropagation(f.bind(this)));
+      return (
+        <div {...events} tabIndex={0}>
+          <WrappedComponent {...this.props}/>
+        </div>
+      )
+    }
+  }
+}
+
+const ComponentRenderer = makePreviewComponent(connect(mapStateToProps)(ComponentRendererCore));
+
+// let test = makePreviewComponent(ComponentRendererExport);
+// console.log(<ComponentRendererExport/>);
 
 export default ComponentRenderer
+
+
+// export default composedMakePreviewComponent(ComponentRenderer);
