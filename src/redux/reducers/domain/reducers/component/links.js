@@ -27,11 +27,11 @@ export const setLinkSource = (tabs, action) => {
 
   if(!action.payload) return { ...tabs }
 
-  let { linkId, source, target, triggers, disables } = action.payload
+  let { linkId, source, target, enables, disables } = action.payload
 
   let sourceComponent = getComponentFromCurrentTab(tabs, source);
 
-  triggers.forEach((event)=>{
+  enables.forEach((event)=>{
     sourceComponent.links.triggers[event].push(target);
   })
 
@@ -41,26 +41,9 @@ export const setLinkSource = (tabs, action) => {
 
   sourceComponent.links.targetStateIds[target] = linkId;
 
-  console.log(sourceComponent)
-
   return _.cloneDeep(tabs);
 
 }
-
-// export const setLinkSource = (links,action) => {
-//   const { domain, app } = action;
-//
-//   let selectionID = getSelectionFirstID(undefined,action.app);
-//
-//   if(!selectionID) return { ...links };
-//
-//   let newLink = createNewLink(action.payload.linkId);
-//   newLink.source = selectionID;
-//   links[newLink.id] = newLink;
-//
-//   //lazy way to return new object
-//   return _.cloneDeep(links);
-// }
 
 export const setLinkTarget = (tabs,action) => {
 
@@ -72,8 +55,6 @@ export const setLinkTarget = (tabs,action) => {
   let targetComponent = getComponentFromCurrentTab(tabs, target);
 
   targetComponent.state.states[linkState.id] = linkState;
-
-  console.log(targetComponent.state.states);
 
   return _.cloneDeep(tabs);
 }

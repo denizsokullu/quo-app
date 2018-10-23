@@ -383,39 +383,94 @@ const mapStateToProps = (state,ownProps) => {
 
 }
 
-const makePreviewComponent = (WrappedComponent,options) => {
+
+
+const makeEditComponent = (WrapperComponent) => {
+  // add selection & dragging here
+  return class EditComponent extends React.Component {
+
+  }
+}
+
+const makePreviewComponent = (WrappedComponent, options) => {
+  // add event listeners here
   return class PreviewComponent extends React.Component {
-    constructor(props){
-      super(props);
-      this.state = {
-        focused: false,
-      }
-    }
     stopPropagation = f => e => {
       e.stopPropagation();
       return f(e)
     }
+    findStates(trigger, type){
+      let states = _.omit(this.props.component.state.states, 'composite');
+      return _.values(_.pickBy(states, state => state[type].includes(trigger)));
+    }
+    addLinkStates(event){
+      const { dispatch } = this.props;
+      let links = this.props.component.links.triggers[event];
+      if(!links) return;
+      links.forEach( id => {
+        let linkId = this.props.component.links.targetStateIds[id];
+        dispatch(actions.ADD_STATE_TO_COMPOSITE({id:id, state:{ id:linkId }}))
+      })
+    }
+    removeLinkStates(event){
+      const { dispatch } = this.props;
+      let links = this.props.component.links.disables[event];
+      if(!links) return;
+      links.forEach( id => {
+        let linkId = this.props.component.links.targetStateIds[id];
+        dispatch(actions.REMOVE_STATE_FROM_COMPOSITE({id:id, state:{ id:linkId }}))
+      })
+    }
+    addStates(id,states){
+      const { dispatch } = this.props;
+      states.forEach(s => {
+        dispatch(actions.ADD_STATE_TO_COMPOSITE({id:id, state:s}))
+      })
+    }
+    removeStates(id,states){
+      const { dispatch } = this.props;
+      states.forEach(s => {
+        dispatch(actions.REMOVE_STATE_FROM_COMPOSITE({id:id, state:s}))
+      })
+    }
+    handleStates(event){
+      this.addStates(this.props.component.id, this.findStates(event,'ins'));
+      this.removeStates(this.props.component.id, this.findStates(event,'outs'));
+      this.addLinkStates(event);
+      this.removeLinkStates(event);
+    }
     onMouseDown(e){
-      console.log('down')
+      console.log('down');
+      this.handleStates('onMouseDown');
+      //apply onMouseDown states
+      //fire actions to trigger any state changes in other components
     }
     onMouseUp(e){
       console.log('up')
+      this.handleStates('onMouseUp');
     }
     onMouseEnter(e){
       console.log('enter')
+      this.handleStates('onMouseEnter');
     }
     onMouseLeave(e){
       console.log('leave')
+      this.handleStates('onMouseLeave');
     }
     onBlur(e){
-      this.setState({focused:false});
       console.log('blurred')
+      this.handleStates('onBlur');
     }
     onFocus(e){
-      this.setState({focused:true});
       console.log('focused')
+      this.handleStates('onFocus');
     }
     render(){
+      if(this.props.component.components){
+        return (
+          <WrappedComponent {...this.props}/>
+        )
+      }
       let events = _.mapValues({
         onMouseDown: this.onMouseDown,
         onMouseUp: this.onMouseUp,
@@ -433,7 +488,7 @@ const makePreviewComponent = (WrappedComponent,options) => {
   }
 }
 
-const ComponentRenderer = makePreviewComponent(connect(mapStateToProps)(ComponentRendererCore));
+const ComponentRenderer = connect(mapStateToProps)(makePreviewComponent(connect(mapStateToProps)(ComponentRendererCore)));
 
 // let test = makePreviewComponent(ComponentRendererExport);
 // console.log(<ComponentRendererExport/>);

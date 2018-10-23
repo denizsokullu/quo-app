@@ -25,28 +25,57 @@ export const updateComponentProps = (tabs,action) => {
   states[selectedState].props = _.mergeWith(sourceProps,propsToUpdate, (s,n) => n);
 
   // add the property to the composite
-  states.composite = addStateToComposite(states, selectedState);
+  // states.composite = addStateToCompositeHelper(states, selectedState);
   var t1 = performance.now();
   return _.cloneDeep(tabs);
 
 }
 
-const addStateToComposite = (states, selectedState) => {
+const addStateToCompositeHelper = (states, selectedState) => {
   let composite = states.composite;
-  let index = composite.modifiers.indexOf(selectedState);
-  if(index === -1){
+  if(!composite.modifiers.includes(selectedState)){
     composite.modifiers.push(selectedState);
   }
-  if(_.isEmpty(states[selectedState].props)){
-    //if its a composite modifier but empty, remove it
-    if(index !== -1){
-      composite.modifiers.splice(index, 1);
-    }
-  }
-  else {
+  console.log(states, selectedState)
+  //resort to guarantee execution order
+  composite.modifiers = composite.modifiers.sort( (id1,id2) => {
+    if(states[id1].order < states[id2].order) return -1;
+    else if(states[id1].order > states[id2].order) return 1;
+    return 0;
+  })
+  // if(_.isEmpty(states[selectedState].props)){
+  //   //if its a composite modifier but empty, remove it
+  //   if(index !== -1){
+  //     composite.modifiers.splice(index, 1);
+  //   }
+  // }
+  // else {
     //update the props to reflect the new
     // console.log(composite.modifiers.map(v => states[v]));
-    composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
-  }
-  return composite;
+  composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
+  // }
+  return _.cloneDeep(composite);
+}
+
+export const addStateToComposite = (tabs, action) => {
+  let id = action.payload.id;
+  let component = getComponentFromCurrentTab(tabs,id);
+  let states = component.state.states;
+  let composite = states.composite;
+  component.state.states.composite =  addStateToCompositeHelper(states, action.payload.state.id);
+  console.log('adding prop', action.payload.state.props)
+  console.log('added',_.cloneDeep(composite.props))
+  return _.cloneDeep(tabs);
+}
+
+export const removeStateFromComposite = (tabs, action) => {
+  let id = action.payload.id;
+  let state = action.payload.state;
+  let component = getComponentFromCurrentTab(tabs,id);
+  let states = component.state.states;
+  let composite = states.composite;
+  composite.modifiers = _.reject(composite.modifiers, id => id === state.id)
+  composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
+  console.log('removed',_.cloneDeep(composite.props))
+  return _.cloneDeep(tabs);
 }

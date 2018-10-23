@@ -17,49 +17,56 @@ import { ADD_MESSAGE } from '../../../redux/actions';
 //
 
 class LinksTab extends Component {
+  constructor(props){
+    super(props);
+    this.updateLinkBuilder = this.updateLinkBuilder.bind(this);
+  }
   createLink(){
     const { dispatch } = this.props;
     dispatch(actions.CREATE_LINK());
   }
-  setActionTrigger(){
+  updateLinkBuilder(data){
     const { dispatch } = this.props;
-    // dispatch()
-  }
-  setPropChange(){
-
+    dispatch(actions.UPDATE_LINK_BUILDER_DATA({ ...data }));
   }
   render(){
 
     const triggers = [
       {
         name:'Hover',
-        triggers:'onMouseEnter',
-        disables:'onMouseLeave',
+        actions:{
+          enables:['onMouseEnter'],
+          disables:['onMouseLeave'],
+        }
       },
       {
         name:'Press',
-        triggers:'onMouseDown',
-        disables:'onMouseUp',
+        actions: {
+          enables:['onMouseDown'],
+          disables:['onMouseUp'],
+        }
       },
       {
         name:'Click',
-        triggers:'onFocus',
-        disables:'onBlur',
+        actions: {
+          enables:['onFocus'],
+          disables:['onBlur'],
+        }
       },
     ]
 
     const propChanges = [
       {
-        name: 'Appears',
-        state: { opacity: 1 },
+        name: 'Appears(red)',
+        props: { fill:{r:255,g:0,b:0,a:1} },
       },
       {
-        name: 'Slides In',
-        state: { opacity: 1 },
+        name: 'Slides In(green)',
+        props: { fill:{r:0,g:255,b:0,a:1} },
       },
       {
-        name: 'Page Change',
-        state: { opacity: 1 },
+        name: 'Page Change(blue)',
+        props: { fill:{r:0,g:0,b:255,a:1} },
       },
     ]
 
@@ -75,9 +82,8 @@ class LinksTab extends Component {
           defaultValue={triggers[0].name}
           options={ triggers.map(t => t.name) }
           onChange={(value)=>{
-            const { dispatch } = this.props;
-            let currentTrig = triggers[_.findIndex(triggers,['name',value])];
-            dispatch(actions.ADD_MESSAGE({type:status, text: `Selected '${value}' as the option`,duration: 3000}))
+            let { actions } = triggers[_.findIndex(triggers,['name',value])];
+            this.updateLinkBuilder({ ...actions });
           }}
         />
 
@@ -91,8 +97,8 @@ class LinksTab extends Component {
           options={propChanges.map( p => p.name)}
           onChange={(value)=>{
             const { dispatch } = this.props;
-            let currentProp = propChanges[_.findIndex(propChanges,['name',value])];
-            dispatch(actions.ADD_MESSAGE({type:status,text:`Selected '${value}' as the option`,duration:1500}))
+            let { props } = propChanges[_.findIndex(propChanges,['name',value])];
+            this.updateLinkBuilder({ props })
           }}
         />
         <ButtonCore title='Create Link' onClick={this.createLink.bind(this)}/>

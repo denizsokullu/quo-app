@@ -96,10 +96,10 @@ export function initAbstractComponent(){
 
         initStates(data){
 
-            let base = new ComponentState('base',[],[],this.initStyleProps(data));
-            let hover = new ComponentState('hover',['onMouseOver'],['onMouseOut'],{});
-            let pressed = new ComponentState('pressed',['onMouseDown'],['onMouseUp'],{});
-            let focused = new ComponentState('focused',['onFocus'],['onBlur'],{});
+            let base = new ComponentState('base',[],[],this.initStyleProps(data),0);
+            let hover = new ComponentState('hover',['onMouseEnter'],['onMouseLeave'],{},1);
+            let pressed = new ComponentState('pressed',['onMouseDown'],['onMouseUp'],{},1);
+            let focused = new ComponentState('focused',['onFocus'],['onBlur'],{},1);
 
             let states = {
                 'composite':{

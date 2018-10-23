@@ -5,7 +5,7 @@ import { uploadSketch, uploadImage } from './reducers/upload';
 import { newTab, changeActiveTab, editTab, deleteTab } from './reducers/tabs';
 // Component Actions
 import { addComponent, removeComponent } from './reducers/component/component';
-import { updateComponentProps } from './reducers/component/props';
+import { updateComponentProps, addStateToComposite, removeStateFromComposite } from './reducers/component/props';
 import { setLinkSource, setLinkTarget } from './reducers/component/links';
 import { addComponentState } from './reducers/component/states';
 
@@ -33,6 +33,8 @@ const tabs = combineReducersLoop({
   'SET_LINK_SOURCE': setLinkSource,
   'SET_LINK_TARGET': setLinkTarget,
   'ADD_COMPONENT_STATE': addComponentState,
+  'ADD_STATE_TO_COMPOSITE': addStateToComposite,
+  'REMOVE_STATE_FROM_COMPOSITE': removeStateFromComposite,
 });
 
 const domain = combineReducers({

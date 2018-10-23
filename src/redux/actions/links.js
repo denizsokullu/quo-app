@@ -34,7 +34,7 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
     let linkName = 'link1'
     let source = getSelectionFirstID(getFullState(),app);
     if(!source) return;
-    dispatch(UPDATE_LINK_BUILDER_DATA({ source, linkId, mode: 'SOURCE_SELECTED' }));
+    dispatch(UPDATE_LINK_BUILDER_DATA({ source, linkId, mode: 'SOURCE_SELECTED', ...payload}));
     break
 
     case 'SOURCE_SELECTED':
@@ -45,15 +45,19 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
 
     case 'TARGET_SELECTED':
     // set the fake data for the time being
+    let linkBuilderData = { ...getLinkBuilder(app)};
+    console.log(linkBuilderData)
     let data = {
-      triggers:['onMouseEnter'],
-      disables:['onMouseLeave'],
-      linkState: new ComponentState('link1'),
+      // enables:['onMouseEnter'],
+      // disables:['onMouseLeave'],
+
+      //this should be set in the link builder reducer instead of here...
+      linkState: new ComponentState('link1',[],[],linkBuilderData.props,10,linkBuilderData.linkId),
     }
     // add in the data
     dispatch(UPDATE_LINK_BUILDER_DATA({ ...data }));
     // get the data
-    let linkBuilderData = { ...getLinkBuilder(app), ...data};
+    linkBuilderData = { ...getLinkBuilder(app), ...data};
 
     // pass the data to the components(source & target)
     dispatch(SET_LINK_SOURCE(linkBuilderData));

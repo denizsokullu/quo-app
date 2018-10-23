@@ -39,7 +39,7 @@ const mapStateToProps = (state) => {
   if (!component) return { cards: []};
   let cards = getCards(component).map( c => ({
     card: PropCards[c],
-    props: getPropsOfSelection(state,getPropsOfCard(c,component))
+    props: getPropsOfSelection(state, getPropsOfCard(c,component))
   }));
   return { cards, id:component.id }
 }
