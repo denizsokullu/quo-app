@@ -20,18 +20,25 @@ class LinksTab extends Component {
   constructor(props){
     super(props);
     this.updateLinkBuilder = this.updateLinkBuilder.bind(this);
+    this.setData();
   }
-  createLink(){
-    const { dispatch } = this.props;
-    dispatch(actions.CREATE_LINK());
-  }
-  updateLinkBuilder(data){
-    const { dispatch } = this.props;
-    dispatch(actions.UPDATE_LINK_BUILDER_DATA({ ...data }));
-  }
-  render(){
+  setData(){
+    this.defaultTrigger = 0
 
-    const triggers = [
+    // change it to this later
+
+    // this.triggers = {
+    //   hover: {
+    //     id: hover,
+    //     name: 'Hover',
+    //     actions:{
+    //       enables:['onMouseEnter'],
+    //       disables:['onMouseLeave'],
+    //     }
+    //   }
+    // }
+    
+    this.triggers = [
       {
         name:'Hover',
         actions:{
@@ -54,8 +61,8 @@ class LinksTab extends Component {
         }
       },
     ]
-
-    const propChanges = [
+    this.defaultProp = 0
+    this.propChanges = [
       {
         name: 'Appears(red)',
         props: { fill:{r:255,g:0,b:0,a:1} },
@@ -69,7 +76,26 @@ class LinksTab extends Component {
         props: { fill:{r:0,g:0,b:255,a:1} },
       },
     ]
+  }
 
+  componentDidMount(){
+    let { actions } = this.triggers[this.defaultTrigger];
+    let { props } = this.propChanges[this.defaultProp];
+    console.log({...actions, props});
+    this.updateLinkBuilder({...actions, props})
+  }
+
+  createLink(){
+    const { dispatch } = this.props;
+    dispatch(actions.CREATE_LINK());
+  }
+
+  updateLinkBuilder(data){
+    const { dispatch } = this.props;
+    dispatch(actions.UPDATE_LINK_BUILDER_DATA({ ...data }));
+  }
+
+  render(){
     return (
       <div className='links-tab-wrapper'>
       
@@ -79,10 +105,10 @@ class LinksTab extends Component {
 
         <DropdownCard
           title='Action'
-          defaultValue={triggers[0].name}
-          options={ triggers.map(t => t.name) }
+          defaultValue={this.triggers[this.defaultTrigger].name}
+          options={ this.triggers.map(t => t.name) }
           onChange={(value)=>{
-            let { actions } = triggers[_.findIndex(triggers,['name',value])];
+            let { actions } = this.triggers[_.findIndex(this.triggers,['name',value])];
             this.updateLinkBuilder({ ...actions });
           }}
         />
@@ -93,11 +119,11 @@ class LinksTab extends Component {
 
         <DropdownCard
           title='Property Change'
-          defaultValue={propChanges[0].name}
-          options={propChanges.map( p => p.name)}
+          defaultValue={this.propChanges[this.defaultProp].name}
+          options={this.propChanges.map( p => p.name)}
           onChange={(value)=>{
             const { dispatch } = this.props;
-            let { props } = propChanges[_.findIndex(propChanges,['name',value])];
+            let { props } = this.propChanges[_.findIndex(this.propChanges,['name',value])];
             this.updateLinkBuilder({ props })
           }}
         />
