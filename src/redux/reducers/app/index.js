@@ -5,7 +5,9 @@ import { updateSelection } from './reducers/selection';
 import { updateLinkBuilderData } from './reducers/links';
 
 const user = combineReducersLoop({})
-const appMode = combineReducersLoop({})
+const appMode = combineReducersLoop({
+  'SET_APP_MODE': (appMode, action) => action.payload
+})
 const selection = combineReducersLoop({
   'COMPONENT_SELECT':updateSelection,
 })

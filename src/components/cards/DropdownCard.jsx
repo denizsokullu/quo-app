@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { fSafe, bool2s } from 'utils'; 
 import { ButtonCore } from 'ui-components/buttons/buttons';
 import Card from './Card';
+import _ from 'lodash';
 
 export default class DropdownCard extends Component {
 
@@ -12,32 +13,24 @@ export default class DropdownCard extends Component {
       collapsed:PropTypes.bool,
       icon:PropTypes.element,
       defaultValue:PropTypes.string.isRequired,
-      options:PropTypes.arrayOf(PropTypes.string).isRequired,
-      lineIndices:PropTypes.arrayOf(PropTypes.number),
+      options: PropTypes.objectOf(PropTypes.string),
       onChange:PropTypes.func,
-    }
-  
-    static defaultProps = {
-      lineIndices: [],
     }
   
     constructor(props){
       super(props);
       this.state = {
-        selected:this.props.defaultValue,
-        dropdownVisible:false,
+        selected: this.props.defaultValue,
+        dropdownVisible: false,
       }
-  
-      this.updateSelected = this.updateSelected.bind(this);
-      this.updateDropdownVisibility = this.updateDropdownVisibility.bind(this);
     }
   
-    updateSelected(value){
-      this.setState({selected:value});
-      fSafe(this.props.onChange,value);
+    updateSelected = (id) => {
+      this.setState({selected: id});
+      fSafe(this.props.onChange, id);
     }
   
-    updateDropdownVisibility(value){
+    updateDropdownVisibility = (value) => {
       if(value) this.setState({dropdownVisible:value})
       this.setState({dropdownVisible: !this.state.dropdownVisible})
     }
@@ -45,22 +38,16 @@ export default class DropdownCard extends Component {
     renderDropdown (){
       return (
         <ul>
-        { this.props.options.map((value,i)=>{
-          let line = this.props.lineIndices.includes(i);
-          let selected = this.state.selected === value ? 'selected' : '';
+        { _.keys(this.props.options).map(((id)=>{
+          let selected = this.state.selected === id ? 'selected' : '';
           return(
-            <React.Fragment key={i}>
-            <li className={selected} onClick={()=>{
-              this.updateSelected(value)
+            <li className={selected} key={id} onClick={()=>{
+              this.updateSelected(id)
               this.updateDropdownVisibility(false)
             }}>
-              {value}
+              {this.props.options[id]}
             </li>
-            {
-              line ? <li className='line'/> : null
-            }
-          </React.Fragment>
-          )})
+          )}))
         }
       </ul>
       )
@@ -71,14 +58,14 @@ export default class DropdownCard extends Component {
         <React.Fragment>
         <Card { ...this.props } className='dropdown-card'>
           <div className='dropdown-selected' onClick={this.updateDropdownVisibility}>
-              {this.state.selected}
+              {this.props.options[this.state.selected]}
             </div>
         </Card>
         {
           this.state.dropdownVisible ?
           <div className='card-dropdown-options-wrapper'>
             { this.renderDropdown() }
-            <ButtonCore title='Cancel' onClick={()=>{this.updateDropdownVisibility(false)}}/>
+            <ButtonCore title='Cancel' onClick={() => {this.updateDropdownVisibility(false)}}/>
           </div> : null
         }
         </React.Fragment>

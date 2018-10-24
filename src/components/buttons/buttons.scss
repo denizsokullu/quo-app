@@ -13,11 +13,19 @@
   font-size:$button-font-size;
   // transition:.2s ease-in-out background-color;
 
+  &.selected {
+
+    background-color:$color-blue;
+
+  }
+
   &:hover {
 
     cursor:pointer;
-    background-color:$color-button-hover;
-
+    &:not(.selected){
+      background-color:$color-button-hover;
+    }
+    
   }
 
   &:focus {
