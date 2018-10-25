@@ -25,7 +25,7 @@ const linkBuilder = {
   linkId: '',
   source: '',
   target: '',
-  triggers: [],
+  enables: [],
   disables: [],
   linkState: undefined,
 }

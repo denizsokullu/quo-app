@@ -6,8 +6,11 @@
   left:0;
   width:100%;
   display:flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
   padding:0 1rem;
   box-sizing:border-box;
+  & > div {
+    margin-right: 1rem;
+  }
 }

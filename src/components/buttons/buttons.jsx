@@ -3,22 +3,28 @@ import PropTypes from 'prop-types';
 
 
 class ButtonCore extends React.Component {
-    render() {
-      return (
-        <div className={this.props.className}>
-          <button
-            className='button-inner' onClick={this.props.onClick}>
-            {this.props.title}
-          </button>
-        </div>
-      );
-    }
-}
+  
+  static propTypes = {
+    title:PropTypes.string.isRequired,
+    onClick:PropTypes.func,
+    selected:PropTypes.bool,
+  }
 
-ButtonCore.propTypes = {
-  title:PropTypes.string.isRequired,
-  onClick:PropTypes.func,
-}
+  static defaultProps = {
+    selected: false
+  }
 
+  render() {
+    let selected = this.props.selected ? 'selected' : ''
+    return (
+      <div className={this.props.className}>
+        <button
+          className={`button-inner ${selected}`} onClick={this.props.onClick}>
+          {this.props.title}
+        </button>
+      </div>
+    );
+  }
+}
 
 export { ButtonCore }

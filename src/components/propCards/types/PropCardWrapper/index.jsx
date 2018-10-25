@@ -2,11 +2,10 @@ import React from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import { connect } from 'react-redux';
 
-class PropCard extends React.Component{
+class PropCardWrapper extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      title:this.props.title,
       enabled:true
     }
     this.onCheckChange = this.onCheckChange.bind(this);
@@ -27,7 +26,7 @@ class PropCard extends React.Component{
     return(
       <div className={`prop-card ${isHalf} ${isDisabled}`} id={`card-${id}`}>
         <div className='prop-card-header'>
-          {this.state.title}
+          {this.props.title}
           <Checkbox
             checked={this.state.enabled}
             value={this.props.title}
@@ -45,4 +44,4 @@ function mapStateToProps(state) {
 }
 
 
-export default PropCard
+export default PropCardWrapper
