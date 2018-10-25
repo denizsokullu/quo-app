@@ -1,7 +1,7 @@
 // import Blur from './types/blur';
 // import Border from './types/border';
 // import CopyState from './types/copyState';
-// import Fill from './types/Fill';
+import Fill from './types/fill';
 // import Layers from './types/layers';
 // import Movement from './types/movement';
 import Position from './types/position';
@@ -12,7 +12,7 @@ const PropCards =  {
                     // Blur,
                     //  Border,
                     //  CopyState,
-                    //  Fill,
+                     Fill,
                     //  Layers,
                     //  Movement,
                      Position,
