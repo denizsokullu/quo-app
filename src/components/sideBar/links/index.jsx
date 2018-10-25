@@ -17,9 +17,9 @@ class LinksTab extends Component {
   data = {
     defaultTrigger: 'hover',
     triggers: {
-      hover: trigger('hover','Hover', actions: { enables:['onMouseEnter'],disables:['onMouseLeave'] }),
-      press: trigger('press','Press', actions: { enables:['onMouseDown'],disables:['onMouseUp'] }),
-      click: trigger('click','Click', actions: { enables:['onFocus'],disables:['onBlur'] })
+      hover: trigger('hover','Hover', { enables:['onMouseEnter'], disables:['onMouseLeave'] }),
+      press: trigger('press','Press', { enables:['onMouseDown'], disables:['onMouseUp'] }),
+      click: trigger('click','Click', { enables:['onFocus'], disables:['onBlur'] })
     },
     defaultPropChange: 'appears',
     propChanges: {
@@ -32,7 +32,7 @@ class LinksTab extends Component {
   componentDidMount(){
     let { actions } = this.data.triggers[this.data.defaultTrigger];
     let { props } = this.data.propChanges[this.data.defaultPropChange];
-    this.updateLinkBuilder({...actions, props})
+    this.updateLinkBuilder({ ...actions, props})
   }
 
   createLink = () => {

@@ -75,6 +75,13 @@ $artboard-size-h:2100px;
     outline:none;
   }
 
+  .edit-component, .preview-component {
+    position:absolute;
+    &:focus {
+      outline: none;
+    }
+  }
+
   .component-container {
 
     left:0;
@@ -85,12 +92,12 @@ $artboard-size-h:2100px;
       fill:transparent;
     }
 
-    &.child.hover-active:hover {
+    // &.child.hover-active:hover {
 
-      outline:2px solid $highlight-color;
-      cursor:default;
+    //   outline:2px solid $highlight-color;
+    //   cursor:default;
 
-    }
+    // }
 
     &.component-text {
 

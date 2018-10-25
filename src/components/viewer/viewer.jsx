@@ -1,14 +1,15 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {connect} from 'react-redux';
-import ComponentRenderer from './componentRenderer';
 import actions from 'quo-redux/actions';
 import { getState } from 'quo-redux/state';
 
-import { dimensions } from '../constants/constants'
-
+import { dimensions } from '../constants/constants';
 import SelectionFrame from '../selectionFrame';
+
+import EditComponent from './EditComponent';
+import PreviewComponent from './PreviewComponent';
 
 
 //fix this to incorporate changing sidebar sizes
@@ -207,8 +208,10 @@ class Viewer extends React.Component {
   }
 
   renderComponents(){
+    const ComponentRenderClass = this.props.appMode === 'EDIT' ? EditComponent : PreviewComponent
+    console.log(ComponentRenderClass)
     return (
-      <ComponentRenderer
+      <ComponentRenderClass
         style={{
             left:'750px',
             top:'525px',
@@ -317,6 +320,7 @@ function mapStateToProps(state) {
   return {
     controller:ui.controller,
     activeTab:activeTab,
+    appMode: app.appMode,
   }
 }
 

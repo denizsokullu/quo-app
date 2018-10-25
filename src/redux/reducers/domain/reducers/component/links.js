@@ -51,10 +51,11 @@ export const setLinkTarget = (tabs,action) => {
 
   let { linkId, source, target, triggers, disables, linkState } = action.payload
 
-
   let targetComponent = getComponentFromCurrentTab(tabs, target);
 
   targetComponent.state.states[linkState.id] = linkState;
+
+  console.log('states',targetComponent.state.states[linkState.id]);
 
   return _.cloneDeep(tabs);
 }

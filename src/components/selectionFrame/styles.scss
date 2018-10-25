@@ -9,7 +9,7 @@
   box-shadow:0px 0px 1px rgba(0,0,0,.3);
   border:1px solid rgba(0,0,0,.3);
   position:absolute;
-
+  z-index: 2;
 
   &.top{
     top:$border-offset;
@@ -36,6 +36,7 @@
   $line-thickness: 1px;
   background-color:rgba(255,255,255,.4);
   position:absolute;
+  z-index: 2;
   &.h {
     width:100%;
     height:$line-thickness;

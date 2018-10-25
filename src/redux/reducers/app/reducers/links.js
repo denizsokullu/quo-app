@@ -1,4 +1,10 @@
 export const updateLinkBuilderData = (linkBuilder,action) => {
-  console.log({ ...linkBuilder, ...action.payload })
+  if(action.payload.mode && action.payload.mode === 'INIT'){
+    linkBuilder.source = '';
+    linkBuilder.target = '';
+    linkBuilder.linkId = '';
+    linkBuilder.enables = [];
+    linkBuilder.disables = [];
+  }
   return { ...linkBuilder, ...action.payload };
 }

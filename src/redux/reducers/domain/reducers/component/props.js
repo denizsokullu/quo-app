@@ -27,6 +27,7 @@ export const updateComponentProps = (tabs,action) => {
   // add the property to the composite
   // states.composite = addStateToCompositeHelper(states, selectedState);
   var t1 = performance.now();
+
   return _.cloneDeep(tabs);
 
 }
@@ -36,13 +37,12 @@ const addStateToCompositeHelper = (states, selectedState) => {
   if(!composite.modifiers.includes(selectedState)){
     composite.modifiers.push(selectedState);
   }
-  console.log(states, selectedState)
   //resort to guarantee execution order
-  composite.modifiers = composite.modifiers.sort( (id1,id2) => {
-    if(states[id1].order < states[id2].order) return -1;
-    else if(states[id1].order > states[id2].order) return 1;
-    return 0;
-  })
+  // composite.modifiers = composite.modifiers.sort( (id1,id2) => {
+  //   if(states[id1].order < states[id2].order) return -1;
+  //   else if(states[id1].order > states[id2].order) return 1;
+  //   return 0;
+  // })
   // if(_.isEmpty(states[selectedState].props)){
   //   //if its a composite modifier but empty, remove it
   //   if(index !== -1){
@@ -63,7 +63,6 @@ export const addStateToComposite = (tabs, action) => {
   let states = component.state.states;
   let composite = states.composite;
   component.state.states.composite =  addStateToCompositeHelper(states, action.payload.state.id);
-  console.log('adding prop', action.payload.state.props)
   console.log('added',_.cloneDeep(composite.props))
   return _.cloneDeep(tabs);
 }
