@@ -11,8 +11,6 @@ import ColorPicker from 'ui-components/inputElements/colorPicker';
 import { SketchPicker } from 'react-color';
 import PropCard from '../PropCardWrapper';
 
-
-
 class Fill extends React.Component{
   constructor(props){
     super(props);
@@ -51,7 +49,6 @@ class Fill extends React.Component{
 
            <ColorPicker title='Color' color={ this.state.color } handleClick={ this.handleClick }/>
            <SliderCore title='Opacity' step={1} min={0} max={100} value={parseInt(this.state.color.a * 100)} handleOnChange={this.handleSliderChange}/>
-    {/*<span className='opacity-text'>{parseInt(parseFloat(this.state.color.a)*100)}%</span> */}
           <TextInput title='' text={parseInt(this.state.color.a * 100)} type='percentage' after="%"/>
         </PropCardWrapper>
         {
