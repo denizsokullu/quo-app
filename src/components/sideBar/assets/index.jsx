@@ -80,8 +80,25 @@ class AssetsViewer extends Component {
   }
 
   renderFirstDepthComponents(){
+
+    if(!this.state.selected){
+      return(
+        <div className='no-assets'>
+          No assets found
+        </div>
+      )
+    }
+
     //find all the artboards
+    let allArtboards = [];
+
+    _.mapValues(this.props.assets,(pages) => {
+     allArtboards =  _.union(allArtboards, pages.children);
+    })
+
     let artboardIDs = this.props.assets[this.state.selected.id].children;
+
+    
     //search all the first depth components
 
     let firstDepthComponents = artboardIDs.map( artboardID =>{
@@ -104,19 +121,14 @@ class AssetsViewer extends Component {
     firstDepthComponents = flattenedfirstDepthComponents;
 
     return (
-        !_.isEmpty(firstDepthComponents) ?
-          <div className='asset-preview-table'>
-            {
-              Object.keys(firstDepthComponents).map((o,i)=>{
-                let component = firstDepthComponents[o]
-                return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
-              })
-            }
-          </div>
-        :
-         <div className='no-assets'>
-           Drop your assets here
-         </div>
+      <div className='asset-preview-table'>
+        {
+          Object.keys(firstDepthComponents).map((o,i)=>{
+            let component = firstDepthComponents[o]
+            return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
+          })
+        }
+      </div>
     )
   }
 
@@ -137,7 +149,7 @@ class AssetsViewer extends Component {
         </div>
         <div className='assets-preview-wrapper'>
           {
-            this.state.selected ? this.renderFirstDepthComponents() : null
+            this.renderFirstDepthComponents()
           }
         </div>
       </div>
@@ -149,7 +161,6 @@ class AssetPreview extends Component {
   constructor(props){
     super(props);
     this.addAssetToEditor = this.addAssetToEditor.bind(this);
-    console.log(this.props.component);
     this.state = {}
   }
   addAssetToEditor(){
@@ -160,45 +171,34 @@ class AssetPreview extends Component {
                             component:this.props.component}));
   }
   componentDidMount(){
-    let preview = ReactDOM.findDOMNode(this);
-    let container = preview.querySelector('.asset-preview-image')
-    let containerDimensions = container.getBoundingClientRect();
 
-    let cDimensions = {
-      w: containerDimensions.width,
-      h: containerDimensions.height
-    }
+      let preview = ReactDOM.findDOMNode(this);
+      let container = preview.querySelector('.asset-preview-image')
+      let containerDimensions = container.getBoundingClientRect();
+  
+      let cDimensions = {
+        w: containerDimensions.width,
+        h: containerDimensions.height
+      }
+  
+      let snapshot = document.getElementById(`snapshot-${this.props.component.id}`);
+  
+      let eDimensions = {
+        w: this.props.component.state.states.composite.props.width,
+        h: this.props.component.state.states.composite.props.height
+      } 
+  
+      let suitableDimensions = computeRatio(eDimensions, cDimensions);
+  
+      //don't make things bigger, just resize them down.
+      if( eDimensions.w < cDimensions.w && eDimensions.h < cDimensions.h ){
+        suitableDimensions = eDimensions;
+      }
+  
+      let data = convertSnapshot(snapshot, suitableDimensions.w, suitableDimensions.h);
+  
+      this.setState({snapshotData:data});
 
-    let snapshot = document.getElementById(`snapshot-${this.props.component.id}`);
-
-    let eDimensions = {
-      w: this.props.component.state.states.composite.props.width,
-      h: this.props.component.state.states.composite.props.height
-    } 
-
-    let suitableDimensions = computeRatio(eDimensions, cDimensions);
-
-    let ratio = suitableDimensions.w / eDimensions.w;
-
-    if(ratio > 1) ratio = 1;
-
-    // let targetWidth = Math.min(suitableDimensions.w,eDimensions.w);
-    // let targetHeight = Math.min(suitableDimensions.h,eDimensions.h);
-    let targetDimensions = suitableDimensions;
-
-    if( eDimensions.w < cDimensions.w && eDimensions.h < cDimensions.h ){
-      targetDimensions = eDimensions;
-    }
-
-    let data = convertSnapshot(snapshot, targetDimensions.w, targetDimensions.h);
-
-    // console.log(this.props.component.name, suitableDimensions,eDimensions,ratio)
-
-    this.setState({snapshotData:data, ratio:ratio});
-
-    // let containerDimensions = 
-
-    // let resizeRatio = {x:size.w/style.width,y:size.h/style.height}
   }
   render(){
     let source = {
@@ -213,13 +213,9 @@ class AssetPreview extends Component {
         <div className='asset-preview-image'>
         {
           this.state.snapshotData ? 
-            <img src={this.state.snapshotData} 
-            // style={{
-            //   transform:`scale(${this.state.ratio})`
-            //  }}
-             />
+            <img src={this.state.snapshotData}/>
           :
-          <SnapshotComponent source={source} id={this.props.component.id} assets/>
+          <SnapshotComponent source={source} id={this.props.component.id} assets isParent/>
         }
         </div>
 

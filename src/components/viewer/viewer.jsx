@@ -10,6 +10,7 @@ import SelectionFrame from '../selectionFrame';
 
 import EditComponent from './EditComponent';
 import PreviewComponent from './PreviewComponent';
+import SnapshotComponent from './SnapshotComponent';
 
 
 //fix this to incorporate changing sidebar sizes

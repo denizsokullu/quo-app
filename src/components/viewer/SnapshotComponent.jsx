@@ -14,10 +14,13 @@ import ComponentRender from '../viewer/ComponentRender';
 const makeSnapshotComponent = (WrappedComponent, options) => {
   return class extends React.Component {
     createWrapperProps = () => {
+      let className = 'snapshot-component'
+      if(this.props.isParent) className += ' snapshot-parent'
       const id = `snapshot-${this.props.component.id}`
       const style = this.getStyleProps();
-
+      style.position = 'absolute';
       return { 
+               className,
                id, 
                style,
              }
@@ -25,8 +28,10 @@ const makeSnapshotComponent = (WrappedComponent, options) => {
     }
 
     getStyleProps = () => {
-      if(this.props.isParent) return { ...this.props.style }
       const props = this.props.component.state.states.composite.props
+      if(this.props.isParent){
+        return translatePropData('abstract', 'css', _.pick(props,['width','height']));
+      }
       return translatePropData('abstract', 'css', _.pick(props,['width','height','x','y']));
     }
     
@@ -63,6 +68,8 @@ const convertSnapshot = (origElem, width, height, left, top) => {
   // unfortunately, SVG can only eat well formed XHTML
   elem.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
 
+
+  console.log(elem);
   // serialize the DOM node to a String
   var serialized = new XMLSerializer().serializeToString(elem);
 
@@ -73,17 +80,6 @@ const convertSnapshot = (origElem, width, height, left, top) => {
       serialized +
       "</foreignObject>" +
     "</svg>";
-  // return dataUri
-  // create new, actual image
-  // var img = new Image();
-  // img.src = dataUri;
-  // when loaded, fire onload callback with actual image node
-  // img.onload = function() {
-  //   if(callback) {
-  //     callback.call(this, this);
-  //   }
-  // };
-
 }
 
 const mapStateToProps = (state,ownProps) => {

@@ -59,6 +59,9 @@ $artboard-size-h:2100px;
   border:20px dashed rgba(255,255,255,.8);
 
 }
+.snapshot-parent {
+  position: relative;
+}
 
 .component-viewer-bg {
   &.edit-mode {
@@ -85,7 +88,7 @@ $artboard-size-h:2100px;
   }
 
   .edit-component, .preview-component {
-    position:absolute;
+    position: absolute;
     &:focus {
       outline: none;
     }

@@ -9,7 +9,7 @@ class ShapeComponent extends CoreComponent{
   }
 
   getDimensionsCSS(props){
-    return translatePropData('abstract','css',{height:props.height,width:props.width});
+    return translatePropData('abstract','css',{height:props.height, width:props.width});
   }
 
   getStyleCSS(props){
@@ -23,7 +23,7 @@ class ShapeComponent extends CoreComponent{
     const dimensions = this.getDimensionsCSS(props);
 
     return(
-      <svg style={{position:'absolute',...dimensions,...style}}>
+      <svg style={{...dimensions,...style}}>
         <path d={this.props.component.pathData}/>
       </svg>
     )
