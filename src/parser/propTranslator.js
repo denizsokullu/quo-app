@@ -54,7 +54,7 @@ class Translator {
   static sketch = (to,data) => {
     let allProps = {};
     const addProp = (prop,val) => {
-      _.merge(allProps,convertProps('sketch',to,prop,val));
+      _.merge(allProps, convertProps('sketch',to,prop,val));
     }
 
     if(data.frame){
@@ -69,8 +69,8 @@ class Translator {
       if(s.borders){
         let eProp = pickEnabledProp(s.borders);
         if(eProp){
-          addProp('border thickness',eProp.thickness);
-          addProp('border color',eProp.color);
+          addProp('border thickness', eProp.thickness);
+          addProp('border color', eProp.color);
           addProp('border style','solid');
         }
       }
@@ -85,7 +85,25 @@ class Translator {
 
     if(data._class === 'text'){
       addProp('textString',data.attributedString.string);
+      //gets the first attribute blob
+      let attributes = data.attributedString.attributes[0].attributes;
+
+      if(attributes){
+        console.log(attributes);
+        let color = attributes.MSAttributedStringColorAttribute
+        let font = attributes.MSAttributedStringFontAttribute
+        if(color) addProp('fontColor', color);
+        if(font){
+          let fontName = font.attributes.name;
+          let fontSize = font.attributes.size;
+          if(fontName) addProp('fontFamily', fontName);
+          if(fontSize) addProp('fontSize', fontSize);
+        }
+      }
+      console.log(allProps)
     }
+
+
 
     //add border radius for rectangular shapes
     //the border also exists for non-rectangular shapes

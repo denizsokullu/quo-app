@@ -170,23 +170,30 @@ class AssetPreview extends Component {
                             page:this.props.page,
                             component:this.props.component}));
   }
-  componentDidMount(){
 
-      let preview = ReactDOM.findDOMNode(this);
-      let container = preview.querySelector('.asset-preview-image')
-      let containerDimensions = container.getBoundingClientRect();
-  
-      let cDimensions = {
-        w: containerDimensions.width,
-        h: containerDimensions.height
-      }
-  
+  getContainerDimensions(){
+    let preview = ReactDOM.findDOMNode(this);
+    let container = preview.querySelector('.asset-preview-image')
+    let containerDimensions = container.getBoundingClientRect();
+
+    return {
+      w: containerDimensions.width,
+      h: containerDimensions.height
+    }
+  }
+
+  getComponentDimensions(){
+    return {
+      w: this.props.component.state.states.composite.props.width,
+      h: this.props.component.state.states.composite.props.height
+    } 
+  }
+
+  componentDidMount(){
+      let cDimensions = this.getContainerDimensions();
+      let eDimensions = this.getComponentDimensions()
+
       let snapshot = document.getElementById(`snapshot-${this.props.component.id}`);
-  
-      let eDimensions = {
-        w: this.props.component.state.states.composite.props.width,
-        h: this.props.component.state.states.composite.props.height
-      } 
   
       let suitableDimensions = computeRatio(eDimensions, cDimensions);
   

@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from 'quo-redux/actions';
 
-import { translatePropData } from '../../parser/propTranslator';
+import { translatePropData } from 'parser/propTranslator';
 
 import { getState } from 'quo-redux/state';
 

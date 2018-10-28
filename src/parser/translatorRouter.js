@@ -95,30 +95,30 @@ export const router = {
           translate:commonTranslators.sketch.abstract.color,
         },
       },
-      fontSize:{
-        prop:'font-size',
-        translate:commonTranslators.id,
-      },
-      fontFamily:{
-        prop:'font-family',
-        translate:commonTranslators.id,
-      },
-      color:{
-        prop:'font-color',
-        translate:commonTranslators.sketch.abstract.color,
-      },
       backgroundColor:{
         prop:'background',
         translate:commonTranslators.sketch.abstract.color,
       },
       fill:{
         prop:'fill',
-        translate:commonTranslators.sketch.abstract.color,
+        translate: commonTranslators.sketch.abstract.color,
       },
       textString:{
         prop:'textString',
         translate:commonTranslators.id,
       },
+      fontColor: {
+        prop:'font-color',
+        translate: commonTranslators.sketch.abstract.color,
+      },
+      fontFamily: {
+        prop: 'font-family',
+        translate: commonTranslators.id,
+      },
+      fontSize: {
+        prop: 'font-size',
+        translate:commonTranslators.id,
+      }
       //
     }
   },
@@ -163,6 +163,18 @@ export const router = {
           return returnObj
         }
       },
+      'font-color': {
+        prop:'color',
+        translate: commonTranslators.abstract.css.color,
+      },
+      'font-family': {
+        prop: 'font-family',
+        translate: (v) => `"${v}", sans-serif`,
+      },
+      'font-size': {
+        prop: 'font-size',
+        translate: commonTranslators.abstract.css.int2px,
+      }
       // 'border-width':{
       //   prop:'border-width',
       //   translate:commonTranslators.abstract.css.int2px,

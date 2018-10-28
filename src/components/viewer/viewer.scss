@@ -94,6 +94,41 @@ $artboard-size-h:2100px;
     }
   }
 
+  .text-component {
+
+    .text-inner {
+      user-select:none;
+      margin:0;
+    }
+
+    .text-outer {
+      width:100%;
+      height:100%;
+      overflow:hidden;
+    }
+
+    .text-outer.edit-mode ~ .selection-frame,
+    .text-outer.edit-mode ~ .selection-line {
+      display:none;
+    }
+
+    &:hover {
+      outline:none;
+      cursor:default;
+
+      .text-outer:not(.edit-mode) {
+
+        box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
+
+      }
+
+
+
+    }
+
+
+  }
+
   .component-container {
 
     left:0;
@@ -110,41 +145,6 @@ $artboard-size-h:2100px;
     //   cursor:default;
 
     // }
-
-    &.component-text {
-
-      .text-inner {
-        user-select:none;
-        margin:0;
-      }
-
-      .text-outer {
-        width:100%;
-        height:100%;
-        overflow:hidden;
-      }
-
-      .text-outer.edit-mode ~ .selection-frame,
-      .text-outer.edit-mode ~ .selection-line {
-        display:none;
-      }
-
-      &:hover {
-        outline:none;
-        cursor:default;
-
-        .text-outer:not(.edit-mode) {
-
-          box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
-
-        }
-
-
-
-      }
-
-
-    }
 
     &.component-artboard {
       &:hover{
