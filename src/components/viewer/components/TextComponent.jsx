@@ -44,8 +44,7 @@ class TextComponent extends CoreComponent{
     }
 
     getText(){
-      console.log(this.props.component.state.states.composite.props)
-        return 'asdasdasdasdasd'
+        return this.props.component.state.states.composite.props.textString
     }
 
     textUpdate(str){
@@ -110,7 +109,10 @@ class TextComponent extends CoreComponent{
     render(){
       // return ( this.renderTextElement() )
       return (
-        <p className='text-inner'>
+        <p className='text-inner' style={{
+            fontFamily: `"Roboto", sans-serif`,
+            fontSize: '8px',
+        }}>
         { this.getText() }
         </p>
       )

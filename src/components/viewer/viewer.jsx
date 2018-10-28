@@ -26,7 +26,7 @@ const viewerSize = {
   h: viewerHeight,
 }
 
-const mainArtboardSize = {w:1500,h:1050}
+const mainArtboardSize = { w:1500, h:1050 }
 
 const zoomBorderThreshold = 100;
 
@@ -209,7 +209,6 @@ class Viewer extends React.Component {
 
   renderComponents(){
     const ComponentRenderClass = this.props.appMode === 'EDIT' ? EditComponent : PreviewComponent
-    console.log(ComponentRenderClass)
     return (
       <ComponentRenderClass
         style={{
@@ -237,6 +236,7 @@ class Viewer extends React.Component {
 
   renderViewer(){
     let draggableClass = this.state.draggable ? 'draggable' : ''
+    let bgClass = this.props.appMode === 'EDIT' ? 'edit-mode' : 'preview-mode'
     const pos = this.state.viewerPos
     return (
       <React.Fragment>
@@ -250,7 +250,7 @@ class Viewer extends React.Component {
 
         {/* Background of the Viewer */}
         <div
-          className='component-viewer-bg'
+          className={`component-viewer-bg ${bgClass}`}
           ref={ c => this.viewerBg = c}
           onClick={this.onClick}
           style={{

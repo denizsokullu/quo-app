@@ -17,9 +17,6 @@ import CoreComponent from './components/CoreComponent';
 import ImageComponent from './components/ImageComponent';
 import ShapeComponent from './components/ShapeComponent';
 import TextComponent from './components/TextComponent';
-import { consolidateStreamedStyles } from 'styled-components';
-
-import EditComponent from './EditComponent';
 
 class ComponentRenderCore extends React.PureComponent {
   render = () => {
@@ -40,6 +37,7 @@ class ComponentRenderCore extends React.PureComponent {
                   <Wrapper
                     id={id}
                     key={id}
+                    source={this.props.source}
                   />
                 )
               })
@@ -50,28 +48,4 @@ class ComponentRenderCore extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state,ownProps) => {
-
-  let domain = getState(state,'domain');
-  //tab root is the parent component
-  let tabRoot = domain.tabs.allTabs[domain.tabs.activeTab]
-  //return the tabRoot
-  if(ownProps.isParent){
-    return {
-      component:tabRoot,
-    }
-  }
-
-  //return the component
-  else{
-    let component = tabRoot.components[ownProps.id];
-    return {
-      component:component,
-    }
-  }
-
-}
-
-const ComponentRender = connect(mapStateToProps)(ComponentRenderCore);
-
-export default ComponentRender
+export default ComponentRenderCore

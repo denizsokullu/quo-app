@@ -34,9 +34,10 @@ class Message extends Component {
         const { dispatch } = this.props
         dispatch(actions.REMOVE_MESSAGE({id:this.props.message.id}))
       },400)
-    },this.props.message.duration)
+    }, this.props.message.duration)
   }
-  componentDidMount(){
+  
+  componentWillMount(){
     this.setSelfDestructTimer();
   }
 
@@ -51,8 +52,9 @@ class Message extends Component {
 }
 
 const mapState = (state) =>{
-  return { messages:getState(state,'ui').messages };
+  return { messages: getState(state,'ui').messages };
 }
 
 Message = connect()(Message)
+
 export default connect(mapState)(MessageStack)

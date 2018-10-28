@@ -60,6 +60,15 @@ $artboard-size-h:2100px;
 
 }
 
+.component-viewer-bg {
+  &.edit-mode {
+    background-color:$color-bg-5;
+  }
+  &.preview-mode {
+    background-color:white;
+  }
+}
+
 .scroll-fixer{
   width:2000px;
   height:2000px;

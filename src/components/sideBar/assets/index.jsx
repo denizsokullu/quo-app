@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
+import { getState } from 'quo-redux/state';
 import { LayerCard } from '../../styleCard/styleCard';
 import _ from 'lodash';
 
 import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
 import actions from '../../../redux/actions';
+
+import SnapshotComponent, { convertSnapshot, computeRatio } from 'ui-components/viewer/SnapshotComponent';
 
 class AssetsTab extends Component {
   constructor(props){
@@ -42,28 +46,6 @@ class AssetsTab extends Component {
   }
 }
 
-class AssetPreview extends Component {
-  constructor(props){
-    super(props);
-    this.addAssetToEditor = this.addAssetToEditor.bind(this);
-  }
-  addAssetToEditor(){
-    const { dispatch } = this.props;
-    dispatch(actions.ADD_COMPONENT({source:this.props.source,
-                            filetype:this.props.filetype,
-                            page:this.props.page,
-                            component:this.props.component}));
-  }
-  render(){
-    return (
-      <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
-        <div className='asset-preview-title'>{this.props.title}</div>
-        <div className='asset-preview-image'></div>
-      </div>
-    )
-  }
-}
-
 class AssetsViewer extends Component {
   constructor(props){
     super(props);
@@ -75,7 +57,6 @@ class AssetsViewer extends Component {
     this.state = {
       pages:pages,
       selected:selected,
-      fakeAssets:new Array(30).fill(0),
     }
     this.onPageChange = this.onPageChange.bind(this);
   }
@@ -134,7 +115,7 @@ class AssetsViewer extends Component {
           </div>
         :
          <div className='no-assets'>
-           No artboards with assets found
+           Drop your assets here
          </div>
     )
   }
@@ -164,6 +145,88 @@ class AssetsViewer extends Component {
   }
 }
 
+class AssetPreview extends Component {
+  constructor(props){
+    super(props);
+    this.addAssetToEditor = this.addAssetToEditor.bind(this);
+    console.log(this.props.component);
+    this.state = {}
+  }
+  addAssetToEditor(){
+    const { dispatch } = this.props;
+    dispatch(actions.ADD_COMPONENT({source:this.props.source,
+                            filetype:this.props.filetype,
+                            page:this.props.page,
+                            component:this.props.component}));
+  }
+  componentDidMount(){
+    let preview = ReactDOM.findDOMNode(this);
+    let container = preview.querySelector('.asset-preview-image')
+    let containerDimensions = container.getBoundingClientRect();
+
+    let cDimensions = {
+      w: containerDimensions.width,
+      h: containerDimensions.height
+    }
+
+    let snapshot = document.getElementById(`snapshot-${this.props.component.id}`);
+
+    let eDimensions = {
+      w: this.props.component.state.states.composite.props.width,
+      h: this.props.component.state.states.composite.props.height
+    } 
+
+    let suitableDimensions = computeRatio(eDimensions, cDimensions);
+
+    let ratio = suitableDimensions.w / eDimensions.w;
+
+    if(ratio > 1) ratio = 1;
+
+    // let targetWidth = Math.min(suitableDimensions.w,eDimensions.w);
+    // let targetHeight = Math.min(suitableDimensions.h,eDimensions.h);
+    let targetDimensions = suitableDimensions;
+
+    if( eDimensions.w < cDimensions.w && eDimensions.h < cDimensions.h ){
+      targetDimensions = eDimensions;
+    }
+
+    let data = convertSnapshot(snapshot, targetDimensions.w, targetDimensions.h);
+
+    // console.log(this.props.component.name, suitableDimensions,eDimensions,ratio)
+
+    this.setState({snapshotData:data, ratio:ratio});
+
+    // let containerDimensions = 
+
+    // let resizeRatio = {x:size.w/style.width,y:size.h/style.height}
+  }
+  render(){
+    let source = {
+      location: this.props.source,
+      filetype: this.props.filetype,
+      page: this.props.page,
+    }
+
+    return (
+      <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
+        <div className='asset-preview-title'>{this.props.title}</div>
+        <div className='asset-preview-image'>
+        {
+          this.state.snapshotData ? 
+            <img src={this.state.snapshotData} 
+            // style={{
+            //   transform:`scale(${this.state.ratio})`
+            //  }}
+             />
+          :
+          <SnapshotComponent source={source} id={this.props.component.id} assets/>
+        }
+        </div>
+
+      </div>
+    )
+  }
+}
 
 AssetPreview = connect()(AssetPreview)
 

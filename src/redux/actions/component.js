@@ -11,7 +11,7 @@ const ADD_COMPONENT_ACTION = (payload,domain) => ({
 const ADD_COMPONENT = (payload) => (dispatch,getFullState) => {
   let domain = getState(getFullState(),'domain');
   dispatch(ADD_COMPONENT_ACTION(payload,domain));
-  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Added component'}));
+  // dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Added component'}));
 }
 
 const COMPONENT_SELECT_ACTION = (component) => ({

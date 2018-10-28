@@ -31,6 +31,8 @@ export function initAbstractComponent(){
             this.id = data.do_objectID;
             this.class = data._class;
 
+            this.snapshot = '';
+
             //first traverses the tree to create children
             this.initChildren(data);
             //styling
@@ -97,10 +99,10 @@ export function initAbstractComponent(){
         
         initStates(data){
 
-            let base = new ComponentState('base',[],[],this.initStyleProps(data),0);
-            let hover = new ComponentState('hover',['onMouseEnter'],['onMouseLeave'],{},1);
-            let pressed = new ComponentState('pressed',['onMouseDown'],['onMouseUp'],{},1);
-            let focused = new ComponentState('focused',['onFocus'],['onBlur'],{},1);
+            let base = new ComponentState('base', [], [], this.initStyleProps(data), 0);
+            let hover = new ComponentState('hover', ['onMouseEnter'], ['onMouseLeave'],{}, 1);
+            let pressed = new ComponentState('pressed', ['onMouseDown'], ['onMouseUp'],{}, 1);
+            let focused = new ComponentState('focused', ['onFocus'], ['onBlur'], {}, 1);
 
             let states = {
                 'composite':{
@@ -164,15 +166,15 @@ export function initAbstractComponent(){
             this.class = newClass;
         }
 
-        static swapState(newState,state){
-            state.states[state.current].active = false;
-            state.states[newState].active = true;
-            state.current = newState;
-            return state;
-        }
-
     }
 }
+
+// components => these are everything u have created a rendering of?
+// assets => everything you have brought in and translated
+// tabs => looks at the components, and finds the components to use in that tab.
+// tab does not contain any actual component, just a list of all the ids, and the children to start from?
+
+
 
 initAbstractComponent();
 

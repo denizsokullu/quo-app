@@ -9,14 +9,7 @@ import { translatePropData } from '../../parser/propTranslator';
 
 import { getState } from 'quo-redux/state';
 
-import SelectionFrame from '../selectionFrame';
-
 import TextArea from '../inputElements/dynamicTextArea';
-
-import CoreComponent from './components/CoreComponent';
-import ImageComponent from './components/ImageComponent';
-import ShapeComponent from './components/ShapeComponent';
-import TextComponent from './components/TextComponent';
 
 import ComponentRender from './ComponentRender';
 
@@ -57,6 +50,7 @@ const makeEditComponent = (WrappedComponent, options) => {
     
     render = () => {
       const wrapperProps = this.createWrapperProps();
+      console.log(this.props)
       return(
         <div {...wrapperProps} tabIndex='0'>
           <WrappedComponent {...this.props} wrapper={EditComponent}/>
