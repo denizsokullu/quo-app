@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React from 'react';
-import { compose } from 'redux';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from 'quo-redux/actions';
@@ -8,6 +7,7 @@ import actions from 'quo-redux/actions';
 import { translatePropData } from 'parser/propTranslator';
 
 import { getState } from 'quo-redux/state';
+import { AbstractComponent } from 'parser/abstract';
 
 import ComponentRender from '../viewer/ComponentRender';
 
@@ -28,11 +28,10 @@ const makeSnapshotComponent = (WrappedComponent, options) => {
     }
 
     getStyleProps = () => {
-      const props = this.props.component.state.states.composite.props
-      if(this.props.isParent){
-        return translatePropData('abstract', 'css', _.pick(props,['width','height']));
-      }
-      return translatePropData('abstract', 'css', _.pick(props,['width','height','x','y']));
+      const props = AbstractComponent.props(this.props.component);
+      let picks = ['width','height','x','y'];
+      if(this.props.isParent) picks = ['width','height'];
+      return translatePropData('abstract', 'css', props(picks));
     }
     
     render = () => {
@@ -44,42 +43,6 @@ const makeSnapshotComponent = (WrappedComponent, options) => {
       )
     }
   }
-}
-
-const computeRatio = (element,container) => {
-
-  let c = container
-  let e = element
-
-  let rInner = e.w/e.h;
-  let rContainer = c.w / c.h;
-
-  return rContainer > rInner ? { w: parseInt(e.w * c.h / e.h), h: parseInt(c.h) } : { w: parseInt(c.w), h: parseInt(e.h * c.w / e.w) }
-
-}
-
-const convertSnapshot = (origElem, width, height, left, top) => {
-
-  left = (left || 0);
-  top = (top || 0);
-
-  var elem = origElem.cloneNode(true);
-
-  // unfortunately, SVG can only eat well formed XHTML
-  elem.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-
-
-  console.log(elem);
-  // serialize the DOM node to a String
-  var serialized = new XMLSerializer().serializeToString(elem);
-
-  // Create well formed data URL with our DOM string wrapped in SVG
-  return "data:image/svg+xml," +
-    "<svg xmlns='http://www.w3.org/2000/svg' width='" + ((width || origElem.offsetWidth) + left) + "' height='" + ((height || origElem.offsetHeight) + top) + "'>" +
-      "<foreignObject width='100%' height='100%' x='" + left + "' y='" + top + "'>" +
-      serialized +
-      "</foreignObject>" +
-    "</svg>";
 }
 
 const mapStateToProps = (state,ownProps) => {
@@ -109,8 +72,6 @@ const mapStateToProps = (state,ownProps) => {
   }
 }
 
-const SnapshotComponent = connect(mapStateToProps)(makeSnapshotComponent(ComponentRender))
+const SnapshotComponent = connect(mapStateToProps)(makeSnapshotComponent(ComponentRender));
 
-export default SnapshotComponent
-
-export { convertSnapshot, computeRatio }
+export default SnapshotComponent 

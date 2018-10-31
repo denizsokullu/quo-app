@@ -10,10 +10,11 @@ class DropzoneContainer extends React.Component {
     this.state = { files: []};
     this.style = {
       normal: {
-        width: '100%',
-        height: '100%',
+        // width: '100%',
+        // height: '100%',
         display: 'block',
-        transition: 'all .4s'
+        position: 'static',
+        // transition: 'all .4s'
       }
     };
   }
@@ -47,17 +48,15 @@ class DropzoneContainer extends React.Component {
   render() {
     return (
       <div className='dropzone-container'>
-        <div className='dropzone'>
-          <Dropzone
-            disableClick={true}
-            onDrop={this.onDrop.bind(this)}
-            style={this.style.normal}
-            activeClassName='drag-active'
-            activeStyle={this.style.active}
-            acceptStyle={this.style.accept}>
-            {this.props.children}
-          </Dropzone>
-        </div>
+        <Dropzone
+          disableClick={true}
+          onDrop={this.onDrop.bind(this)}
+          style={this.style.normal}
+          activeClassName='drag-active'
+          activeStyle={this.style.active}
+          acceptStyle={this.style.accept}>
+          {this.props.children}
+        </Dropzone>
       </div>
     );
   }

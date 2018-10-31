@@ -5,10 +5,10 @@ import { getState } from 'quo-redux/state';
 import { LayerCard } from '../../styleCard/styleCard';
 import _ from 'lodash';
 
-import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
-import actions from '../../../redux/actions';
+import HorizontalOptionGroup from 'ui-components/inputElements/horizontalOptionGroup';
+import actions from 'quo-redux/actions';
 
-import SnapshotComponent, { convertSnapshot, computeRatio } from 'ui-components/viewer/SnapshotComponent';
+import { SnapshotContainer, convertSnapshotToImage } from 'ui-components/snapshotComponent';
 
 class AssetsTab extends Component {
   constructor(props){
@@ -19,6 +19,7 @@ class AssetsTab extends Component {
     }
     this.updateTab = this.updateTab.bind(this)
   }
+
   updateTab(newTab){
     this.setState({currentTab:newTab})
   }
@@ -160,10 +161,13 @@ class AssetsViewer extends Component {
 class AssetPreview extends Component {
   constructor(props){
     super(props);
-    this.addAssetToEditor = this.addAssetToEditor.bind(this);
-    this.state = {}
+    this.state = {
+      draggable: false,
+      dragImage: null,
+      dragImageNode: null,
+    }
   }
-  addAssetToEditor(){
+  addAssetToEditor = () => {
     const { dispatch } = this.props;
     dispatch(actions.ADD_COMPONENT({source:this.props.source,
                             filetype:this.props.filetype,
@@ -171,43 +175,32 @@ class AssetPreview extends Component {
                             component:this.props.component}));
   }
 
-  getContainerDimensions(){
-    let preview = ReactDOM.findDOMNode(this);
-    let container = preview.querySelector('.asset-preview-image')
-    let containerDimensions = container.getBoundingClientRect();
-
-    return {
-      w: containerDimensions.width,
-      h: containerDimensions.height
-    }
+  onRender = (image) => {
+    this.setState({dragImage:image})
   }
 
-  getComponentDimensions(){
-    return {
-      w: this.props.component.state.states.composite.props.width,
-      h: this.props.component.state.states.composite.props.height
-    } 
+  onDragStart = (e) => {
+
+    let img = new Image();
+
+    this.setState({
+      draggable:true,
+      dragImageNode: img,
+    });
+
+    img.src = this.state.dragImage;
+    document.body.appendChild(img);
+    e.dataTransfer.setData("text/plain", this.props.component.id);
+    e.dataTransfer.setDragImage(img, 0, 0);
+    return false
   }
 
-  componentDidMount(){
-      let cDimensions = this.getContainerDimensions();
-      let eDimensions = this.getComponentDimensions()
-
-      let snapshot = document.getElementById(`snapshot-${this.props.component.id}`);
-  
-      let suitableDimensions = computeRatio(eDimensions, cDimensions);
-  
-      //don't make things bigger, just resize them down.
-      if( eDimensions.w < cDimensions.w && eDimensions.h < cDimensions.h ){
-        suitableDimensions = eDimensions;
-      }
-  
-      let data = convertSnapshot(snapshot, suitableDimensions.w, suitableDimensions.h);
-  
-      this.setState({snapshotData:data});
-
+  onDragEnd = () => {
+    this.setState({draggable:false});
+    if(this.state.dragImageNode) this.state.dragImageNode.remove();
   }
-  render(){
+
+  render = () => {
     let source = {
       location: this.props.source,
       filetype: this.props.filetype,
@@ -216,16 +209,17 @@ class AssetPreview extends Component {
 
     return (
       <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
-        <div className='asset-preview-title'>{this.props.title}</div>
-        <div className='asset-preview-image'>
-        {
-          this.state.snapshotData ? 
-            <img src={this.state.snapshotData}/>
-          :
-          <SnapshotComponent source={source} id={this.props.component.id} assets isParent/>
-        }
+        <div className='asset-preview-title'>
+          {this.props.title}
         </div>
-
+        <div 
+          className={`asset-preview-image ${this.state.draggable ? 'draggable' : ''}`}
+          draggable
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+        >
+          <SnapshotContainer source={source} component={this.props.component} onRender={this.onRender} />
+        </div>
       </div>
     )
   }

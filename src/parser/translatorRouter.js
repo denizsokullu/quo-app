@@ -168,11 +168,11 @@ export const router = {
         translate: commonTranslators.abstract.css.color,
       },
       'font-family': {
-        prop: 'font-family',
+        prop: 'fontFamily',
         translate: (v) => `"${v}", sans-serif`,
       },
       'font-size': {
-        prop: 'font-size',
+        prop: 'fontSize',
         translate: commonTranslators.abstract.css.int2px,
       }
       // 'border-width':{

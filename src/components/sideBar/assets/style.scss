@@ -85,6 +85,13 @@
       justify-content: center;
       align-items: center;
 
+      &.draggable{
+        cursor: grab;
+      }
+      &.grabbable:active {
+        cursor: grabbing;
+      }
+
       img {
         align-self: center;
         &:focus {
