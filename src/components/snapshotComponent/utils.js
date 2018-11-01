@@ -38,7 +38,7 @@ const convertSnapshotToImage = (data, callback) => {
 
   let snapshot = document.getElementById(`snapshot-${id}`);
 
-  if(full) return convertSnapshot(snapshot, eDimensions.w, eDimensions.h);
+  if(full) return {image: convertSnapshot(snapshot, eDimensions.w, eDimensions.h)};
 
   let suitableDimensions = computeRatio(eDimensions, cDimensions);
   //don't make things bigger, just resize them down.
@@ -46,7 +46,9 @@ const convertSnapshotToImage = (data, callback) => {
     suitableDimensions = eDimensions;
   }
 
-  return convertSnapshot(snapshot, suitableDimensions.w, suitableDimensions.h);
+  let scale = Math.min(1, Math.max(suitableDimensions.w / eDimensions.w,  suitableDimensions.h / eDimensions.h));
+
+  return {image: convertSnapshot(snapshot, eDimensions.w, eDimensions.h), scale: scale};
 
 }
 

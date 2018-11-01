@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const allComponents = ['shapeGroup', 'group', 'text']
+const allComponents = ['shape', 'group', 'text']
 
 const componentProps = {
     width: allComponents,
@@ -8,7 +8,7 @@ const componentProps = {
     x: allComponents,
     y: allComponents,
     // border: allComponents,
-    fill: ['shapeGroup'],
+    fill: ['shape'],
     textString: ['text'],
 }
 
@@ -26,7 +26,7 @@ const propsOfCards = {
     Fill: {
         requires: {
             all: ['backgroundColor'],
-            shapeGroup: ['fill'],
+            shape: ['fill'],
         }
     },
 }

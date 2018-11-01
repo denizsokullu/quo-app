@@ -44,14 +44,12 @@ function App() {
               path="/"
               render={() => (
                 <KeyController>
-                  {/* <DropzoneContainer> */}
-                    <Viewer />
-                  {/* </DropzoneContainer> */}
-                  <TopBar />
                   <DropzoneContainer>
+                    <Viewer />
+                    <TopBar />
                     <SideBarLeft />
+                    <SideBarRight />
                   </DropzoneContainer>
-                  <SideBarRight />
                   <MessageStack />
                 </KeyController>
               )}

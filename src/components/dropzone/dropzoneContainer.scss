@@ -1,7 +1,16 @@
 .dropzone-container {
   position:absolute;
-  height:100%;
-  & .drag-active .sidebar-container {
-    border:1px solid green;
+  width:100vw;
+  height:100vh;
+  top:0;
+  left:0;
+  background:transparent;
+  .dropzone {
+    height:100%;
+    width:100%;
+    & .drag-active .viewer-wrapper{
+      border:1px solid green;
+    }
   }
+
 }

@@ -10,11 +10,11 @@ class DropzoneContainer extends React.Component {
     this.state = { files: []};
     this.style = {
       normal: {
-        // width: '100%',
-        // height: '100%',
+        width: '100%',
+        height: '100%',
         display: 'block',
-        position: 'static',
-        // transition: 'all .4s'
+        position: 'relative',
+        transition: 'all .4s'
       }
     };
   }

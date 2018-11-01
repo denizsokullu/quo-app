@@ -23,9 +23,10 @@ export default class SnapshotContainer extends Component {
 
   getContainerDimensions = () => {
     let dims =  ReactDOM.findDOMNode(this).parentNode.getBoundingClientRect();
+    // -4 for border radius
     return {
-      w: dims.width,
-      h: dims.height
+      w: dims.width - 8,
+      h: dims.height - 8
     }
   }
 
@@ -43,13 +44,17 @@ export default class SnapshotContainer extends Component {
       cDimensions : this.getContainerDimensions(),
       eDimensions : this.getComponentDimensions(),
     }
+
+    console.log(data);
     
-    let image = convertSnapshotToImage(data);
+    let { image, scale } = convertSnapshotToImage(data);
     let fullImage = convertSnapshotToImage({...data, full:true});
 
-    this.setState({snapshotImage: image});
+    console.log(scale);
 
-    this.props.onRender(fullImage);
+    this.setState({snapshotImage: image, scale: scale});
+
+    this.props.onRender(fullImage.image);
 
   }
 
@@ -60,7 +65,7 @@ export default class SnapshotContainer extends Component {
         {
           this.state.snapshotImage
           ?
-            <img src={this.state.snapshotImage} alt={alt}/>
+            <img src={this.state.snapshotImage} style={{transform:`scale(${this.state.scale})`}} alt={alt}/>
           :
             <div style={{display:'none'}}>
               <SnapshotComponent

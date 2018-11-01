@@ -21,7 +21,7 @@ import TextComponent from './components/TextComponent';
 class ComponentRenderCore extends React.PureComponent {
   render = () => {
     switch(this.props.component.class){
-      case 'shapeGroup':
+      case 'shape':
         return (<ShapeComponent component={ this.props.component }></ShapeComponent>)
         break;
       case 'text':

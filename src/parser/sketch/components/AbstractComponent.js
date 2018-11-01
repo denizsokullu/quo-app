@@ -42,12 +42,8 @@ export function initAbstractComponent(){
 
             //move these into the subclasses
 
-            if(this.is('shapeGroup')){
-                this.initShapeProps(data);
-            }
-
-            else if(this.is('bitmap')){
-                this.initImageProps(data);
+            if(this.is('bitmap')){
+              this.initImageProps(data);
             }
         }
 
@@ -71,11 +67,15 @@ export function initAbstractComponent(){
                 }
                 else{
                     switch(component._class){
+                        case 'star':
+                        case 'polygon':
+                        case 'triangle':
+                        case 'oval':
+                        case 'rectangle':
                         case 'shapeGroup':
                           abstractChild = new AbstractShape(component);
                           this.children.push(abstractChild);
                         break;
-
                         case 'text':
                           abstractChild = new AbstractText(component);
                           this.children.push(abstractChild);
@@ -142,12 +142,6 @@ export function initAbstractComponent(){
                 },
                 targetStateIds: {}
             }
-        }
-
-        //WRITE THESE
-        initShapeProps(data){
-            //add the code here
-            this.layers = data.layers;
         }
 
         initImageProps(data){

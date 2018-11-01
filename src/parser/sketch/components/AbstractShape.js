@@ -3,13 +3,30 @@ import AbstractComponent, { initAbstractComponent } from './AbstractComponent';
 initAbstractComponent();
 
 export default class AbstractShape extends AbstractComponent {
-    constructor(data){
-        super(data);
-        this.pathData = this.calculateSVG(data);
+  constructor(data){
+    super(data);
+    this.class = 'shape';
+    switch(data._class){
+      case 'star':
+      case 'polygon':
+      case 'triangle':
+      case 'oval':
+      case 'rectangle':
+        this.pathData = this.calculateSVGforSingleShape(data);
+        break;
+      default:
+        this.pathData = this.calculateSVGforShapeGroup(data);
+        break;
+    }
+  }
+
+    calculateSVGforSingleShape(data){
+      let frame = { ...data.frame, x:0, y:0 }
+      return this.createPathCode(data,frame);
     }
 
-    calculateSVG(data){
-        return data.layers.map((shape,index) => this.createPathCode(shape)).join(' ');
+    calculateSVGforShapeGroup(data){
+      return data.layers.map((shape,index) => this.createPathCode(shape,data.frame)).join(' ');
     }
 
     convertPoint(point,frame){
@@ -46,10 +63,10 @@ export default class AbstractShape extends AbstractComponent {
         return pointTuples;
     }
 
-    createPathCode(data){
+    createPathCode(data,frame){
 
         let path = '';
-        let edges = this.createPointTuples(data.points,data.frame,data.isClosed);
+        let edges = this.createPointTuples(data.points,frame,data.isClosed);
 
         //loop through the edges
         edges.map((edge,i) => {
@@ -98,12 +115,15 @@ export default class AbstractShape extends AbstractComponent {
     isLine(edge){
         return !edge.p1.hasCurveFrom && !edge.p2.hasCurveTo
     }
+
     isCurve(edge){
         return edge.p1.hasCurveFrom || edge.p2.hasCurveTo
     }
+    
     isSmoothCurve(edge){
         return edge.p2.curveMode === 2
     }
+
     getControlPoints(edge,frame){
         return [edge.p1.curveFrom,edge.p2.curveTo];
     }
