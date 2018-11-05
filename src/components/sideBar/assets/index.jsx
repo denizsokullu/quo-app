@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
+import { getState } from 'quo-redux/state';
 import { LayerCard } from '../../styleCard/styleCard';
 import _ from 'lodash';
 
-import HorizontalOptionGroup from '../../inputElements/horizontalOptionGroup';
-import actions from '../../../redux/actions';
+import HorizontalOptionGroup from 'ui-components/inputElements/horizontalOptionGroup';
+import actions from 'quo-redux/actions';
+
+import { SnapshotContainer, convertSnapshotToImage } from 'ui-components/snapshotComponent';
 
 class AssetsTab extends Component {
   constructor(props){
@@ -15,6 +19,7 @@ class AssetsTab extends Component {
     }
     this.updateTab = this.updateTab.bind(this)
   }
+
   updateTab(newTab){
     this.setState({currentTab:newTab})
   }
@@ -42,30 +47,6 @@ class AssetsTab extends Component {
   }
 }
 
-class AssetPreview extends Component {
-  constructor(props) {
-    super(props);
-    this.addAssetToEditor = this.addAssetToEditor.bind(this);
-  }
-  addAssetToEditor() {
-    const { dispatch } = this.props;
-    dispatch(actions.ADD_COMPONENT({
-      source: this.props.source,
-      filetype: this.props.filetype,
-      page: this.props.page,
-      component: this.props.component
-    }));
-  }
-  render(){
-    return (
-      <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
-        <div className='asset-preview-title'>{this.props.title}</div>
-        <div className='asset-preview-image'></div>
-      </div>
-    )
-  }
-}
-
 class AssetsViewer extends Component {
   constructor(props){
     super(props);
@@ -77,7 +58,6 @@ class AssetsViewer extends Component {
     this.state = {
       pages:pages,
       selected:selected,
-      fakeAssets:new Array(30).fill(0),
     }
     this.onPageChange = this.onPageChange.bind(this);
   }
@@ -101,8 +81,25 @@ class AssetsViewer extends Component {
   }
 
   renderFirstDepthComponents(){
+
+    if(!this.state.selected){
+      return(
+        <div className='no-assets'>
+          No assets found
+        </div>
+      )
+    }
+
     //find all the artboards
+    let allArtboards = [];
+
+    _.mapValues(this.props.assets,(pages) => {
+     allArtboards =  _.union(allArtboards, pages.children);
+    })
+
     let artboardIDs = this.props.assets[this.state.selected.id].children;
+
+    
     //search all the first depth components
 
     let firstDepthComponents = artboardIDs.map( artboardID =>{
@@ -125,19 +122,14 @@ class AssetsViewer extends Component {
     firstDepthComponents = flattenedfirstDepthComponents;
 
     return (
-        !_.isEmpty(firstDepthComponents) ?
-          <div className='asset-preview-table'>
-            {
-              Object.keys(firstDepthComponents).map((o,i)=>{
-                let component = firstDepthComponents[o]
-                return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
-              })
-            }
-          </div>
-        :
-         <div className='no-assets'>
-           No artboards with assets found
-         </div>
+      <div className='asset-preview-table'>
+        {
+          Object.keys(firstDepthComponents).map((o,i)=>{
+            let component = firstDepthComponents[o]
+            return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
+          })
+        }
+      </div>
     )
   }
 
@@ -158,7 +150,7 @@ class AssetsViewer extends Component {
         </div>
         <div className='assets-preview-wrapper'>
           {
-            this.state.selected ? this.renderFirstDepthComponents() : null
+            this.renderFirstDepthComponents()
           }
         </div>
       </div>
@@ -166,6 +158,72 @@ class AssetsViewer extends Component {
   }
 }
 
+class AssetPreview extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      draggable: false,
+      dragImage: null,
+      dragImageNode: null,
+    }
+  }
+  addAssetToEditor = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.ADD_COMPONENT({source:this.props.source,
+                            filetype:this.props.filetype,
+                            page:this.props.page,
+                            component:this.props.component}));
+  }
+
+  onRender = (image) => {
+    this.setState({dragImage:image})
+  }
+
+  onDragStart = (e) => {
+
+    let img = new Image();
+
+    this.setState({
+      draggable:true,
+      dragImageNode: img,
+    });
+
+    img.src = this.state.dragImage;
+    document.body.appendChild(img);
+    e.dataTransfer.setData("text/plain", this.props.component.id);
+    e.dataTransfer.setDragImage(img, 0, 0);
+    return false
+  }
+
+  onDragEnd = () => {
+    this.setState({draggable:false});
+    if(this.state.dragImageNode) this.state.dragImageNode.remove();
+  }
+
+  render = () => {
+    let source = {
+      location: this.props.source,
+      filetype: this.props.filetype,
+      page: this.props.page,
+    }
+
+    return (
+      <div className={`asset-preview-wrapper ${this.props.filetype}-asset`} onDoubleClick={this.addAssetToEditor}>
+        <div className='asset-preview-title'>
+          {this.props.title}
+        </div>
+        <div 
+          className={`asset-preview-image ${this.state.draggable ? 'draggable' : ''}`}
+          draggable
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+        >
+          <SnapshotContainer source={source} component={this.props.component} onRender={this.onRender} />
+        </div>
+      </div>
+    )
+  }
+}
 
 AssetPreview = connect()(AssetPreview)
 

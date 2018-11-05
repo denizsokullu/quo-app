@@ -1,11 +1,10 @@
-
-export const setCurrentLinkId = (linkBuilder,action) => {
-  return { ...linkBuilder, currentLinkId:action.payload }
-}
-
-export const updateLinkBuilderMode = (linkBuilder,action) => {
-  if(action.payload === 'INIT'){
-    linkBuilder = setCurrentLinkId('');
+export const updateLinkBuilderData = (linkBuilder,action) => {
+  if(action.payload.mode && action.payload.mode === 'INIT'){
+    linkBuilder.source = '';
+    linkBuilder.target = '';
+    linkBuilder.linkId = '';
+    linkBuilder.enables = [];
+    linkBuilder.disables = [];
   }
-  return { ...linkBuilder, mode:action.payload };
+  return { ...linkBuilder, ...action.payload };
 }

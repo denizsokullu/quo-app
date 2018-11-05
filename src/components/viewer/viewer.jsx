@@ -1,14 +1,15 @@
-import _ from 'underscore';
+import _ from 'lodash';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {connect} from 'react-redux';
-import ComponentRenderer from './componentRenderer';
 import actions from 'quo-redux/actions';
 import { getState } from 'quo-redux/state';
 
-import { dimensions } from '../constants/constants'
-
+import { dimensions } from '../constants/constants';
 import SelectionFrame from '../selectionFrame';
+
+import EditComponent from './EditComponent';
+import PreviewComponent from './PreviewComponent';
 
 
 //fix this to incorporate changing sidebar sizes
@@ -25,7 +26,7 @@ const viewerSize = {
   h: viewerHeight,
 }
 
-const mainArtboardSize = {w:1500,h:1050}
+const mainArtboardSize = { w:1500, h:1050 }
 
 const zoomBorderThreshold = 100;
 
@@ -205,8 +206,9 @@ class Viewer extends React.Component {
   handlePinch() { }
 
   renderComponents() {
+    const ComponentRenderClass = this.props.appMode === 'EDIT' ? EditComponent : PreviewComponent
     return (
-      <ComponentRenderer
+      <ComponentRenderClass
         style={{
             left:'750px',
             top:'525px',
@@ -232,6 +234,7 @@ class Viewer extends React.Component {
 
   renderViewer(){
     let draggableClass = this.state.draggable ? 'draggable' : ''
+    let bgClass = this.props.appMode === 'EDIT' ? 'edit-mode' : 'preview-mode'
     const pos = this.state.viewerPos
     return (
       <React.Fragment>
@@ -245,7 +248,7 @@ class Viewer extends React.Component {
 
         {/* Background of the Viewer */}
         <div
-          className='component-viewer-bg'
+          className={`component-viewer-bg ${bgClass}`}
           ref={ c => this.viewerBg = c}
           onClick={this.onClick}
           style={{
@@ -315,6 +318,7 @@ function mapStateToProps(state) {
   return {
     controller:ui.controller,
     activeTab:activeTab,
+    appMode: app.appMode,
   }
 }
 

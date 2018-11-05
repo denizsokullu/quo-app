@@ -44,7 +44,7 @@ class SelectionFrame extends React.Component {
 
   setTarget(nextProps){
     if(this.isSelectionSingle(nextProps.selection)){
-      let el = document.getElementById(nextProps.selection.data[0]);
+      let el = document.getElementById(`component-${nextProps.selection.data[0]}`);
       this.setState({
         visible:true,
         target:el,
@@ -55,7 +55,7 @@ class SelectionFrame extends React.Component {
   calculateScale(nextProps){
 
     if(this.isSelectionSingle(nextProps.selection)){
-      let el = document.getElementById(nextProps.selection.data[0]);
+      let el = document.getElementById(`component-${nextProps.selection.data[0]}`);
       let elDims = el.getBoundingClientRect();
       let style = window.getComputedStyle(el);
       let styleWidth = style.width.slice(0,-2);

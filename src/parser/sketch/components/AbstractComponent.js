@@ -5,6 +5,8 @@ import AbstractShape from './AbstractShape';
 import AbstractText from './AbstractText';
 import AbstractViewport from './AbstractViewport';
 
+import ComponentState from 'parser/ComponentState';
+
 import { translatePropData } from '../../propTranslator';
 import { PropCompositor } from 'quo-redux/helpers';
 
@@ -29,6 +31,8 @@ export function initAbstractComponent(){
             this.id = data.do_objectID;
             this.class = data._class;
 
+            this.snapshot = '';
+
             //first traverses the tree to create children
             this.initChildren(data);
             //styling
@@ -38,12 +42,8 @@ export function initAbstractComponent(){
 
             //move these into the subclasses
 
-            if(this.is('shapeGroup')){
-                this.initShapeProps(data);
-            }
-
-            else if(this.is('bitmap')){
-                this.initImageProps(data);
+            if(this.is('bitmap')){
+              this.initImageProps(data);
             }
         }
 
@@ -67,11 +67,15 @@ export function initAbstractComponent(){
                 }
                 else{
                     switch(component._class){
+                        case 'star':
+                        case 'polygon':
+                        case 'triangle':
+                        case 'oval':
+                        case 'rectangle':
                         case 'shapeGroup':
                           abstractChild = new AbstractShape(component);
                           this.children.push(abstractChild);
                         break;
-
                         case 'text':
                           abstractChild = new AbstractText(component);
                           this.children.push(abstractChild);
@@ -91,24 +95,27 @@ export function initAbstractComponent(){
                 }
             })
         }
-
+  
+        
         initStates(data){
 
-            let diffProps = {}
-            let coreProps = this.initStyleProps(data);
+            let base = new ComponentState('base', [], [], this.initStyleProps(data), 0);
+            let hover = new ComponentState('hover', ['onMouseEnter'], ['onMouseLeave'],{}, 1);
+            let pressed = new ComponentState('pressed', ['onMouseDown'], ['onMouseUp'],{}, 1);
+            let focused = new ComponentState('focused', ['onFocus'], ['onBlur'], {}, 1);
+
             let states = {
                 'composite':{
                   props:{},
-                  modifiers:['_base']
+                  modifiers:[base.id]
                 },
-                '_base':{...coreProps},
-                'none':{...diffProps},
-                'hover':{...diffProps},
-                'pressed':{...diffProps},
-                'focused':{...diffProps},
+                [base.id]:base,
+                [hover.id]:hover,
+                [pressed.id]:pressed,
+                [focused.id]:focused,
             }
 
-            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v]));
+            states.composite.props = PropCompositor.bakeProps(states.composite.modifiers.map(v => states[v].props));
 
             this.state = {
                 current:'composite',
@@ -121,40 +128,20 @@ export function initAbstractComponent(){
             return translatePropData('sketch','abstract',data);
         }
 
-        initLinkingStructure(){
+        initLinkingStructure () {
             this.links = {
-
+                triggers: {
+                    onMouseEnter: [],
+                    onMouseDown: [],
+                    onFocus: [],
+                },
+                disables: {
+                    onMouseLeave: [],
+                    onMouseUp: [],
+                    onBlur: [],
+                },
+                targetStateIds: {}
             }
-            // links = {
-            //   linkId:{
-            //     trigger:{
-            //       id:'id of the trigger component'
-            //       method:'click'
-            //     },
-            //     targets:[
-            //       {
-            //         id:'id of the target component',
-            //         change:[
-            //           {
-            //             type:'position,style-bg-color',
-            //             value:'value of the property change'
-            //             timing:{
-            //               'props for timing go here'
-            //             }
-            //           },
-            //         ]
-            //       }
-            //     ]
-            //   },
-            //   linkId...,
-            //   linkId...,
-            // }
-        }
-
-        //WRITE THESE
-        initShapeProps(data){
-            //add the code here
-            this.layers = data.layers;
         }
 
         initImageProps(data) {
@@ -173,15 +160,15 @@ export function initAbstractComponent(){
             this.class = newClass;
         }
 
-        static swapState(newState,state){
-            state.states[state.current].active = false;
-            state.states[newState].active = true;
-            state.current = newState;
-            return state;
-        }
-
     }
 }
+
+// components => these are everything u have created a rendering of?
+// assets => everything you have brought in and translated
+// tabs => looks at the components, and finds the components to use in that tab.
+// tab does not contain any actual component, just a list of all the ids, and the children to start from?
+
+
 
 initAbstractComponent();
 

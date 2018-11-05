@@ -10,9 +10,20 @@ const UPDATE_COMPONENT_PROPS_ACTION = (payload,domain) => ({
 const UPDATE_COMPONENT_PROPS = (payload) => (dispatch,getFullState) => {
   let domain = getState(getFullState(),'domain');
   dispatch(UPDATE_COMPONENT_PROPS_ACTION(payload,domain));
-  dispatch(messageActions.ADD_MESSAGE({type:'status',duration:1500,text:'Updated component property'}));
 }
 
+const ADD_STATE_TO_COMPOSITE = (payload) => ({
+  type:'ADD_STATE_TO_COMPOSITE',
+  payload:payload,
+})
+
+const REMOVE_STATE_FROM_COMPOSITE = (payload) => ({
+  type:'REMOVE_STATE_FROM_COMPOSITE',
+  payload:payload,
+})
+
 export default {
-  UPDATE_COMPONENT_PROPS
+  UPDATE_COMPONENT_PROPS,
+  ADD_STATE_TO_COMPOSITE,
+  REMOVE_STATE_FROM_COMPOSITE
 }

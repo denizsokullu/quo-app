@@ -1,23 +1,22 @@
-import Base from './types/base';
-import Blur from './types/blur';
-import Border from './types/border';
-import CopyState from './types/copyState';
-import Fill from './types/base';
-import Layers from './types/layers';
-import Movement from './types/movement';
+// import Blur from './types/blur';
+// import Border from './types/border';
+// import CopyState from './types/copyState';
+import Fill from './types/fill';
+// import Layers from './types/layers';
+// import Movement from './types/movement';
 import Position from './types/position';
-import Scale from './types/scale';
+// import Scale from './types/scale';
 import Size from './types/size';
 
-const PropCards =  { Base,
-                     Blur,
-                     Border,
-                     CopyState,
+const PropCards =  { 
+                    // Blur,
+                    //  Border,
+                    //  CopyState,
                      Fill,
-                     Layers,
-                     Movement,
+                    //  Layers,
+                    //  Movement,
                      Position,
-                     Scale,
+                    //  Scale,
                      Size
                     };
 

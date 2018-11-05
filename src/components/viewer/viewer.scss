@@ -59,6 +59,18 @@ $artboard-size-h:2100px;
   border:20px dashed rgba(255,255,255,.8);
 
 }
+.snapshot-parent {
+  position: relative;
+}
+
+.component-viewer-bg {
+  &.edit-mode {
+    background-color:$color-bg-5;
+  }
+  &.preview-mode {
+    background-color:white;
+  }
+}
 
 .scroll-fixer{
   width:2000px;
@@ -75,6 +87,48 @@ $artboard-size-h:2100px;
     outline:none;
   }
 
+  .edit-component, .preview-component {
+    position: absolute;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .text-component {
+
+    .text-inner {
+      user-select:none;
+      margin:0;
+    }
+
+    .text-outer {
+      width:100%;
+      height:100%;
+      overflow:hidden;
+    }
+
+    .text-outer.edit-mode ~ .selection-frame,
+    .text-outer.edit-mode ~ .selection-line {
+      display:none;
+    }
+
+    &:hover {
+      outline:none;
+      cursor:default;
+
+      .text-outer:not(.edit-mode) {
+
+        box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
+
+      }
+
+
+
+    }
+
+
+  }
+
   .component-container {
 
     left:0;
@@ -85,47 +139,12 @@ $artboard-size-h:2100px;
       fill:transparent;
     }
 
-    &.child.hover-active:hover {
+    // &.child.hover-active:hover {
 
-      outline:2px solid $highlight-color;
-      cursor:default;
+    //   outline:2px solid $highlight-color;
+    //   cursor:default;
 
-    }
-
-    &.component-text {
-
-      .text-inner {
-        user-select:none;
-        margin:0;
-      }
-
-      .text-outer {
-        width:100%;
-        height:100%;
-        overflow:hidden;
-      }
-
-      .text-outer.edit-mode ~ .selection-frame,
-      .text-outer.edit-mode ~ .selection-line {
-        display:none;
-      }
-
-      &:hover {
-        outline:none;
-        cursor:default;
-
-        .text-outer:not(.edit-mode) {
-
-          box-shadow: inset 0 -1px 0 transparent, inset 0 -2px 0 $highlight-color;
-
-        }
-
-
-
-      }
-
-
-    }
+    // }
 
     &.component-artboard {
       &:hover{

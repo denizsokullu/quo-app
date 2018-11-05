@@ -200,16 +200,7 @@ class PreviewComponentInner extends React.PureComponent{
     const focusedClass = this.state.focused ? 'focused' : ''
     const pressedClass = this.state.pressed ? 'pressed' : ''
     const hoveredClass = this.state.hovered ? 'hovered' : ''
-
-    // console.log('rendered')
-
-    console.log('THIS IS THE COMPONENT');
-    console.log('ID:',this.props.component.pageName);
-    console.log('CLASSES:');
-    console.log('hover',this.state.hovered);
-    console.log('pressed',this.state.pressed);
-    console.log('focused',this.state.focused);
-
+    
     // currently creates a div only = make it so that the render
     // calls previewComponentCore for the inner components as well.
     // Also instead of changing the width of the element, the scaling should

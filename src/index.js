@@ -46,10 +46,10 @@ function App() {
                 <KeyController>
                   <DropzoneContainer>
                     <Viewer />
+                    <TopBar />
+                    <SideBarLeft />
+                    <SideBarRight />
                   </DropzoneContainer>
-                  <TopBar />
-                  <SideBarLeft />
-                  <SideBarRight />
                   <MessageStack />
                 </KeyController>
               )}

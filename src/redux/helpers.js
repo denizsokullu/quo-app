@@ -95,10 +95,15 @@ const getCurrentLinkBuilderMode = (app) => {
   return app.linkBuilder.mode
 }
 
+const getLinkBuilder = (app) => {
+  return app.linkBuilder
+}
+
 export { mergeActions,
          combineReducersLoop,
          getPropsOfSelection,
          getComponentFromCurrentTab,
-         PropCompositor, 
+         PropCompositor,
          getSelectionFirstID,
-         getCurrentLinkBuilderMode }
+         getCurrentLinkBuilderMode,
+         getLinkBuilder }

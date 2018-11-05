@@ -81,6 +81,23 @@
       background-color:$color-bg-3;
       height:72px;
       border-radius:8px;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+
+      &.draggable{
+        cursor: grab;
+      }
+      &.grabbable:active {
+        cursor: grabbing;
+      }
+
+      img {
+        align-self: center;
+        &:focus {
+          user-select: none;
+        }
+      }
 
     }
 
