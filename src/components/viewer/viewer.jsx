@@ -193,7 +193,6 @@ class Viewer extends React.Component {
   }
 
   calcPanningOffsets(threshold,e){
-
     let newPos = {}
 
     newPos.x = Math.max(threshold.x.max ,Math.min(threshold.x.min,this.state.viewerPos.x - e.deltaX));
@@ -203,23 +202,22 @@ class Viewer extends React.Component {
     return newPos
   }
 
-  handlePinch(){
-  }
+  handlePinch() { }
 
-  renderComponents(){
+  renderComponents() {
     return (
       <ComponentRenderer
         style={{
             left:'750px',
             top:'525px',
         }}
+        tab={this.props.activeTab} // This is the rendered out page on the viewer
         isParent
-        tab={this.props.activeTab}
       />
     )
   }
 
-  renderViewerWrapper(){
+  renderViewerWrapper() {
     return (
       <div
         className='viewer-wrapper scroll-disabled'

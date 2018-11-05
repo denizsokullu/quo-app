@@ -44,15 +44,12 @@ class ComponentRendererCore extends React.PureComponent {
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
 
-
     this.getStyle();
-
   }
 
-  componentWillReceiveProps(nextProps){
-  }
+  componentWillReceiveProps(nextProps){ }
 
-  decideType(data){
+  decideType(data) {
     return (
       data.path ? 'svg' :
       data._class === 'text' ? 'text' :
@@ -65,7 +62,7 @@ class ComponentRendererCore extends React.PureComponent {
   }
 
   // TODO: Update this to check if component.interactions.clicked == true
-  isSelected(id){
+  isSelected(id) {
     return false;
     // if(id){
     //   return this.state.selection === id;
@@ -73,7 +70,7 @@ class ComponentRendererCore extends React.PureComponent {
     // return this.state.selection === this.state.id;
   }
 
-  getPosition(){
+  getPosition() {
     let frame = this.getStyle();
     return {
       x: parseInt(frame.left.slice(0,-2)),
@@ -90,11 +87,7 @@ class ComponentRendererCore extends React.PureComponent {
   }
 
   getStyle() {
-
     if(this.props.isParent)return;
-
-
-
     // if(this.isSelected()){
     //   return this.state.components.editStates[this.state.editState].style;
     // }
@@ -233,36 +226,32 @@ class ComponentRendererCore extends React.PureComponent {
     return _.filter(this.siblings,this.isSelected).length > 0;
   }
 
-  renderWrapper(content){
-
+  renderWrapper(content) {
     let style = this.getStyle();
 
     //Add in drag offset
-
-    if(!this.props.isParent){
-
-      style = {...style,...this.calcDragOffset(style)}
-
-    }
-
-    else if(this.props.isParent){
-      style = {...this.props.style}
+    if(!this.props.isParent) {
+      style = {...style,...this.calcDragOffset(style) };
+    } else if(this.props.isParent) {
+      style = {...this.props.style };
     }
 
     let selectedClass = this.isSelected() ? 'selected' : '';
 
     //selected component just works normally
-
-    if(this.isSelected()){
+    if(this.isSelected()) {
       return (
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`} id={this.state.id}
+        <div
+          className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`}
+          id={this.state.id}
           style={style}
           onClick={this.onClick}
           ref='handle'
           onMouseDown={this.onMouseDownHandler.bind(this)}
         >
           { content }
-      </div>)
+        </div>
+      )
     }
 
     //artboard can be selected with 1 click always
@@ -333,82 +322,72 @@ class ComponentRendererCore extends React.PureComponent {
     // }
 
     //component isnt selectable
-    else{
+    else {
       return (
-        <div className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`}
+        <div 
+          className={`component-container ${this.props.isParent ? 'parent' : 'child'} component-${this.props.component.class} ${selectedClass}`}
           id={this.state.id}
           style={style}
           onClick={this.onClick}
         >
           { content }
-      </div>)
-    }
-
-  }
-
-  changeDrag(b){
-    this.setState({draggable:b});
-  }
-
-  render(){
-
-    let parentContent = this.props.component.children.map(id => {
-      return (
-        <ComponentRenderer
-          id={id}
-          key={id}
-        />
+        </div>
       )
-    });
+    }
+  }
+
+  changeDrag(b) {
+    this.setState({ draggable: b });
+  }
+
+  render() {
+    let parentContent = this.props.component.children.map(id => (
+      <ComponentRenderer
+        id={id}
+        key={id}
+      />
+    ));
 
     let nonParentContent;
-
-    switch(this.props.component.class){
+    // ADD CASE HERE FOR IMAGE -- BASE CASE FOR RECURSIVE RENDER
+    switch (this.props.component.class) {
       case 'shapeGroup':
         return this.renderWrapper(<ShapeComponent component={this.props.component}></ShapeComponent>);
-        break;
       case 'text':
         return this.renderWrapper(<TextComponent component={this.props.component}></TextComponent>);
-        break;
+      case 'image':
+        return this.renderWrapper(<ImageComponent component={this.props.component} />)
       default:
-
+        break;
     }
 
-    nonParentContent = this.props.component.children.map(id => {
-      return (
-        <ComponentRenderer
-          id={id}
-          key={id}
-        />
-      )
-    })
+    nonParentContent = this.props.component.children.map(id => (
+      <ComponentRenderer
+        id={id}
+        key={id}
+      />
+    ))
 
-    return ( this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent))
-
+    return (this.props.isParent ? this.renderWrapper(parentContent) : this.renderWrapper(nonParentContent));
   }
 }
 
 function mapStateToProps(state,ownProps) {
-
   let domain = getState(state,'domain');
   //tab root is the parent component
   let tabRoot = domain.tabs.allTabs[domain.tabs.activeTab]
 
   //return the tabRoot
-  if(ownProps.isParent){
+  if (ownProps.isParent) {
     return {
       component:tabRoot,
     }
-  }
-
-  //return the component
-  else{
+  } else { //return the component
     let component = tabRoot.components[ownProps.id];
     return {
       component:component,
     }
   }
-
 }
 
 const ComponentRenderer = connect(mapStateToProps)(ComponentRendererCore);

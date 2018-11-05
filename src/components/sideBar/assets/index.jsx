@@ -43,16 +43,18 @@ class AssetsTab extends Component {
 }
 
 class AssetPreview extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.addAssetToEditor = this.addAssetToEditor.bind(this);
   }
-  addAssetToEditor(){
+  addAssetToEditor() {
     const { dispatch } = this.props;
-    dispatch(actions.ADD_COMPONENT({source:this.props.source,
-                            filetype:this.props.filetype,
-                            page:this.props.page,
-                            component:this.props.component}));
+    dispatch(actions.ADD_COMPONENT({
+      source: this.props.source,
+      filetype: this.props.filetype,
+      page: this.props.page,
+      component: this.props.component
+    }));
   }
   render(){
     return (

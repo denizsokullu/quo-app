@@ -1,3 +1,5 @@
 import SketchParser from './sketch';
+import PrimativeParser from './primatives';
 import * as Helpers from './helpers';
-export { SketchParser, Helpers };
+
+export { SketchParser, PrimativeParser, Helpers };

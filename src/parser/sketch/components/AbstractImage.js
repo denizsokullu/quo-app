@@ -5,5 +5,7 @@ initAbstractComponent();
 export default class AbstractImage extends AbstractComponent {
     constructor(data){
         super(data);
+        this.data = data;
+        this.class = 'image';
     }
 }

@@ -51,7 +51,7 @@ export function initAbstractComponent(){
         //then remove the children data,
         //replace it with just the id
         //and add it to top layer.
-        initChildren(data){
+        initChildren(data) {
             //init the children array.
             this.children = [];
             //if it is a leaf component, return
@@ -61,7 +61,7 @@ export function initAbstractComponent(){
                 let abstractChild;
                 //Special case for artboards that are
                 //contained by a page
-                if(this.is('page') && component._class === 'artboard'){
+                if (this.is('page') && component._class === 'artboard') {
                     abstractChild = new AbstractViewport(component);
                     this.children.push(abstractChild);
                 }
@@ -157,7 +157,7 @@ export function initAbstractComponent(){
             this.layers = data.layers;
         }
 
-        initImageProps(data){
+        initImageProps(data) {
             this.changeClassTo('image');
             this.imageURL = data.image._ref;
         }

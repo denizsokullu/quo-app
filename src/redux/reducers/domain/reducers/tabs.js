@@ -1,13 +1,13 @@
 import uuidv1 from 'uuid/v1';
 
-const newTab = (tabs,action) => {
+const newTab = (tabs, action) => {
 
   let newTab = {
-    id:uuidv1().toUpperCase(),
+    id: uuidv1().toUpperCase(),
     name:`Tab ${tabs.tabCount}`,
-    components:action.payload ? action.payload : {},
-    children:[],
-    tabCount:tabs.tabCount
+    components: action.payload ? action.payload : {},
+    children: [],
+    tabCount: tabs.tabCount
   }
   //add it to the list of tabs
   tabs.allTabs[newTab.id] = newTab;
@@ -21,7 +21,7 @@ const newTab = (tabs,action) => {
   return { ...tabs }
 }
 
-const changeActiveTab = (tabs,action) => {
+const changeActiveTab = (tabs, action) => {
   let newTabs = { ...tabs };
   newTabs.activeTab = action.payload.id;
   return newTabs

@@ -7,8 +7,8 @@ import { updateComponentProps } from './reducers/component/props';
 import { setLinkSource, setLinkTarget } from './reducers/component/links';
 
 const assets = combineReducersLoop({
-  'UPLOAD_SKETCH':uploadSketch,
-  'UPLOAD_IMAGE':uploadImage,
+  'UPLOAD_SKETCH': uploadSketch,
+  'UPLOAD_IMAGE': uploadImage,
 });
 
 const components = combineReducersLoop({

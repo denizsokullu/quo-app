@@ -1,10 +1,10 @@
-import { SketchParser } from '../../../../parser';
+import { SketchParser, PrimativeParser } from '../../../../parser';
 
 const uploadSketch = (assets = {}, action) => {
 
   let newPage = new SketchParser.AbstractPage(action.payload.data);
   let filetype = action.payload.filetype
-
+  // Shouldn't be mutating "assets"
   if(!assets[filetype]){
     assets[filetype] = {};
   }
@@ -14,7 +14,21 @@ const uploadSketch = (assets = {}, action) => {
 }
 
 const uploadImage = (state = {}, action) => {
-  return state;
+  let newImage = new PrimativeParser.AbstractImage(action.payload.data);
+  let filetype = action.payload.filetype;
+  if (!state[filetype]) {
+    return {
+      ...state,
+      [filetype]: {}
+    }
+  }
+  return {
+    ...state,
+    [filetype]: {
+      ...[state[filetype]],
+      [newImage.id]: newImage
+    }
+  }
 }
 
 export { uploadSketch, uploadImage };
