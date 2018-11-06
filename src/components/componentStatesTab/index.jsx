@@ -25,7 +25,6 @@ const mapStateToProps = (state) => {
   let stateModifiers = component.state.states.composite.modifiers;
   let ids = (_.remove(_.keys(component.state.states),(e)=> e !== 'composite'))
   let stateOptions = ids.map((id)=> component.state.states[id])
-  console.log(stateOptions)
   stateOptions = stateOptions.map(e => { return {
     text:e.title,
     selected:!!(stateModifiers.includes(e.id))

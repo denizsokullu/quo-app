@@ -89,7 +89,6 @@ class Translator {
       let attributes = data.attributedString.attributes[0].attributes;
 
       if(attributes){
-        console.log(attributes);
         let color = attributes.MSAttributedStringColorAttribute
         let font = attributes.MSAttributedStringFontAttribute
         if(color) addProp('fontColor', color);
@@ -100,7 +99,6 @@ class Translator {
           if(fontSize) addProp('fontSize', fontSize);
         }
       }
-      console.log(allProps)
     }
 
 

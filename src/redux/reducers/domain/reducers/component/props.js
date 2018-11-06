@@ -63,7 +63,6 @@ export const addStateToComposite = (tabs, action) => {
   let states = component.state.states;
   let composite = states.composite;
   component.state.states.composite =  addStateToCompositeHelper(states, action.payload.state.id);
-  console.log('added',_.cloneDeep(composite.props))
   return _.cloneDeep(tabs);
 }
 
@@ -75,6 +74,5 @@ export const removeStateFromComposite = (tabs, action) => {
   let composite = states.composite;
   composite.modifiers = _.reject(composite.modifiers, id => id === state.id)
   composite.props = PropCompositor.bakeProps(composite.modifiers.map(v => states[v].props))
-  console.log('removed',_.cloneDeep(composite.props))
   return _.cloneDeep(tabs);
 }

@@ -46,7 +46,6 @@ const CREATE_LINK = (payload) => (dispatch,getFullState) => {
     case 'TARGET_SELECTED':
     // set the fake data for the time being
     let linkBuilderData = { ...getLinkBuilder(app)};
-    console.log(linkBuilderData)
     let data = {
       // enables:['onMouseEnter'],
       // disables:['onMouseLeave'],

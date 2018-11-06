@@ -37,10 +37,8 @@ class AssetsTab extends Component {
         />
         {
           this.state.currentTab === 'static'
-          ?
-          <AssetsViewer assets={this.props.assets[this.state.filetype]} components={this.props.components}/>
-          :
-          null
+            ? <AssetsViewer assets={this.props.assets} components={this.props.components} />
+            : null
         }
       </div>
     )
@@ -50,7 +48,7 @@ class AssetsTab extends Component {
 class AssetsViewer extends Component {
   constructor(props){
     super(props);
-    let pages = this.assignPages(props.assets);
+    let pages = this.assignPages(props.assets.sketch);
     let selected = undefined;
     if(pages.length > 0){
       selected = pages[0];
@@ -69,8 +67,8 @@ class AssetsViewer extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(!_.isEmpty(nextProps.assets)){
-      let pages = this.assignPages(nextProps.assets);
+    if(!_.isEmpty(nextProps.assets.sketch)){
+      let pages = this.assignPages(nextProps.assets.sketch);
       if(!this.state.selected) this.setState({selected:pages[0]})
       this.setState({pages:pages})
     }
@@ -80,60 +78,72 @@ class AssetsViewer extends Component {
     this.setState({selected:page});
   }
 
-  renderFirstDepthComponents(){
-
-    if(!this.state.selected){
-      return(
+  renderFirstDepthComponents() {
+    if (!this.state.selected) {
+      return (
         <div className='no-assets'>
           No assets found
         </div>
-      )
+      );
     }
 
     //find all the artboards
     let allArtboards = [];
 
-    _.mapValues(this.props.assets,(pages) => {
-     allArtboards =  _.union(allArtboards, pages.children);
-    })
+    _.mapValues(this.props.assets.sketch, (pages) => {
+      allArtboards = _.union(allArtboards, pages.children);
+    });
 
-    let artboardIDs = this.props.assets[this.state.selected.id].children;
+    let artboardIDs = this.props.assets.sketch[this.state.selected.id].children;
 
-    
     //search all the first depth components
-
-    let firstDepthComponents = artboardIDs.map( artboardID =>{
+    let firstDepthComponents = artboardIDs.map(artboardID =>{
       //get the children of the artboard;
-      let components = this.props.assets[this.state.selected.id].components
+      let components = this.props.assets.sketch[this.state.selected.id].components;
       let artboard = components[artboardID];
-      return artboard.children.map( childID => {
+      return artboard.children.map(childID => {
         return components[childID]
-      })
-    })
+      });
+    });
 
     let flattenedfirstDepthComponents = [];
 
     firstDepthComponents.map(components => {
       components.map(component => {
         flattenedfirstDepthComponents.push(component);
-      })
-    })
+      });
+    });
 
     firstDepthComponents = flattenedfirstDepthComponents;
-
     return (
-      <div className='asset-preview-table'>
-        {
-          Object.keys(firstDepthComponents).map((o,i)=>{
-            let component = firstDepthComponents[o]
-            return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
-          })
-        }
-      </div>
+      <React.Fragment>
+        <div className='asset-preview-table'>
+          {
+            Object.keys(firstDepthComponents).map((o,i)=>{
+              let component = firstDepthComponents[o];
+              return <AssetPreview key={i} component={component} page={this.state.selected.id} filetype='sketch' source='assets' title={`${component.name}`}/>
+            })
+          }
+        </div>
+        <div className='asset-preview-table'>
+            {
+              Object.values(this.props.assets.image).map((image, i) => (
+                <AssetPreview
+                  key={i}
+                  component={image}
+                  page={this.state.selected.id}
+                  filetype='image'
+                  source='assets'
+                  title={`${component.name}`}
+                />
+              ))
+            }
+          </div>
+      </React.Fragment>
     )
   }
 
-  render(){
+  render() {
     return (
       <div className='assets-library-wrapper'>
         <div className='card-header'>
@@ -141,9 +151,9 @@ class AssetsViewer extends Component {
         </div>
         <div className='card-body'>
           {
-            this.state.pages.map((page,i)=>{
+            this.state.pages.map((page,i) => {
               return(
-                <div className={`page ${page.id === this.state.selected.id ? 'selected' : ''}`} key={i} onClick={()=>{this.onPageChange(page)}}>{page.name}</div>
+                <div className={`page ${page.id === this.state.selected.id ? 'selected' : ''}`} key={i} onClick={() => {this.onPageChange(page)}}>{page.name}</div>
               )
             })
           }

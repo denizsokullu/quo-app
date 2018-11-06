@@ -47,7 +47,6 @@ class LinksTab extends Component {
 
   render(){
     const data = this.data;
-    console.log(data);
     return (
       <div className='links-tab-wrapper'>
       

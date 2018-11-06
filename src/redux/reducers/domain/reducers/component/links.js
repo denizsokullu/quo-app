@@ -55,7 +55,5 @@ export const setLinkTarget = (tabs,action) => {
 
   targetComponent.state.states[linkState.id] = linkState;
 
-  console.log('states',targetComponent.state.states[linkState.id]);
-
   return _.cloneDeep(tabs);
 }

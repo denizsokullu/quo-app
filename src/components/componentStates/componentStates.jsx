@@ -13,7 +13,6 @@ class ComponentStates extends React.Component {
   }
 
   onClick(e){
-    console.log(e.target.innerHTML)
     this.setState({selected : e.target.innerHTML.toLowerCase()});
     // const { dispatch } = this.props;
     // dispatch(EDIT_STATE_CHANGE(e.target.innerHTML.toLowerCase()));

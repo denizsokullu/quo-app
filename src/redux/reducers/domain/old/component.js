@@ -158,8 +158,6 @@ function TEXT_STRING_UPDATE(state = {},action){
 
   component = setEditState(component,editState);
 
-  console.log(component)
-
   return addUpdatedComponentToState(state,action,component)
 
 }

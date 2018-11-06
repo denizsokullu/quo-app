@@ -6,6 +6,7 @@ export default class AbstractImage {
     }
 
     initCoreProps(data) {
+        this.data = data.image;
         this.name = data.name;
         this.id = '123'; // Generate Id?
         this.class = 'image';

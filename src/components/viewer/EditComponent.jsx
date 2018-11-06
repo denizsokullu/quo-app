@@ -50,7 +50,6 @@ const makeEditComponent = (WrappedComponent, options) => {
     
     render = () => {
       const wrapperProps = this.createWrapperProps();
-      console.log(this.props)
       return(
         <div {...wrapperProps} tabIndex='0'>
           <WrappedComponent {...this.props} wrapper={EditComponent}/>

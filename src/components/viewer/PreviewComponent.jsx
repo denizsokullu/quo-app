@@ -58,29 +58,23 @@ const makePreviewComponent = (WrappedComponent, options) => {
         this.removeLinkStates(event);
       }
       onMouseDown(e){
-        console.log('down');
         this.handleStates('onMouseDown');
         //apply onMouseDown states
         //fire actions to trigger any state changes in other components
       }
       onMouseUp(e){
-        console.log('up')
         this.handleStates('onMouseUp');
       }
       onMouseEnter(e){
-        console.log('enter')
         this.handleStates('onMouseEnter');
       }
       onMouseLeave(e){
-        console.log('leave')
         this.handleStates('onMouseLeave');
       }
       onBlur(e){
-        console.log('blurred')
         this.handleStates('onBlur');
       }
       onFocus(e){
-        console.log('focused')
         this.handleStates('onFocus');
       }
 

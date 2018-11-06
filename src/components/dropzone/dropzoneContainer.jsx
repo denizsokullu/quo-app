@@ -46,7 +46,10 @@ class DropzoneContainer extends React.Component {
         case 'png':
           const reader = new FileReader();
           reader.onload = () => {
-              dispatch(actions.UPLOAD_IMAGE({ filetype: 'image', data: reader.result }))
+            dispatch(actions.UPLOAD_IMAGE({ filetype: 'image', data: {
+              name: curFile.name,
+              image: reader.result 
+            }}));
           };
           reader.readAsDataURL(curFile);
           break;

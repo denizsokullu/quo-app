@@ -21,7 +21,6 @@ import WebAssetIcon from 'material-ui-icons/WebAsset';
 import LinkIcon from 'material-ui-icons/Link';
 
 import actions from 'quo-redux/actions.js';
-console.log(actions)
 import { getState } from '../../redux/state';
 
 import AssetsTab from './assets';

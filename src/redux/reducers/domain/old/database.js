@@ -8,7 +8,6 @@ const getPage = (state,id) => {
 
 const PUSH_PROJECT = (state,action) => {
   //if the newAssets is empty, the push is no-op
-  console.log('pushing project')
   firebase.database.ref('/mainProject').set({...state.newAssets}).then(()=>{console.log('upload completed')});
   // //retrieve the page, and push a ref with the id to the core database
   return state

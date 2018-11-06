@@ -117,7 +117,6 @@ class TextComponent extends CoreComponent{
     render(){
       // return ( this.renderTextElement() )
       let style = this.getStyle();
-      console.log(style)
       return (
         <p className='text-inner' style={style}>
         { this.getText() }

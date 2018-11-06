@@ -20,13 +20,13 @@ import TextComponent from './components/TextComponent';
 
 class ComponentRenderCore extends React.PureComponent {
   render = () => {
-    switch(this.props.component.class){
+    switch(this.props.component.class) {
       case 'shape':
-        return (<ShapeComponent component={ this.props.component }></ShapeComponent>)
-        break;
+        return <ShapeComponent component={ this.props.component } />
       case 'text':
-        return (<TextComponent component={ this.props.component }></TextComponent>)
-        break;
+        return <TextComponent component={ this.props.component } />
+      case 'image':
+        return <ImageComponent component={this.props.component} />
       default:
         const Wrapper = this.props.wrapper
         return (

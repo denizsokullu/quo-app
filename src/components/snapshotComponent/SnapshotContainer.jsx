@@ -44,13 +44,9 @@ export default class SnapshotContainer extends Component {
       cDimensions : this.getContainerDimensions(),
       eDimensions : this.getComponentDimensions(),
     }
-
-    console.log(data);
     
     let { image, scale } = convertSnapshotToImage(data);
     let fullImage = convertSnapshotToImage({...data, full:true});
-
-    console.log(scale);
 
     this.setState({snapshotImage: image, scale: scale});
 
