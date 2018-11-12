@@ -1,4 +1,4 @@
-# Quo - Prototyping with components
+# Quo - Prototyping with components (DEPRECATED)
 
 Max Stein, Deniz Sokullu
 
